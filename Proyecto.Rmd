@@ -1,0 +1,61 @@
+---
+title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
+author: |
+  <center>
+  Ferrer Font, Neus<br>
+  Navarro García, Marta<br>
+  Rodríguez Simón, Alba<br>
+  Aissa Djellouli, Mohammed<br>
+  Balbastre Aparisi, Héctor<br>
+  Ruiz Ripoll, Joan<br>
+  Martinez Torres, Carlos Santiago
+  </center>
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  bookdown::pdf_document2:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    figure_caption: "Figura" # Referencias en castellano
+    table_caption: "Tabla"
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+  html_notebook:
+    echo: true
+    number_sections: true
+    toc: true
+  html_document:
+    echo: true
+    number_sections: true
+    theme: lumen
+    toc: true
+  bookdown::html_document2:
+    echo: true
+    number_sections: true
+    theme: spacelab
+    toc: true
+    figure_caption: "Figura"
+    table_caption: "Tabla"
+always_allow_html: true
+params:
+  lang: ES
+lang: "`r switch(params$lang, ES = 'es-ES', EN = 'en-US')`"
+subtitle: "Tratamiento de datos. Grado en Ciencia de Datos - UV"
+language:
+  label:
+    fig: 'Figura '
+    tab: 'Tabla '
+    eq: 'Ecuación '
+    thm: 'Teorema '
+    lem: 'Lema '
+    def: 'Definición '
+    cor: 'Corolario '
+    prp: 'Proposición '
+    exm: 'Ejemplo '
+    exr: 'Ejercicio '
+    proof: 'Demostración. '
+    remark: 'Nota: '
+    solution: 'Solución. '
+---
