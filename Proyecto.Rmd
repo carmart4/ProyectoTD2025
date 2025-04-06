@@ -12,7 +12,11 @@ author: |
   </center>
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
+  html_document:
+    echo: true
+    number_sections: true
+    theme: lumen
+    toc: true
   bookdown::pdf_document2:
     toc: true
     toc_depth: 3
@@ -26,11 +30,7 @@ output:
     echo: true
     number_sections: true
     toc: true
-  html_document:
-    echo: true
-    number_sections: true
-    theme: lumen
-    toc: true
+  pdf_document: default
   bookdown::html_document2:
     echo: true
     number_sections: true
@@ -59,3 +59,60 @@ language:
     remark: 'Nota: '
     solution: 'Solución. '
 ---
+Instalación de las librerias.
+```{r}
+#install.packages("pdftools")
+```
+Importacion de las librerias. 
+```{r, warning=FALSE}
+library(pdftools)
+library(dplyr)
+library(stringr)
+```
+
+Lectura de un solo fichero pdf, de prueba. 
+```{r}
+n_pdf <- 'data/20240323 Mercadona 234,20.pdf'
+
+t_pdf <- pdf_text(n_pdf)
+t_pdf
+
+lineas <- strsplit(t_pdf, "\n")[[1]]
+grepl('MERCADONA', lineas[1]) # Verificamos que sea una factura de Mercadona. 
+```
+```{r}
+lineas
+lineas_limpias <- sub("^\\s+", "", lineas)
+lineas_limpias
+
+# Obtenemos información encabezado, FIJO
+direccion <- lineas_limpias[2]
+direccion
+
+#sub("^\\s+", "", lineas[3])
+lineas_limpias[3]
+CP <- str_sub(string = lineas_limpias[3], start = 0, end = 5)
+CP
+
+str_sub(string = lineas_limpias)
+
+municipio <- str_sub(string = lineas_limpias[3], start = 7)
+municipio
+
+lineas_limpias[6]
+factura <- str_sub(lineas_limpias[6], -15)
+factura
+
+id_tienda <- substr(factura, nchar(factura) - 14, nchar(factura) - 11)
+id_tienda
+
+n_caja <- substr(factura, nchar(factura) - 9, nchar(factura) - 7)
+n_caja
+
+id_factura <- substr(factura, nchar(factura) - 5, nchar(factura))
+id_factura
+```
+
+
+
+
