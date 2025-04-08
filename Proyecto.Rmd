@@ -494,8 +494,7 @@ Compra
 
 # Tratamos productos por unidad
 
-```{r}
-
+'```{r,}
 
 i <- 1
 
@@ -555,5 +554,5 @@ while (i <= length(productos)){
 ###       mejorar para dejar con una función, a la que se le pase una línea
 ###       y por cada linea que lea, la añada al dataframe. 
 
-compra
-```
+
+```'''
