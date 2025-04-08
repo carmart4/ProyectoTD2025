@@ -68,11 +68,26 @@ Instalación de las librerias.
 
 Importacion de las librerias. 
 ```{r, warning=FALSE}
+
+
+# Lista de paquetes que se van a utilizar
+paquetes <- c("pdftools", "dplyr", "stringr", "dplyr", "ggplot2", "tidyr", "stringr")
+
+# Función 
+instalar_y_cargar <- function(paquetes) {
+  nuevos <- paquetes[!(paquetes %in% installed.packages()[,"Package"])]
+
+  if(length(nuevos) != 0) {
+    install.packages(nuevos)
+    }
+
+  lapply(paquetes, library, character.only = TRUE)
+}
+
+instalar_y_cargar(paquetes)
 rm(list = ls())
-library(pdftools)
-library(dplyr)
-library(stringr)
 ```
+
 ```{r}
   # Guardae todos los archivos PDF en la carpeta "data"
   archivos_pdf <- list.files(path = "data", pattern = "\\.pdf$", full.names = TRUE)
