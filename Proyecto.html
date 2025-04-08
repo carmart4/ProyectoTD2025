@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2025-04-06" />
+<meta name="date" content="2025-04-08" />
 
 <title>Análisis de Tickets de Supermercado: Mini Proyecto 2025</title>
 
@@ -382,16 +382,368 @@ Ferrer Font, Neus<br> Navarro García, Marta<br> Rodríguez Simón,
 Alba<br> Aissa Djellouli, Mohammed<br> Balbastre Aparisi, Héctor<br>
 Ruiz Ripoll, Joan<br> Martinez Torres, Carlos Santiago
 </center></h4>
-<h4 class="date">2025-04-06</h4>
+<h4 class="date">2025-04-08</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#lo-que-necesitamos-para-trabajar." id="toc-lo-que-necesitamos-para-trabajar."><span class="toc-section-number">1</span> Lo que necesitamos para
+trabajar.</a></li>
+<li><a href="#como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar" id="toc-como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar"><span class="toc-section-number">2</span> Como vamos a almacenar la
+informacion? Que informacion queremos almacenar?</a></li>
+</ul>
+</div>
 
+<div id="lo-que-necesitamos-para-trabajar." class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Lo que necesitamos para
+trabajar.</h1>
 <p>Instalación de las librerias.</p>
 <pre class="r"><code>#install.packages(&quot;pdftools&quot;)</code></pre>
 <p>Importacion de las librerias.</p>
 <pre class="r"><code>library(pdftools)</code></pre>
 <pre><code>## Using poppler version 23.08.0</code></pre>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Adjuntando el paquete: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(stringr)</code></pre>
+<p>NOTA: Mejorar la instalación e importanción de librerias para que, en
+caso de que ya esté instalada la libreria, solo se cargue, sin
+actualizarse o instalarse de nuevo. (Pensando en que un ordenador sin
+esas librerias)</p>
+</div>
+<div id="como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Como vamos a almacenar
+la informacion? Que informacion queremos almacenar?</h1>
+<pre class="r"><code># Dataframe que contendrá el nombre del fichero leido y la factura a la que pertenece. En caso de no ser leido, porque no pertenece a Mercadona, identificaremos cual fichero ha sido y lo almacenaremos en otro df.
+
+ficheros &lt;- data.frame( FacturaFichero = character(),
+                        NombreFichero = character(),
+                        stringsAsFactors = FALSE
+                        )
+
+NoLeidos &lt;- data.frame( NombreFichero = character(),
+                        stringsAsFactors = FALSE
+                        )
+
+
+# Dataframe que contendrá la información de las diferentes tiendas de las facturas.  
+# Dado que no vamos a hacer operaciones con el id, CP o telefono, estas variables las guardaremos como char. 
+
+tienda &lt;- data.frame( IdTienda = character(),
+                      Direccion = character(),
+                      CodigoPostal = character(),
+                      Municipio = character(),
+                      Telefono = character(),
+                      stringsAsFactors = FALSE
+) 
+
+# Dataframe que contendra la informacion de las compras realizadas. 
+
+# Compra &lt;- Fecha, IdTienda, Producto, Cantidad, Precio, Importe, TipoProducto, </code></pre>
+<p>Lectura de un solo fichero pdf, de prueba.</p>
+<p>Es una factura del mercadona?</p>
+<pre class="r"><code># Carga del pdf 
+
+#nombre_pdf &lt;- &#39;data/ticket_dia_03_02_2025_14_10.pdf&#39; # Factura de otro supermercado
+nombre_pdf &lt;- &#39;data/20240323 Mercadona 234,20.pdf&#39; # Factura con pescado
+#nombre_pdf &lt;- &#39;data/20241228 Mercadona 32,50 Ôé¼.pdf&#39;
+
+pdf_completo &lt;- pdf_text(nombre_pdf) # Extrae el texto del pdf.
+lineas &lt;- strsplit(pdf_completo, &quot;\n&quot;)[[1]] # Divide el texto en diferentes lineas, por cada salto de linea. 
+
+#lineas &lt;- sub(&quot;^\\s+&quot;, &quot;&quot;, lineas) # Eliminamos los espacios en blanco a la izq de cada linea.
+lineas &lt;- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
+
+
+# Verificamos que sea una factura de Mercadona.
+
+Mercadona &lt;- grepl(&#39;MERCADONA&#39;, lineas[1])  
+Mercadona # Solo si es TRUE, debe continuar. De no ser así, es que la factura no es de Mercadona.</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>Información encabezado, FIJO.</p>
+<p>Solo si es una factura del Mercadona:</p>
+<pre class="r"><code># De ser una factura del mercadona (Mercadona == TRUE), continuamos...
+
+info_compra &lt;- grep(paste0(&quot;\\b&quot;, &#39;MERCADONA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+info_compra_final &lt;- grep(paste0(&quot;\\b&quot;, &#39;FACTURA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+
+encabezado &lt;- lineas[info_compra:info_compra_final]
+encabezado</code></pre>
+<pre><code>## [1] &quot;MERCADONA, S.A. A-46103834&quot;           
+## [2] &quot;C/ ALICANTE 83&quot;                       
+## [3] &quot;03801 ALCOI/ALCOY&quot;                    
+## [4] &quot;TELÉFONO: 965366422&quot;                  
+## [5] &quot;23/03/2024 13:04  OP: 79063&quot;          
+## [6] &quot;FACTURA SIMPLIFICADA: 4530-021-052628&quot;</code></pre>
+<p>Una vez que tenemos identificado el ‘espacio’ del encabezado,
+extraemos la información.</p>
+<pre class="r"><code>direccion &lt;- encabezado[2]
+direccion</code></pre>
+<pre><code>## [1] &quot;C/ ALICANTE 83&quot;</code></pre>
+<pre class="r"><code># Ubicacion 
+ubicacion &lt;- strsplit(lineas[3], split = &#39; &#39;)[[1]] 
+
+CP &lt;- ubicacion[1]
+CP</code></pre>
+<pre><code>## [1] &quot;03801&quot;</code></pre>
+<pre class="r"><code>municipio &lt;- ubicacion[2]
+municipio</code></pre>
+<pre><code>## [1] &quot;ALCOI/ALCOY&quot;</code></pre>
+<pre class="r"><code>telefono &lt;- strsplit(lineas[4], split = &#39;: &#39;)[[1]]
+telefono[2]</code></pre>
+<pre><code>## [1] &quot;965366422&quot;</code></pre>
+<pre class="r"><code>tiempo &lt;- strsplit(lineas[5], split = &#39; &#39;)[[1]][1:2]
+
+fecha &lt;- tiempo[1] # String de la fecha en formato dd/mm/aaaa
+fecha</code></pre>
+<pre><code>## [1] &quot;23/03/2024&quot;</code></pre>
+<pre class="r"><code>hora &lt;- tiempo[2]
+hora</code></pre>
+<pre><code>## [1] &quot;13:04&quot;</code></pre>
+<pre class="r"><code>factura &lt;- strsplit(lineas[6], split = &quot;: &quot;)[[1]]
+factura &lt;- strsplit(factura[2], split = &quot;-&quot;)[[1]]
+
+id_tienda &lt;- factura[1]
+id_tienda</code></pre>
+<pre><code>## [1] &quot;4530&quot;</code></pre>
+<pre class="r"><code>n_caja &lt;- factura[2]
+n_caja</code></pre>
+<pre><code>## [1] &quot;021&quot;</code></pre>
+<pre class="r"><code>id_factura &lt;- factura[3]
+id_factura</code></pre>
+<pre><code>## [1] &quot;052628&quot;</code></pre>
+<pre class="r"><code># Añadimos información del fichero, si pertenece a mercadona o no.
+
+if ((Mercadona) &amp; (!id_factura %in% ficheros$FacturaFichero)) {
+  ficheros &lt;- ficheros %&gt;%
+                add_row(
+                  NombreFichero = nombre_pdf,
+                  FacturaFichero = id_factura
+                )
+} else if ((!Mercadona) &amp; ((!nombre_pdf %in% NoLeidos$NombreFichero))){
+    NoLeidos &lt;- NoLeidos %&gt;%
+                add_row(
+                  NombreFichero = nombre_pdf
+                )
+}
+
+# La información leida anteriormente, la concatenaremos en el df anteriormente creado. 
+# Solo si el id_tienda no está.
+
+info_tienda &lt;- c(id_tienda, direccion, CP, municipio, telefono)
+
+if ((Mercadona) &amp; (!id_tienda %in% tienda$Id)){
+  tienda &lt;- tienda %&gt;%
+                add_row(
+                  IdTienda = id_tienda,
+                  Direccion = direccion,
+                  CodigoPostal = CP,
+                  Municipio = municipio,
+                  Telefono = telefono
+    )
+}</code></pre>
+<p>NOTA: Automatizar para que lea cada fichero de la carpeta y almacene
+la información en los dataframes correspondientes.</p>
+<p>Información de los productos.</p>
+<pre class="r"><code># Como sabemos que los poductos se describen desde el encabezado &#39;descripcion&#39;, hasta el primer &#39;TOTAL&#39;, buscamos la linea que contenga esa palabra. Por lo tanto:
+
+indice_encabezado &lt;- grep(paste0(&quot;\\b&quot;, &#39;Descripción&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+indice_total &lt;- grep(paste0(&quot;\\b&quot;, &#39;TOTAL&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+
+# Leemos los productos, que van desde una linea despues del encabezado descripcion, hasta una linea menos del primer total. 
+
+productos &lt;- lineas[(indice_encabezado+1):(indice_total-1)]
+productos &lt;- str_replace_all(productos, &quot;\\s+&quot;, &quot; &quot;) # Eliminamos los espacios multiples
+productos</code></pre>
+<pre><code>##  [1] &quot;2 JUDÍA PLANA 350 GR 1,50 3,00&quot; &quot;3 ESP VERDE FINO 1,99 5,97&quot;    
+##  [3] &quot;1 FRESÓN 1,3 KG 3,10&quot;           &quot;1 MIX DE SETAS INTENSO 4,62&quot;   
+##  [5] &quot;1 PAN 51% INTEGRAL 5UN 1,30&quot;    &quot;1 PAN ESPELTA INTEGRAL 1,40&quot;   
+##  [7] &quot;1 PAT. CLASSICAS 1,75&quot;          &quot;1 MINI EMP PISTO P6 1,70&quot;      
+##  [9] &quot;1 GALL DIGESTIVE 1,75&quot;          &quot;1 MINI SALADAS 24 UN 2,50&quot;     
+## [11] &quot;1 NARANJA 5 KG. 5,95&quot;           &quot;1 REBUENAS 1,20&quot;               
+## [13] &quot;1 CEBOLLA TIERNA 1,29&quot;          &quot;1 RABANITOS 1,10&quot;              
+## [15] &quot;1 ICEBERG 0,99&quot;                 &quot;1 ACEITUNA PARTIDA 3,90&quot;       
+## [17] &quot;1 DEO AXE DARK TEMPT. 3,15&quot;     &quot;1 TARTA QUESO 1,80&quot;            
+## [19] &quot;1 QUESO AÑEJO FUERTE 19,25&quot;     &quot;1 CORTEZA DE CERDO 1,00&quot;       
+## [21] &quot;1 CONOS 0,75&quot;                   &quot;1 CHAMPÚ H&amp;S MENTOL 4,25&quot;      
+## [23] &quot;1 PIMENTON DULCE D.O 1,75&quot;      &quot;1 AZAFRAN HEBRA 1,70&quot;          
+## [25] &quot;1 CRUNCHY PICANTE 1,00&quot;         &quot;1 CARAMELO REGALIZ 1,95&quot;       
+## [27] &quot;1 LONGANIZA PASCUA 2,43&quot;        &quot;1 COSTILLA CHURRASCO 5,38&quot;     
+## [29] &quot;1 COSTILLA CHURRASCO 4,44&quot;      &quot;1 BACALAO AHUMADO 3,20&quot;        
+## [31] &quot;1 FIGATELL 3,77&quot;                &quot;1 COSTILLA CARNOSA 5,11&quot;       
+## [33] &quot;1 QUESO LONCHAS OVEJA 2,72&quot;     &quot;1 EMBUTIDO LONCHEADO 4,90&quot;     
+## [35] &quot;1 HAMBURGUESA DE LOMO 3,70&quot;     &quot;1 1/2 CONEJO TROCEADO 5,71&quot;    
+## [37] &quot;1 1/2 POLLO PART CERT 6,91&quot;     &quot;1 ALAS PARTIDAS CERT 4,00&quot;     
+## [39] &quot;1 QUESO LONCHAS OVEJA 2,68&quot;     &quot;1 VINO BAHIA DE DENIA 4,90&quot;    
+## [41] &quot;1 MARINA ALTA 4,95&quot;             &quot;2 TINTO BOBAL 2,90 5,80&quot;       
+## [43] &quot;1 SALCHICHON CEBO LONC 1,89&quot;    &quot;1 MAXI HAMBURGUESA 0,90&quot;       
+## [45] &quot;1 JAMÓN COCIDO 92% 2,41&quot;        &quot;1 JAMON CEBO IBERICO 7,73&quot;     
+## [47] &quot;1 JAMON CEBO IBERICO 8,55&quot;      &quot;1 JAMON CEBO IBERICO 8,03&quot;     
+## [49] &quot;1 GARROFON 1,50&quot;                &quot;2 FLTE BACALAO 5,30 10,60&quot;     
+## [51] &quot;1 BERBERECHO 5,95&quot;              &quot;1 CAÑAILLA 2,90&quot;               
+## [53] &quot;PESCADO&quot;                        &quot;SEPIA LONJA&quot;                   
+## [55] &quot;0,714 kg 13,95 €/kg 9,96&quot;       &quot;BACALADILLA&quot;                   
+## [57] &quot;1,098 kg 3,95 €/kg 4,34&quot;        &quot;QUISQUILLA MEDIANA&quot;            
+## [59] &quot;0,278 kg 27,90 €/kg 7,76&quot;       &quot;1 ALCACHOFA&quot;                   
+## [61] &quot;0,814 kg 2,25 €/kg 1,83&quot;        &quot;1 HABAS&quot;                       
+## [63] &quot;2,102 kg 3,95 €/kg 8,30&quot;        &quot;1 MANDARINA&quot;                   
+## [65] &quot;0,828 kg 1,99 €/kg 1,65&quot;        &quot;1 TOMATE NEGRO&quot;                
+## [67] &quot;0,440 kg 2,69 €/kg 1,18&quot;</code></pre>
+<p>Creacion del dataframe que contiene las compras:</p>
+<pre class="r"><code>compra &lt;- data.frame( Cantidad = numeric(),
+                      Descripcion = character(),
+                      PrecioUnitario = numeric(),
+                      Importe = numeric(),
+                      stringsAsFactors = FALSE
+) </code></pre>
+<p>Identificamos el patron de los diferentes productos, ya que pueden
+ser de tipo unitario, o por peso.</p>
+<pre class="r"><code># Los productos al peso, como pescado, frutas y verduras están al final. Sabiendo que pescado está en primer lugar, podemos hacer un primer filtro. 
+
+# Extraer los valores de cada linea con el formato de cantidad, descripcion, preciounitario, importe. 
+# - ^([0-9]+) - El primer elemento, que es un número.
+# - Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea (.+?)
+# - Luego de otro espacio, \\s , lee el valor unitario ([0-9]+,[0-9]{2})
+# - Luego de otro espacio, \\s , lee el importe total ([0-9]+,[0-9]{2})$, indicando que es el final de la linea. 
+
+# Formato normal (cantidad &gt; 1)
+patron_normal &lt;- &quot;^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$&quot;
+
+# Caso 2: Cuando cantidad es 1 (sin precio unitario)
+patron_cantidad_1 &lt;- &quot;^1\\s(.+?)\\s+([0-9]+,[0-9]{2})$&quot;
+
+# Caso 3: Productos por peso
+patron_peso &lt;- &quot;^([0-9]+)\\s(.+)$&quot;
+patron_precio_peso &lt;- &quot;^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$&quot;
+
+# Solo si se ha comprado pescado, servirá este filtro. 
+
+if (any(grepl(&#39;\\bPESCADO\\b&#39;, productos, ignore.case = TRUE))) {
+  indice_pescado &lt;- grep(&quot;\\bPESCADO\\b&quot;, productos, ignore.case = TRUE)[1]
+  productos_peso &lt;- productos[(indice_pescado+1):length(productos)]
+  productos &lt;- productos[0:(indice_pescado-1)]
+} 
+
+i &lt;- 1
+
+while (i &lt;= length(productos)){
+  p &lt;- productos[i]
+  
+  if ((grepl(patron_normal, p)) | (grepl(patron_cantidad_1, p))) {
+    
+    if (str_detect(p, patron_normal)) {
+      elementos &lt;- str_match(p, patron_normal)[,2:5]
+      resultado &lt;- data.frame( cantidad = as.numeric(elementos[1]),
+                                descripcion = elementos[2],
+                                precio_unit = as.numeric(str_replace(elementos[3], &quot;,&quot;, &quot;.&quot;)),
+                                importe = as.numeric(str_replace(elementos[4], &quot;,&quot;, &quot;.&quot;)),
+                                stringsAsFactors = FALSE )
+      
+    }
+    else if (str_detect(p, patron_cantidad_1)) {
+      elementos &lt;- str_match(p, patron_cantidad_1)[,2:3]
+      precio_total &lt;- as.numeric(str_replace(elementos[2], &quot;,&quot;, &quot;.&quot;))
+      resultado &lt;- data.frame( cantidad = 1,
+                                descripcion = elementos[1],
+                                precio_unit = precio_total,
+                                importe = precio_total,
+                                stringsAsFactors = FALSE)
+    }
+    
+    # Agregar al data frame compra
+    compra &lt;- rbind(compra, resultado)
+    
+  }
+  
+  else if (str_detect(p, patron_peso)){
+    
+    elemento1 &lt;- str_match(p, patron_peso)[,3]
+    
+    # Verificar que existe siguiente línea
+    if (i + 1 &lt;= length(productos)) {
+      i &lt;- i + 1 # Salto para leer la siguiente linea
+      peso &lt;- productos[i]
+      elemento2 &lt;- str_match(peso, patron_precio_peso)[2:4]
+      resultado &lt;- data.frame( cantidad = elemento2[1],
+                                descripcion = elemento1,
+                                precio_unit = as.numeric(str_replace(elemento2[2], &quot;,&quot;, &quot;.&quot;)),
+                                importe = as.numeric(str_replace(elemento2[3], &quot;,&quot;, &quot;.&quot;)),
+                                stringsAsFactors = FALSE )
+
+      # Agregar al data frame compra
+      compra &lt;- rbind(compra, resultado)
+    }
+  }
+  i &lt;- i + 1
+}
+
+### NOTA: HAce falta revisar los productos con pescado, y las facturas que tienen parking. 
+###       También, revisar por qué se están duplicando los valores en estos bucles; 
+###       mejorar para dejar con una función, a la que se le pase una línea
+###       y por cada linea que lea, la añada al dataframe. 
+
+compra</code></pre>
+<pre><code>##    cantidad          descripcion precio_unit importe
+## 1         2   JUDÍA PLANA 350 GR        1.50    3.00
+## 2         3       ESP VERDE FINO        1.99    5.97
+## 3         1        FRESÓN 1,3 KG        3.10    3.10
+## 4         1 MIX DE SETAS INTENSO        4.62    4.62
+## 5         1 PAN 51% INTEGRAL 5UN        1.30    1.30
+## 6         1 PAN ESPELTA INTEGRAL        1.40    1.40
+## 7         1       PAT. CLASSICAS        1.75    1.75
+## 8         1    MINI EMP PISTO P6        1.70    1.70
+## 9         1       GALL DIGESTIVE        1.75    1.75
+## 10        1   MINI SALADAS 24 UN        2.50    2.50
+## 11        1        NARANJA 5 KG.        5.95    5.95
+## 12        1             REBUENAS        1.20    1.20
+## 13        1       CEBOLLA TIERNA        1.29    1.29
+## 14        1            RABANITOS        1.10    1.10
+## 15        1              ICEBERG        0.99    0.99
+## 16        1     ACEITUNA PARTIDA        3.90    3.90
+## 17        1  DEO AXE DARK TEMPT.        3.15    3.15
+## 18        1          TARTA QUESO        1.80    1.80
+## 19        1   QUESO AÑEJO FUERTE       19.25   19.25
+## 20        1     CORTEZA DE CERDO        1.00    1.00
+## 21        1                CONOS        0.75    0.75
+## 22        1    CHAMPÚ H&amp;S MENTOL        4.25    4.25
+## 23        1   PIMENTON DULCE D.O        1.75    1.75
+## 24        1        AZAFRAN HEBRA        1.70    1.70
+## 25        1      CRUNCHY PICANTE        1.00    1.00
+## 26        1     CARAMELO REGALIZ        1.95    1.95
+## 27        1     LONGANIZA PASCUA        2.43    2.43
+## 28        1   COSTILLA CHURRASCO        5.38    5.38
+## 29        1   COSTILLA CHURRASCO        4.44    4.44
+## 30        1      BACALAO AHUMADO        3.20    3.20
+## 31        1             FIGATELL        3.77    3.77
+## 32        1     COSTILLA CARNOSA        5.11    5.11
+## 33        1  QUESO LONCHAS OVEJA        2.72    2.72
+## 34        1   EMBUTIDO LONCHEADO        4.90    4.90
+## 35        1  HAMBURGUESA DE LOMO        3.70    3.70
+## 36        1  1/2 CONEJO TROCEADO        5.71    5.71
+## 37        1  1/2 POLLO PART CERT        6.91    6.91
+## 38        1   ALAS PARTIDAS CERT        4.00    4.00
+## 39        1  QUESO LONCHAS OVEJA        2.68    2.68
+## 40        1  VINO BAHIA DE DENIA        4.90    4.90
+## 41        1          MARINA ALTA        4.95    4.95
+## 42        2          TINTO BOBAL        2.90    5.80
+## 43        1 SALCHICHON CEBO LONC        1.89    1.89
+## 44        1     MAXI HAMBURGUESA        0.90    0.90
+## 45        1     JAMÓN COCIDO 92%        2.41    2.41
+## 46        1   JAMON CEBO IBERICO        7.73    7.73
+## 47        1   JAMON CEBO IBERICO        8.55    8.55
+## 48        1   JAMON CEBO IBERICO        8.03    8.03
+## 49        1             GARROFON        1.50    1.50
+## 50        2         FLTE BACALAO        5.30   10.60
+## 51        1           BERBERECHO        5.95    5.95
+## 52        1             CAÑAILLA        2.90    2.90</code></pre>
+</div>
 
 
 

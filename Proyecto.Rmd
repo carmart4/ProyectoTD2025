@@ -59,96 +59,206 @@ language:
     remark: 'Nota: '
     solution: 'Solución. '
 ---
+# Lo que necesitamos para trabajar. 
+
 Instalación de las librerias.
 ```{r}
 #install.packages("pdftools")
 ```
+
 Importacion de las librerias. 
 ```{r, warning=FALSE}
+#rm(list = ls())
 library(pdftools)
 library(dplyr)
 library(stringr)
 ```
 
-Lectura de un solo fichero pdf, de prueba. 
+NOTA: Mejorar la instalación e importanción de librerias para que, en caso de que ya esté instalada la libreria, solo se cargue, sin actualizarse o instalarse de nuevo. (Pensando en que un ordenador sin esas librerias)
+
+# Como vamos a almacenar la informacion? Que informacion queremos almacenar? 
+
 ```{r}
-#n_pdf <- 'data/20240323 Mercadona 234,20.pdf' # Factura con pescado Producto
-n_pdf <- 'data/20241228 Mercadona 32,50 Ôé¼.pdf'
+# Dataframe que contendrá el nombre del fichero leido y la factura a la que pertenece. En caso de no ser leido, porque no pertenece a Mercadona, identificaremos cual fichero ha sido y lo almacenaremos en otro df.
 
-t_pdf <- pdf_text(n_pdf) # Extrae el texto del pdf.
+ficheros <- data.frame( FacturaFichero = character(),
+                        NombreFichero = character(),
+                        stringsAsFactors = FALSE
+                        )
 
-lineas <- strsplit(t_pdf, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea. 
+NoLeidos <- data.frame( NombreFichero = character(),
+                        stringsAsFactors = FALSE
+                        )
+
+
+# Dataframe que contendrá la información de las diferentes tiendas de las facturas.  
+# Dado que no vamos a hacer operaciones con el id, CP o telefono, estas variables las guardaremos como char. 
+
+tienda <- data.frame( IdTienda = character(),
+                      Direccion = character(),
+                      CodigoPostal = character(),
+                      Municipio = character(),
+                      Telefono = character(),
+                      stringsAsFactors = FALSE
+) 
+
+# Dataframe que contendra la informacion de las compras realizadas. 
+
+# En principio, todo irá en character. Cuando estén todos los datos, se hara la limpieza sobre el df. 
+
+# Compra <- Fecha, IdTienda, Producto, Cantidad, Precio, Importe, TipoProducto, 
+
+compra <- data.frame( Fecha = character(),
+                      IdFactura = character(),
+                      Producto = character(),
+                      Cantidad = character(),
+                      PrecioUnitario = character(),
+                      Importe = character(),
+                      TipoProducto = character(),
+                      Parking = logical(), 
+                      stringsAsFactors = FALSE
+) 
+
+```
+
+
+Lectura de un solo fichero pdf, de prueba. 
+
+Es una factura del mercadona? 
+```{r}
+# Carga del pdf 
+
+#nombre_pdf <- 'data/ticket_dia_03_02_2025_14_10.pdf' # Factura de otro supermercado
+nombre_pdf <- 'data/20240323 Mercadona 234,20.pdf' # Factura con pescado
+#nombre_pdf <- 'data/20241228 Mercadona 32,50 Ôé¼.pdf'
+#nombre_pdf <- 'data/20250224 Mercadona 75,48 Ôé¼.pdf' # Con Parking
+
+pdf_completo <- pdf_text(nombre_pdf) # Extrae el texto del pdf.
+lineas <- strsplit(pdf_completo, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea. 
+
+#lineas <- sub("^\\s+", "", lineas) # Eliminamos los espacios en blanco a la izq de cada linea.
+lineas <- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
+
+
+# Verificamos que sea una factura de Mercadona.
+
+Mercadona <- grepl('MERCADONA', lineas[1])  
+Mercadona # Solo si es TRUE, debe continuar. De no ser así, es que la factura no es de Mercadona.
+
 ```
 
 Información encabezado, FIJO. 
+
+Solo si es una factura del Mercadona:
+
 ```{r}
-#lineas <- sub("^\\s+", "", lineas) # Eliminamos los espacios en blanco a la izq de cada linea.
-lineas <- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea. 
+# De ser una factura del mercadona (Mercadona == TRUE), continuamos...
 
-Mercadona <- grepl('MERCADONA', lineas[1]) # Verificamos que sea una factura de Mercadona. 
-Mercadona
+if (Mercadona) {
+  
+  info_compra <- grep(paste0("\\b", 'MERCADONA', "\\b"), lineas, ignore.case = TRUE)[1]
+  info_compra_final <- grep(paste0("\\b", 'FACTURA', "\\b"), lineas, ignore.case = TRUE)[1]
+  
+  encabezado <- lineas[info_compra:info_compra_final]
+  
+}
 
-direccion <- lineas[2]
-direccion
-
-# Ubicacion 
-ubicacion <- strsplit(lineas[3], split = ' ')[[1]] 
-
-CP <- ubicacion[1]
-CP
-
-municipio <- ubicacion[2]
-municipio
-
-telefono <- str_sub(string = lineas[4], start = -9)
-telefono
-
-fecha <- str_sub(string = lineas[5], start = 0, end = 10) # String de la fecha en formato dd-mm-aaaa
-fecha
-
-hora <- str_sub(string = lineas[5], start = 12, end = 16)
-hora
-
-factura <- str_sub(lineas[6], -15)
-factura <- strsplit(factura, split = "-")[[1]]
-factura
-
-id_tienda <- factura[1]
-id_tienda
-
-n_caja <- factura[2]
-n_caja
-
-id_factura <- factura[3]
-id_factura
+encabezado
 
 ```
-Información de los productos.
+Una vez que tenemos identificado el 'espacio' del encabezado, extraemos la información. 
+
+```{r}
+if (Mercadona) {
+  
+  direccion <- encabezado[2]
+  
+  # Ubicacion 
+  ubicacion <- strsplit(lineas[3], split = ' ')[[1]] 
+  
+  CP <- ubicacion[1]
+  
+  municipio <- ubicacion[2]
+  
+  telefono <- strsplit(lineas[4], split = ': ')[[1]][2]
+  
+  tiempo <- strsplit(lineas[5], split = ' ')[[1]][1:2]
+  
+  fecha <- tiempo[1] # String de la fecha en formato dd/mm/aaaa
+  fecha
+  
+  hora <- tiempo[2]
+  hora
+  
+  factura <- strsplit(lineas[6], split = ": ")[[1]]
+  factura <- strsplit(factura[2], split = "-")[[1]]
+  
+  id_tienda <- factura[1]
+  id_tienda
+  
+  n_caja <- factura[2]
+  n_caja
+  
+  id_factura <- factura[3]
+  id_factura
+  
+}
+
+# Añadimos información del fichero, si pertenece a mercadona o no.
+
+if ((Mercadona) & (!id_factura %in% ficheros$FacturaFichero)) {
+  ficheros <- ficheros %>%
+                add_row(
+                  NombreFichero = nombre_pdf,
+                  FacturaFichero = id_factura
+                )
+} else if ((!Mercadona) & ((!nombre_pdf %in% NoLeidos$NombreFichero))){
+    NoLeidos <- NoLeidos %>%
+                add_row(
+                  NombreFichero = nombre_pdf
+                )
+}
+
+# La información leida anteriormente, la concatenaremos en el df anteriormente creado. 
+# Solo si el id_tienda no está.
+
+info_tienda <- c(id_tienda, direccion, CP, municipio, telefono)
+info_tienda
+
+if ((Mercadona) & (!id_tienda %in% tienda$Id)){
+  tienda <- tienda %>%
+                add_row(
+                  IdTienda = id_tienda,
+                  Direccion = direccion,
+                  CodigoPostal = CP,
+                  Municipio = municipio,
+                  Telefono = telefono
+    )
+}
+
+```
+NOTA: Automatizar para que lea cada fichero de la carpeta y almacene la información en los dataframes correspondientes. Corregir para que en nombre del fichero no aparezca 'data/'.
+
+
+# Información de los productos.
 ```{r}
 # Como sabemos que los poductos se describen desde el encabezado 'descripcion', hasta el primer 'TOTAL', buscamos la linea que contenga esa palabra. Por lo tanto:
 
 indice_encabezado <- grep(paste0("\\b", 'Descripción', "\\b"), lineas, ignore.case = TRUE)[1]
-
 indice_total <- grep(paste0("\\b", 'TOTAL', "\\b"), lineas, ignore.case = TRUE)[1]
+
+# Leemos los productos, que van desde una linea despues del encabezado descripcion, hasta una linea menos del primer total. 
 
 productos <- lineas[(indice_encabezado+1):(indice_total-1)]
 productos <- str_replace_all(productos, "\\s+", " ") # Eliminamos los espacios multiples
 productos
-```
-Creacion del dataframe que contiene las compras: 
-```{r}
-compra <- data.frame( Cantidad = numeric(),
-                      Descripcion = character(),
-                      PrecioUnitario = numeric(),
-                      Importe = numeric(),
-                      stringsAsFactors = FALSE
-) 
+
 ```
 
-
-
-Identificamos el patron de los diferentes productos, ya que pueden ser de tipo unitario, o por peso.
+# Identificamos el patron de los diferentes productos, ya que pueden ser de tipo unitario, o por peso.
 ```{r}
+# Sabemos que disponemos de 3 tipos de productos
+tipo_producto <- c('Unitario', 'Pescado', 'Fruta y verdura')
 
 # Los productos al peso, como pescado, frutas y verduras están al final. Sabiendo que pescado está en primer lugar, podemos hacer un primer filtro. 
 
@@ -164,17 +274,126 @@ patron_normal <- "^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$"
 # Caso 2: Cuando cantidad es 1 (sin precio unitario)
 patron_cantidad_1 <- "^1\\s(.+?)\\s+([0-9]+,[0-9]{2})$"
 
-# Caso 3: Productos por peso
+# Caso 3: Productos por peso, tanto pescado como fruteria.
+patron_pescado <- "^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$"
 patron_peso <- "^([0-9]+)\\s(.+)$"
 patron_precio_peso <- "^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$"
 
-# Solo si se ha comprado pescado, servirá este filtro. 
+```
+
+# Aplicamos los diferentes filtros para determinar el tipo de producto.
+
+```{r}
+# FORMATO
+
+# Unitarios
+# Pescado
+# Futeria
+# Parking
+
+# Como sabemos que parking solo estará en las ultimas dos lineas, lo descartamos primero. 
+# Con esto sabemos si tiene parking. 
+
+parking <- FALSE
+
+if (any(grepl(paste0("\\b", 'PARKING', "\\b"), productos, ignore.case = TRUE))) {
+  parking <- TRUE
+  indice_parking <- grep(paste0("\\b", 'PARKING', "\\b"), productos, ignore.case = TRUE)[1]
+  productos <- productos[1:(indice_parking-1)]
+}
+
+productos
+
+```
+
+
+```{r}
+# Solo si se ha comprado pescado, servira este filtro, para diferenciar entre unitarios y por peso.
+
+Peso <- FALSE
 
 if (any(grepl('\\bPESCADO\\b', productos, ignore.case = TRUE))) {
+  Peso <- TRUE
   indice_pescado <- grep("\\bPESCADO\\b", productos, ignore.case = TRUE)[1]
   productos_peso <- productos[(indice_pescado+1):length(productos)]
   productos <- productos[0:(indice_pescado-1)]
 } 
+
+productos
+productos_peso
+
+```
+
+# Tratamos productos por peso
+```{r}
+# En caso de haber productos por peso, identificamos:
+
+if (Peso) {
+  
+  ListaCompra <- list()
+  indice <- 1 # indice de la lista para añadir los productos  
+  i <- 1
+  
+  while (i <= length(productos_peso)){
+    p <- productos_peso[i]
+    
+    if (grepl(patron_pescado, p)) {
+      elemento1 <- p
+      
+      if (i + 1 <= length(productos_peso)){
+        i <- i + 1 
+        info <- productos_peso[i]
+        elemento2 <- str_match(info, patron_precio_peso)[2:4]
+        
+        # Una vez tenemos info del producto, lo añadimos a la lista 
+        
+        ListaCompra[[indice]] <- list( Fecha = fecha,
+                                       IdFactura = id_factura,
+                                        Producto = elemento1,
+                                        Cantidad = elemento2[1],
+                                        PrecioUnitario = elemento2[2],
+                                        Importe = elemento2[3],
+                                        TipoProducto = tipo_producto[2],
+                                        Parking = parking )
+        indice <- indice + 1
+      }
+    }
+    
+    else if (grepl(patron_peso, p)) {
+        
+        elemento1 <- str_match(p, patron_peso)[,3]
+        
+        if (i + 1 <= length(productos_peso)){
+          i <- i + 1 
+          info <- productos_peso[i]
+          elemento2 <- str_match(info, patron_precio_peso)[2:4]
+          ListaCompra[[indice]] <- list(  Fecha = fecha,
+                                          IdFactura = id_factura,
+                                          Producto = elemento1,
+                                          Cantidad = elemento2[1],
+                                          PrecioUnitario = elemento2[2],
+                                          Importe = elemento2[3],
+                                          TipoProducto = tipo_producto[3],
+                                          Parking = parking)
+          indice <- indice + 1
+          
+          }
+    }
+    
+    i <- i + 1 
+    
+  }
+  
+}
+
+compra <- bind_rows(compra, bind_rows(ListaCompra))
+
+```
+
+# Tratamos productos por unidad
+
+```{r}
+
 
 i <- 1
 
