@@ -1,0 +1,10 @@
+Mejorar descargas de librerías -> Comprobar si están descargadas, descargar si no, cargar
+
+Revisar tema del parking
+
+Revisar el aviso del ticket
+
+Descartar escáneres / Descartar otros supermercados (función)
+
+Identificar tipo producto (pescado, verdura, unitario...)
+
