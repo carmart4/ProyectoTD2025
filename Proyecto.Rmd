@@ -68,25 +68,25 @@ Instalación de las librerias.
 
 Importacion de las librerias. 
 ```{r, warning=FALSE}
-#rm(list = ls())
+rm(list = ls())
 library(pdftools)
 library(dplyr)
 library(stringr)
 ```
 
-NOTA: Mejorar la instalación e importanción de librerias para que, en caso de que ya esté instalada la libreria, solo se cargue, sin actualizarse o instalarse de nuevo. (Pensando en que un ordenador sin esas librerias)
+*NOTA: Mejorar la instalación e importanción de librerias para que, en caso de que ya esté instalada la libreria, solo se cargue, sin actualizarse o instalarse de nuevo. (Pensando en que un ordenador sin esas librerias)*
 
 # Como vamos a almacenar la informacion? Que informacion queremos almacenar? 
 
 ```{r}
 # Dataframe que contendrá el nombre del fichero leido y la factura a la que pertenece. En caso de no ser leido, porque no pertenece a Mercadona, identificaremos cual fichero ha sido y lo almacenaremos en otro df.
 
-ficheros <- data.frame( FacturaFichero = character(),
+FicheroLeido <- data.frame( FacturaFichero = character(),
                         NombreFichero = character(),
                         stringsAsFactors = FALSE
                         )
 
-NoLeidos <- data.frame( NombreFichero = character(),
+NoLeido <- data.frame( NombreFichero = character(),
                         stringsAsFactors = FALSE
                         )
 
@@ -94,7 +94,7 @@ NoLeidos <- data.frame( NombreFichero = character(),
 # Dataframe que contendrá la información de las diferentes tiendas de las facturas.  
 # Dado que no vamos a hacer operaciones con el id, CP o telefono, estas variables las guardaremos como char. 
 
-tienda <- data.frame( IdTienda = character(),
+Tienda <- data.frame( IdTienda = character(),
                       Direccion = character(),
                       CodigoPostal = character(),
                       Municipio = character(),
@@ -106,9 +106,8 @@ tienda <- data.frame( IdTienda = character(),
 
 # En principio, todo irá en character. Cuando estén todos los datos, se hara la limpieza sobre el df. 
 
-# Compra <- Fecha, IdTienda, Producto, Cantidad, Precio, Importe, TipoProducto, 
-
-compra <- data.frame( Fecha = character(),
+Compra <- data.frame( Fecha = character(),
+                      IdTienda = character(),
                       IdFactura = character(),
                       Producto = character(),
                       Cantidad = character(),
@@ -121,17 +120,117 @@ compra <- data.frame( Fecha = character(),
 
 ```
 
+# Carga de ficheros
+
+```{r}
+# Ficheros a trabajar 
+lista_ficheros <- list.files(path = 'data/', pattern = "\\.pdf$")
+fichero <- lista_ficheros[1]
+fichero
+
+```
+# Funcion EsMercadona, que comprueba si la factura es de Mercadona o no
+
+```{r}
+# Funcion para comprobar si es factura de mercadona.
+
+# Dado que solo se puede devolver un objeto, vamos a devolver una lista con:
+# valor booleano y los valores leidos. 
+
+EsMercadona <- function(NombreFichero){
+  carpeta <- 'data/'
+  nombre_pdf <- paste0(carpeta, NombreFichero)
+  
+  pdf_completo <- pdf_text(nombre_pdf) # Extrae el texto del pdf.
+  lineas <- strsplit(pdf_completo, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
+  
+  Mercadona <- grepl('MERCADONA', lineas[1])  
+  
+  if (!Mercadona){
+    lineas <- list()
+  }
+  
+  informacion <- list(Mercadona, lineas)
+  
+  return(informacion)
+}
+
+```
+
+```{r}
+# Prueba
+EsMercadona(fichero)[[1]]
+
+```
+
+# Funcion que almacena el nombre de los ficheros que son de Mercadona, y lo que no.
+
+```{r}
+# Funcion para almacenar los ficheros leidos.
+
+# Le paso el dataframe de los ficheros leidos y no leidos. 
+
+RegistroFicheros <- function(f, NoLeido, FicheroLeido) {
+  
+  if (!EsMercadona(f)[[1]] && !(f %in% NoLeido$NombreFichero)) {
+    NoLeido <- NoLeido %>%
+      add_row( NombreFichero = f )
+  }
+  else {
+    
+    info_compra <- grep(paste0("\\b", 'MERCADONA', "\\b"), lineas, ignore.case = TRUE)[1]
+    info_compra_final <- grep(paste0("\\b", 'FACTURA', "\\b"), lineas, ignore.case = TRUE)[1]
+  
+    encabezado <- lineas[info_compra:info_compra_final]
+    
+    factura <- strsplit(lineas[6], split = ": ")[[1]]
+    factura <- strsplit(factura[2], split = "-")[[1]]
+
+    id_factura <- factura[3]
+    
+    if (!id_factura %in% FicheroLeido$FacturaFichero){
+      
+      FicheroLeido <- FicheroLeido %>%
+                add_row(
+                  FacturaFichero = id_factura,
+                  NombreFichero = nombre_pdf
+                )
+    }
+  }
+  valores <- list (NoLeido = NoLeido, FicheroLeido = FicheroLeido)
+  return(valores)
+}
+
+```
+
+```{r}
+# Prueba
+resultado <- RegistroFicheros(fichero, NoLeido, FicheroLeido)
+
+# Reasignar resultados a los originales
+NoLeido <- resultado$NoLeido
+FicheroLeido <- resultado$FicheroLeido
+
+```
+
+
+
+# Codigo funcional para una sola factura
 
 Lectura de un solo fichero pdf, de prueba. 
 
 Es una factura del mercadona? 
 ```{r}
-# Carga del pdf 
+# Carga de los pdf 
+
+
 
 #nombre_pdf <- 'data/ticket_dia_03_02_2025_14_10.pdf' # Factura de otro supermercado
 nombre_pdf <- 'data/20240323 Mercadona 234,20.pdf' # Factura con pescado
 #nombre_pdf <- 'data/20241228 Mercadona 32,50 Ôé¼.pdf'
 #nombre_pdf <- 'data/20250224 Mercadona 75,48 Ôé¼.pdf' # Con Parking
+
+
 
 pdf_completo <- pdf_text(nombre_pdf) # Extrae el texto del pdf.
 lineas <- strsplit(pdf_completo, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea. 
@@ -206,14 +305,14 @@ if (Mercadona) {
 
 # Añadimos información del fichero, si pertenece a mercadona o no.
 
-if ((Mercadona) & (!id_factura %in% ficheros$FacturaFichero)) {
-  ficheros <- ficheros %>%
+if ((Mercadona) & (!id_factura %in% FicheroLeido$FacturaFichero)) {
+  FicheroLeido <- FicheroLeido %>%
                 add_row(
                   NombreFichero = nombre_pdf,
                   FacturaFichero = id_factura
                 )
-} else if ((!Mercadona) & ((!nombre_pdf %in% NoLeidos$NombreFichero))){
-    NoLeidos <- NoLeidos %>%
+} else if ((!Mercadona) & ((!nombre_pdf %in% NoLeido$NombreFichero))){
+    NoLeido <- NoLeido %>%
                 add_row(
                   NombreFichero = nombre_pdf
                 )
@@ -225,8 +324,8 @@ if ((Mercadona) & (!id_factura %in% ficheros$FacturaFichero)) {
 info_tienda <- c(id_tienda, direccion, CP, municipio, telefono)
 info_tienda
 
-if ((Mercadona) & (!id_tienda %in% tienda$Id)){
-  tienda <- tienda %>%
+if ((Mercadona) & (!id_tienda %in% Tienda$IdTienda)){
+  Tienda <- Tienda %>%
                 add_row(
                   IdTienda = id_tienda,
                   Direccion = direccion,
@@ -348,6 +447,7 @@ if (Peso) {
         # Una vez tenemos info del producto, lo añadimos a la lista 
         
         ListaCompra[[indice]] <- list( Fecha = fecha,
+                                       IdTienda = id_tienda,
                                        IdFactura = id_factura,
                                         Producto = elemento1,
                                         Cantidad = elemento2[1],
@@ -368,6 +468,7 @@ if (Peso) {
           info <- productos_peso[i]
           elemento2 <- str_match(info, patron_precio_peso)[2:4]
           ListaCompra[[indice]] <- list(  Fecha = fecha,
+                                          IdTienda = id_tienda,
                                           IdFactura = id_factura,
                                           Producto = elemento1,
                                           Cantidad = elemento2[1],
@@ -376,7 +477,6 @@ if (Peso) {
                                           TipoProducto = tipo_producto[3],
                                           Parking = parking)
           indice <- indice + 1
-          
           }
     }
     
@@ -386,7 +486,9 @@ if (Peso) {
   
 }
 
-compra <- bind_rows(compra, bind_rows(ListaCompra))
+Compra <- bind_rows(Compra, bind_rows(ListaCompra))
+
+Compra
 
 ```
 
