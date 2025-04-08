@@ -162,7 +162,7 @@ library(stringr)
           elementos <- str_match(p, patron_cantidad_1)[,2:3]
           precio_total <- as.numeric(str_replace(elementos[2], ",", "."))
           resultado <- data.frame( cantidad = 1,
-                                    descripcion = elementos[1],
+                                   descripcion = elementos[1],
                                     precio_unit = precio_total,
                                     importe = precio_total,
                                     stringsAsFactors = FALSE)
@@ -201,9 +201,4 @@ library(stringr)
   # Ver el dataframe final con todas las compras
   compras_totales
   
-        
-  
 ```
-
-
-```'''
