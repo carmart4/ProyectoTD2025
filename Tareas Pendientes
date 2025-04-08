@@ -1,0 +1,10 @@
+Mejorar la descarga de librerias:
+  Comprobar si están, y si no descargar y cargar
+
+Revisar el tema del parking dentro de los tickets
+
+Revisar el aviso que da al leer los tickets
+
+Descartar tickets escaneados, y descartar tickets que no pertenezcan a mercadona (Hacer una función)
+
+Identificar por clases los distintos tipos de productos, (unitarios, verdura, pescado...)
