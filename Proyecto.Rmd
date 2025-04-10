@@ -146,6 +146,7 @@ EsMercadona <- function(NombrePDF){
   
   texto <- pdf_text(fichero) # Extrae el texto del pdf.
   lineas <- strsplit(texto, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
+  lineas <- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
   
   Mercadona <- grepl('MERCADONA', lineas[1])  # Valor bool para saber si es de Mercadona o no. 
   
@@ -162,7 +163,68 @@ EsMercadona <- function(NombrePDF){
 
 ```
 
-# Funcion que almacena el nombre de los ficheros que son de Mercadona, y lo que no.
+# Funcion que almacena la informacion de todas las tiendas leidas. 
+
+```{r}
+ExtraeEncabezado <- function(lineas, Tienda) {
+  
+    # Obtenemos el rango de filas que contienen el encabezado
+
+    info_compra <- grep(x=lineas, pattern='MERCADONA')[1]
+    info_compra_final <- grep(x=lineas, pattern='FACTURA')[1]
+  
+    # Definimos el encabezado
+    encabezado <- lineas[info_compra:info_compra_final]
+    
+    # Extraemos la informacion
+    direccion <- encabezado[2]
+
+    # Ubicacion (CP y municipio)
+    ubicacion <- strsplit(encabezado[3], split = ' ')[[1]] 
+    
+    CP <- ubicacion[1]
+    
+    municipio <- ubicacion[2]
+    
+    telefono <- strsplit(encabezado[4], split = ': ')[[1]][2]
+    
+    tiempo <- strsplit(encabezado[5], split = ' ')[[1]][1:2]
+    
+    fecha <- tiempo[1] # String de la fecha en formato dd/mm/aaaa
+    
+    hora <- tiempo[2]
+    
+    factura <- strsplit(encabezado[6], split = ": ")[[1]]
+    factura <- strsplit(factura[2], split = "-")[[1]]
+    
+    id_tienda <- factura[1]
+    
+    n_caja <- factura[2]
+    
+    id_factura <- factura[3]
+    
+    # La información leida anteriormente, la concatenaremos en el df de tiendas. 
+    # Solo si el id_tienda no está.
+    
+    if (!id_tienda %in% Tienda$IdTienda){
+          Tienda <- Tienda %>%
+                        add_row(
+                          IdTienda = id_tienda,
+                          Direccion = direccion,
+                          CodigoPostal = CP,
+                          Municipio = municipio,
+                          Telefono = telefono
+    )
+    }
+    return(Tienda)
+}
+```
+
+# Funcion que almacena:
+
+El nombre de los ficheros que son de Mercadona, y lo que no. 2 dataframes
+
+La información de las tiendas. 1 dataframe
 
 ```{r}
 # Funcion para almacenar los ficheros leidos y los que no. 
@@ -170,7 +232,7 @@ EsMercadona <- function(NombrePDF){
 # Le paso el dataframe de los ficheros leidos y no leidos para que los modifique, 
 # si se añade un nuevo fichero. 
 
-RegistroFicheros <- function(Nombrepdf, NoLeido, FicheroLeido) {
+RegistroFicheros <- function(Nombrepdf, NoLeido, FicheroLeido, Tienda) {
   
   verifica <- EsMercadona(Nombrepdf)
   
@@ -200,8 +262,11 @@ RegistroFicheros <- function(Nombrepdf, NoLeido, FicheroLeido) {
                   NombreFichero = Nombrepdf
                 )
     }
+    
+    Tienda = ExtraeEncabezado(lineas, Tienda)
+    
   }
-  valores <- list (NoLeido = NoLeido, FicheroLeido = FicheroLeido)
+  valores <- list (NoLeido = NoLeido, FicheroLeido = FicheroLeido, Tienda = Tienda)
   # Devuelve los dataframes con los ficheros que han sido leidos y los que no.
   return(valores)
 }
@@ -216,9 +281,10 @@ Esto servirá para comprobar si hay valores repetidos y/o por qué x fichero no 
 
 ```{r}
 for (f in lista_nombres_ficheros) {
-  resultado <- RegistroFicheros(f, NoLeido, FicheroLeido)
+  resultado <- RegistroFicheros(f, NoLeido, FicheroLeido, Tienda)
   NoLeido <- resultado$NoLeido
   FicheroLeido <- resultado$FicheroLeido
+  Tienda <- resultado$Tienda
 }
 
 ```
@@ -236,80 +302,43 @@ De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron le
 
 ```{r}
 x <- lista_nombres_ficheros[2]
-r <- RegistroFicheros(x, NoLeido, FicheroLeido)
+r <- RegistroFicheros(x, NoLeido, FicheroLeido, Tienda)
 NoLeido <- r$NoLeido
 FicheroLeido <- r$FicheroLeido
+Tienda <- r$Tienda
 
 ```
 
-Una vez que ya tenemos detectados los ficheros con los que vamos a trabajar, vamos a extraer la información correspondiente de ellos. 
+# Información de los productos.
 
-1. Encabezado
-
-2. Productos, identificando el tipo de producto
+Una vez que ya tenemos detectados los ficheros con los que vamos a trabajar, vamos a extraer la información correspondiente a los diferentes tipos de productos. 
 
 ```{r}
-ExtraeEncabezado <- function(verifica, Tienda) {
-  if (verifica[[1]]){
-    lineas <- verifica[[2]]
-    
-    info_compra <- grep(x=lineas, pattern='MERCADONA')[1]
-    info_compra_final <- grep(x=lineas, pattern='FACTURA')[1]
-  
-    encabezado <- lineas[info_compra:info_compra_final]
-    
-    direccion <- encabezado[2]
+# Como sabemos que los poductos se describen desde el encabezado 'descripcion', hasta el primer 'TOTAL', buscamos la linea que contenga esa palabra. Por lo tanto:
 
-    # Ubicacion 
-    ubicacion <- strsplit(lineas[3], split = ' ')[[1]] 
-    
-    CP <- ubicacion[1]
-    
-    municipio <- ubicacion[2]
-    
-    telefono <- strsplit(lineas[4], split = ': ')[[1]][2]
-    
-    tiempo <- strsplit(lineas[5], split = ' ')[[1]][1:2]
-    
-    fecha <- tiempo[1] # String de la fecha en formato dd/mm/aaaa
-    
-    hora <- tiempo[2]
-    
-    factura <- strsplit(lineas[6], split = ": ")[[1]]
-    factura <- strsplit(factura[2], split = "-")[[1]]
-    
-    id_tienda <- factura[1]
-    
-    n_caja <- factura[2]
-    
-    id_factura <- factura[3]
-    
-    # La información leida anteriormente, la concatenaremos en el df de tiendas. 
-    # Solo si el id_tienda no está.
-    
-    #info_tienda <- c(id_tienda, direccion, CP, municipio, telefono)
-    
-    if (!id_tienda %in% Tienda$IdTienda){
-          Tienda <- Tienda %>%
-                        add_row(
-                          IdTienda = id_tienda,
-                          Direccion = direccion,
-                          CodigoPostal = CP,
-                          Municipio = municipio,
-                          Telefono = telefono
-    )
-    }
-  }
-    return(Tienda)
-}
+lineas <- EsMercadona(x)[[2]]
+
+indice_encabezado <- grep(x=lineas, pattern='Descripción')[1]
+indice_total <- grep(x=lineas, pattern='TOTAL')[1]
+
+# Leemos los productos, que van desde una linea despues del encabezado descripcion, hasta una linea menos del primer total. 
+
+productos <- lineas[(indice_encabezado+1):(indice_total-1)]
+productos <- str_replace_all(productos, "\\s+", " ") # Eliminamos los espacios multiples
+productos
+
 ```
+
+Ya tenemos identificados los productos. Ahora sigue determinar:
+
+1. Si tiene parking o no
+2. Qué tipo de producto es
 
 
 ```{r}
-verifica <- EsMercadona(x)
-Tienda <- ExtraeEncabezado(verifica = verifica, Tienda)
 
 ```
+
 
 
 
