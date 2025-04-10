@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2025-04-08" />
+<meta name="date" content="2025-04-10" />
 
 <title>Análisis de Tickets de Supermercado: Mini Proyecto 2025</title>
 
@@ -382,7 +382,7 @@ Ferrer Font, Neus<br> Navarro García, Marta<br> Rodríguez Simón,
 Alba<br> Aissa Djellouli, Mohammed<br> Balbastre Aparisi, Héctor<br>
 Ruiz Ripoll, Joan<br> Martinez Torres, Carlos Santiago
 </center></h4>
-<h4 class="date">2025-04-08</h4>
+<h4 class="date">2025-04-10</h4>
 
 </div>
 
@@ -397,26 +397,28 @@ informacion? Que informacion queremos almacenar?</a></li>
 si la factura es de Mercadona o no</a></li>
 <li><a href="#funcion-que-almacena-el-nombre-de-los-ficheros-que-son-de-mercadona-y-lo-que-no." id="toc-funcion-que-almacena-el-nombre-de-los-ficheros-que-son-de-mercadona-y-lo-que-no."><span class="toc-section-number">5</span> Funcion que almacena el nombre de
 los ficheros que son de Mercadona, y lo que no.</a></li>
-<li><a href="#codigo-funcional-para-una-sola-factura" id="toc-codigo-funcional-para-una-sola-factura"><span class="toc-section-number">6</span> Codigo funcional para una sola
+<li><a href="#verificacion-de-las-funciones-anteriores-para-todos-los-ficheros" id="toc-verificacion-de-las-funciones-anteriores-para-todos-los-ficheros"><span class="toc-section-number">6</span> Verificacion de las funciones
+anteriores para todos los ficheros</a></li>
+<li><a href="#codigo-funcional-para-una-sola-factura" id="toc-codigo-funcional-para-una-sola-factura"><span class="toc-section-number">7</span> Codigo funcional para una sola
 factura</a></li>
-<li><a href="#información-de-los-productos." id="toc-información-de-los-productos."><span class="toc-section-number">7</span> Información de los
+<li><a href="#información-de-los-productos." id="toc-información-de-los-productos."><span class="toc-section-number">8</span> Información de los
 productos.</a></li>
-<li><a href="#identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso." id="toc-identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso."><span class="toc-section-number">8</span> Identificamos el patron de los
+<li><a href="#identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso." id="toc-identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso."><span class="toc-section-number">9</span> Identificamos el patron de los
 diferentes productos, ya que pueden ser de tipo unitario, o por
 peso.</a></li>
-<li><a href="#aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto." id="toc-aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto."><span class="toc-section-number">9</span> Aplicamos los diferentes filtros
+<li><a href="#aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto." id="toc-aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto."><span class="toc-section-number">10</span> Aplicamos los diferentes filtros
 para determinar el tipo de producto.</a></li>
-<li><a href="#tratamos-productos-por-peso" id="toc-tratamos-productos-por-peso"><span class="toc-section-number">10</span> Tratamos productos por
+<li><a href="#tratamos-productos-por-peso" id="toc-tratamos-productos-por-peso"><span class="toc-section-number">11</span> Tratamos productos por
 peso</a></li>
-<li><a href="#tratamos-productos-por-unidad" id="toc-tratamos-productos-por-unidad"><span class="toc-section-number">11</span> Tratamos productos por unidad</a>
+<li><a href="#tratamos-productos-por-unidad" id="toc-tratamos-productos-por-unidad"><span class="toc-section-number">12</span> Tratamos productos por unidad</a>
 <ul>
-<li><a href="#nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking." id="toc-nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking."><span class="toc-section-number">11.0.1</span> NOTA: HAce falta revisar los
+<li><a href="#nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking." id="toc-nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking."><span class="toc-section-number">12.0.1</span> NOTA: HAce falta revisar los
 productos con pescado, y las facturas que tienen parking.</a></li>
-<li><a href="#también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles" id="toc-también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles"><span class="toc-section-number">11.0.2</span> También, revisar por qué se
+<li><a href="#también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles" id="toc-también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles"><span class="toc-section-number">12.0.2</span> También, revisar por qué se
 están duplicando los valores en estos bucles;</a></li>
-<li><a href="#mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea" id="toc-mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea"><span class="toc-section-number">11.0.3</span> mejorar para dejar con una
+<li><a href="#mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea" id="toc-mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea"><span class="toc-section-number">12.0.3</span> mejorar para dejar con una
 función, a la que se le pase una línea</a></li>
-<li><a href="#y-por-cada-linea-que-lea-la-añada-al-dataframe." id="toc-y-por-cada-linea-que-lea-la-añada-al-dataframe."><span class="toc-section-number">11.0.4</span> y por cada linea que lea, la
+<li><a href="#y-por-cada-linea-que-lea-la-añada-al-dataframe." id="toc-y-por-cada-linea-que-lea-la-añada-al-dataframe."><span class="toc-section-number">12.0.4</span> y por cada linea que lea, la
 añada al dataframe.</a></li>
 </ul></li>
 </ul>
@@ -491,10 +493,12 @@ Compra &lt;- data.frame( Fecha = character(),
 <div id="carga-de-ficheros" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Carga de ficheros</h1>
 <pre class="r"><code># Ficheros a trabajar 
-lista_ficheros &lt;- list.files(path = &#39;data/&#39;, pattern = &quot;\\.pdf$&quot;)
-fichero &lt;- lista_ficheros[1]
-fichero</code></pre>
-<pre><code>## [1] &quot;1.pdf&quot;</code></pre>
+#lista_ficheros &lt;- list.files(path = &#39;data/&#39;, pattern = &quot;\\.pdf$&quot;)
+lista_nombres_ficheros &lt;- list.files(path = &#39;data/&#39;)
+length(lista_nombres_ficheros)</code></pre>
+<pre><code>## [1] 355</code></pre>
+<p>Hay un total de 355 ficheros, pero solo trabajaremos con los que
+tengan el formato correcto de Mercadona.</p>
 </div>
 <div id="funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Funcion EsMercadona,
@@ -504,44 +508,49 @@ que comprueba si la factura es de Mercadona o no</h1>
 # Dado que solo se puede devolver un objeto, vamos a devolver una lista con:
 # valor booleano y los valores leidos. 
 
-EsMercadona &lt;- function(NombreFichero){
+EsMercadona &lt;- function(NombrePDF){
+  
   carpeta &lt;- &#39;data/&#39;
-  nombre_pdf &lt;- paste0(carpeta, NombreFichero)
+  fichero &lt;- paste0(carpeta, NombrePDF)
   
-  pdf_completo &lt;- pdf_text(nombre_pdf) # Extrae el texto del pdf.
-  lineas &lt;- strsplit(pdf_completo, &quot;\n&quot;)[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
+  texto &lt;- pdf_text(fichero) # Extrae el texto del pdf.
+  lineas &lt;- strsplit(texto, &quot;\n&quot;)[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
   
-  Mercadona &lt;- grepl(&#39;MERCADONA&#39;, lineas[1])  
+  Mercadona &lt;- grepl(&#39;MERCADONA&#39;, lineas[1])  # Valor bool para saber si es de Mercadona o no. 
   
   if (!Mercadona){
     lineas &lt;- list()
-  }
+  } 
   
   informacion &lt;- list(Mercadona, lineas)
   
+  # Del fichero leido, devulve si es o no de Mercadona, y las lineas leidas.
+  # En caso de no ser de Mercadona, la lista de lineas es vacia. 
   return(informacion)
 }</code></pre>
-<pre class="r"><code># Prueba
-EsMercadona(fichero)[[1]]</code></pre>
-<pre><code>## [1] FALSE</code></pre>
 </div>
 <div id="funcion-que-almacena-el-nombre-de-los-ficheros-que-son-de-mercadona-y-lo-que-no." class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Funcion que almacena el
 nombre de los ficheros que son de Mercadona, y lo que no.</h1>
-<pre class="r"><code># Funcion para almacenar los ficheros leidos.
+<pre class="r"><code># Funcion para almacenar los ficheros leidos y los que no. 
 
-# Le paso el dataframe de los ficheros leidos y no leidos. 
+# Le paso el dataframe de los ficheros leidos y no leidos para que los modifique, 
+# si se añade un nuevo fichero. 
 
-RegistroFicheros &lt;- function(f, NoLeido, FicheroLeido) {
+RegistroFicheros &lt;- function(Nombrepdf, NoLeido, FicheroLeido) {
   
-  if (!EsMercadona(f)[[1]] &amp;&amp; !(f %in% NoLeido$NombreFichero)) {
+  verifica &lt;- EsMercadona(Nombrepdf)
+  
+  if ((verifica[[1]] == FALSE) &amp;&amp; !(Nombrepdf %in% NoLeido$NombreFichero)) {
     NoLeido &lt;- NoLeido %&gt;%
-      add_row( NombreFichero = f )
+      add_row( NombreFichero = Nombrepdf )
   }
-  else {
+  else if (verifica[[1]] == TRUE) {
     
-    info_compra &lt;- grep(paste0(&quot;\\b&quot;, &#39;MERCADONA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
-    info_compra_final &lt;- grep(paste0(&quot;\\b&quot;, &#39;FACTURA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+    lineas &lt;- verifica[[2]]
+    
+    info_compra &lt;- grep(x=lineas, pattern=&#39;MERCADONA&#39;)[1]
+    info_compra_final &lt;- grep(x=lineas, pattern=&#39;FACTURA&#39;)[1]
   
     encabezado &lt;- lineas[info_compra:info_compra_final]
     
@@ -555,22 +564,49 @@ RegistroFicheros &lt;- function(f, NoLeido, FicheroLeido) {
       FicheroLeido &lt;- FicheroLeido %&gt;%
                 add_row(
                   FacturaFichero = id_factura,
-                  NombreFichero = nombre_pdf
+                  NombreFichero = Nombrepdf
                 )
     }
   }
   valores &lt;- list (NoLeido = NoLeido, FicheroLeido = FicheroLeido)
+  # Devuelve los dataframes con los ficheros que han sido leidos y los que no.
   return(valores)
 }</code></pre>
-<pre class="r"><code># Prueba
-resultado &lt;- RegistroFicheros(fichero, NoLeido, FicheroLeido)
-
-# Reasignar resultados a los originales
-NoLeido &lt;- resultado$NoLeido
-FicheroLeido &lt;- resultado$FicheroLeido</code></pre>
 </div>
-<div id="codigo-funcional-para-una-sola-factura" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Codigo funcional para
+<div id="verificacion-de-las-funciones-anteriores-para-todos-los-ficheros" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Verificacion de las
+funciones anteriores para todos los ficheros</h1>
+<p>Cada nombre de pdf que está en la lista de los archivos leidos de la
+carpeta data, se registra en un dataframe. Es decir, si es de Mercadona
+almacena el nombre en el df FicheroLeido y si no, lo deja en el df
+NoLeido. Esto servirá para comprobar si hay valores repetidos y/o por
+qué x fichero no fue leido.</p>
+<pre class="r"><code>for (f in lista_nombres_ficheros) {
+  resultado &lt;- RegistroFicheros(f, NoLeido, FicheroLeido)
+  NoLeido &lt;- resultado$NoLeido
+  FicheroLeido &lt;- resultado$FicheroLeido
+}</code></pre>
+<p>Una vez que recuperamos la informacion sobre las facturas leidas y no
+leias, verificamos</p>
+<pre class="r"><code>lista_f_almacenados &lt;- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
+diferencia &lt;- setdiff(lista_nombres_ficheros, lista_f_almacenados)
+diferencia</code></pre>
+<pre><code>##  [1] &quot;20231218 Mercadona 60,47.pdf&quot;  &quot;20231224 Mercadona 37,49.pdf&quot; 
+##  [3] &quot;20231226 Mercadona 25,83.pdf&quot;  &quot;20231230 Mercadona 66,30.pdf&quot; 
+##  [5] &quot;20240102 Mercadona 70,04.pdf&quot;  &quot;20240108 Mercadona 83,73.pdf&quot; 
+##  [7] &quot;20240109 Mercadona 7,35.pdf&quot;   &quot;20240111 Mercadona 41,20.pdf&quot; 
+##  [9] &quot;20240115 Mercadona 117,41.pdf&quot; &quot;20240123 Mercadona 44,13.pdf&quot; 
+## [11] &quot;20240127 Mercadona 108,33.pdf&quot; &quot;20240131 Mercadona 16,82.pdf&quot; 
+## [13] &quot;ticket3.pdf&quot;</code></pre>
+<p>De estos nombres, identificamos que se trata de ficheros repetidos.
+Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni
+almacenar. El caso del ‘ticket3.pdf’ es un caso especial, ya que al ser
+escaneado, lo detecta como MERCADONA, pero no lee lo valores
+correctamente. Por eso no es considerado dentro de los df’s
+correspodientes.</p>
+</div>
+<div id="codigo-funcional-para-una-sola-factura" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Codigo funcional para
 una sola factura</h1>
 <p>Lectura de un solo fichero pdf, de prueba.</p>
 <p>Es una factura del mercadona?</p>
@@ -690,8 +726,8 @@ info_tienda</code></pre>
 la información en los dataframes correspondientes. Corregir para que en
 nombre del fichero no aparezca ‘data/’.</p>
 </div>
-<div id="información-de-los-productos." class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Información de los
+<div id="información-de-los-productos." class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Información de los
 productos.</h1>
 <pre class="r"><code># Como sabemos que los poductos se describen desde el encabezado &#39;descripcion&#39;, hasta el primer &#39;TOTAL&#39;, buscamos la linea que contenga esa palabra. Por lo tanto:
 
@@ -738,8 +774,8 @@ productos</code></pre>
 ## [65] &quot;0,828 kg 1,99 €/kg 1,65&quot;        &quot;1 TOMATE NEGRO&quot;                
 ## [67] &quot;0,440 kg 2,69 €/kg 1,18&quot;</code></pre>
 </div>
-<div id="identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso." class="section level1" number="8">
-<h1><span class="header-section-number">8</span> Identificamos el patron
+<div id="identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso." class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Identificamos el patron
 de los diferentes productos, ya que pueden ser de tipo unitario, o por
 peso.</h1>
 <pre class="r"><code># Sabemos que disponemos de 3 tipos de productos
@@ -764,8 +800,8 @@ patron_pescado &lt;- &quot;^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$&quot;
 patron_peso &lt;- &quot;^([0-9]+)\\s(.+)$&quot;
 patron_precio_peso &lt;- &quot;^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$&quot;</code></pre>
 </div>
-<div id="aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto." class="section level1" number="9">
-<h1><span class="header-section-number">9</span> Aplicamos los
+<div id="aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto." class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Aplicamos los
 diferentes filtros para determinar el tipo de producto.</h1>
 <pre class="r"><code># FORMATO
 
@@ -867,8 +903,8 @@ productos</code></pre>
 ## [11] &quot;1 MANDARINA&quot;              &quot;0,828 kg 1,99 €/kg 1,65&quot; 
 ## [13] &quot;1 TOMATE NEGRO&quot;           &quot;0,440 kg 2,69 €/kg 1,18&quot;</code></pre>
 </div>
-<div id="tratamos-productos-por-peso" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> Tratamos productos por
+<div id="tratamos-productos-por-peso" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Tratamos productos por
 peso</h1>
 <pre class="r"><code># En caso de haber productos por peso, identificamos:
 
@@ -951,8 +987,8 @@ Compra</code></pre>
 ## 6    1,65 Fruta y verdura   FALSE
 ## 7    1,18 Fruta y verdura   FALSE</code></pre>
 </div>
-<div id="tratamos-productos-por-unidad" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> Tratamos productos por
+<div id="tratamos-productos-por-unidad" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> Tratamos productos por
 unidad</h1>
 <p>’```{r,}</p>
 <p>i &lt;- 1</p>
@@ -998,21 +1034,21 @@ if (i + 1 &lt;= length(productos)) {
   compra &lt;- rbind(compra, resultado)
 }</code></pre>
 <p>} i &lt;- i + 1 }</p>
-<div id="nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking." class="section level3" number="11.0.1">
-<h3><span class="header-section-number">11.0.1</span> NOTA: HAce falta
+<div id="nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking." class="section level3" number="12.0.1">
+<h3><span class="header-section-number">12.0.1</span> NOTA: HAce falta
 revisar los productos con pescado, y las facturas que tienen
 parking.</h3>
 </div>
-<div id="también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles" class="section level3" number="11.0.2">
-<h3><span class="header-section-number">11.0.2</span> También, revisar
+<div id="también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles" class="section level3" number="12.0.2">
+<h3><span class="header-section-number">12.0.2</span> También, revisar
 por qué se están duplicando los valores en estos bucles;</h3>
 </div>
-<div id="mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea" class="section level3" number="11.0.3">
-<h3><span class="header-section-number">11.0.3</span> mejorar para dejar
+<div id="mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea" class="section level3" number="12.0.3">
+<h3><span class="header-section-number">12.0.3</span> mejorar para dejar
 con una función, a la que se le pase una línea</h3>
 </div>
-<div id="y-por-cada-linea-que-lea-la-añada-al-dataframe." class="section level3" number="11.0.4">
-<h3><span class="header-section-number">11.0.4</span> y por cada linea
+<div id="y-por-cada-linea-que-lea-la-añada-al-dataframe." class="section level3" number="12.0.4">
+<h3><span class="header-section-number">12.0.4</span> y por cada linea
 que lea, la añada al dataframe.</h3>
 <p>```’’’</p>
 </div>

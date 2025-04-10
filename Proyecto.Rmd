@@ -124,62 +124,66 @@ Compra <- data.frame( Fecha = character(),
 
 ```{r}
 # Ficheros a trabajar 
-lista_ficheros <- list.files(path = 'data/', pattern = "\\.pdf$")
-fichero <- lista_ficheros[1]
-fichero
+#lista_ficheros <- list.files(path = 'data/', pattern = "\\.pdf$")
+lista_nombres_ficheros <- list.files(path = 'data/')
+length(lista_nombres_ficheros)
 
 ```
-# Funcion EsMercadona, que comprueba si la factura es de Mercadona o no
 
+Hay un total de 355 ficheros, pero solo trabajaremos con los que tengan el formato correcto de Mercadona.
+
+# Funcion EsMercadona, que comprueba si la factura es de Mercadona o no
 ```{r}
 # Funcion para comprobar si es factura de mercadona.
 
 # Dado que solo se puede devolver un objeto, vamos a devolver una lista con:
 # valor booleano y los valores leidos. 
 
-EsMercadona <- function(NombreFichero){
+EsMercadona <- function(NombrePDF){
+  
   carpeta <- 'data/'
-  nombre_pdf <- paste0(carpeta, NombreFichero)
+  fichero <- paste0(carpeta, NombrePDF)
   
-  pdf_completo <- pdf_text(nombre_pdf) # Extrae el texto del pdf.
-  lineas <- strsplit(pdf_completo, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
+  texto <- pdf_text(fichero) # Extrae el texto del pdf.
+  lineas <- strsplit(texto, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
   
-  Mercadona <- grepl('MERCADONA', lineas[1])  
+  Mercadona <- grepl('MERCADONA', lineas[1])  # Valor bool para saber si es de Mercadona o no. 
   
   if (!Mercadona){
     lineas <- list()
-  }
+  } 
   
   informacion <- list(Mercadona, lineas)
   
+  # Del fichero leido, devulve si es o no de Mercadona, y las lineas leidas.
+  # En caso de no ser de Mercadona, la lista de lineas es vacia. 
   return(informacion)
 }
-
-```
-
-```{r}
-# Prueba
-EsMercadona(fichero)[[1]]
 
 ```
 
 # Funcion que almacena el nombre de los ficheros que son de Mercadona, y lo que no.
 
 ```{r}
-# Funcion para almacenar los ficheros leidos.
+# Funcion para almacenar los ficheros leidos y los que no. 
 
-# Le paso el dataframe de los ficheros leidos y no leidos. 
+# Le paso el dataframe de los ficheros leidos y no leidos para que los modifique, 
+# si se añade un nuevo fichero. 
 
-RegistroFicheros <- function(f, NoLeido, FicheroLeido) {
+RegistroFicheros <- function(Nombrepdf, NoLeido, FicheroLeido) {
   
-  if (!EsMercadona(f)[[1]] && !(f %in% NoLeido$NombreFichero)) {
+  verifica <- EsMercadona(Nombrepdf)
+  
+  if ((verifica[[1]] == FALSE) && !(Nombrepdf %in% NoLeido$NombreFichero)) {
     NoLeido <- NoLeido %>%
-      add_row( NombreFichero = f )
+      add_row( NombreFichero = Nombrepdf )
   }
-  else {
+  else if (verifica[[1]] == TRUE) {
     
-    info_compra <- grep(paste0("\\b", 'MERCADONA', "\\b"), lineas, ignore.case = TRUE)[1]
-    info_compra_final <- grep(paste0("\\b", 'FACTURA', "\\b"), lineas, ignore.case = TRUE)[1]
+    lineas <- verifica[[2]]
+    
+    info_compra <- grep(x=lineas, pattern='MERCADONA')[1]
+    info_compra_final <- grep(x=lineas, pattern='FACTURA')[1]
   
     encabezado <- lineas[info_compra:info_compra_final]
     
@@ -193,27 +197,41 @@ RegistroFicheros <- function(f, NoLeido, FicheroLeido) {
       FicheroLeido <- FicheroLeido %>%
                 add_row(
                   FacturaFichero = id_factura,
-                  NombreFichero = nombre_pdf
+                  NombreFichero = Nombrepdf
                 )
     }
   }
   valores <- list (NoLeido = NoLeido, FicheroLeido = FicheroLeido)
+  # Devuelve los dataframes con los ficheros que han sido leidos y los que no.
   return(valores)
 }
 
 ```
 
-```{r}
-# Prueba
-resultado <- RegistroFicheros(fichero, NoLeido, FicheroLeido)
+# Verificacion de las funciones anteriores para todos los ficheros
 
-# Reasignar resultados a los originales
-NoLeido <- resultado$NoLeido
-FicheroLeido <- resultado$FicheroLeido
+Cada nombre de pdf que está en la lista de los archivos leidos de la carpeta data, se registra en un dataframe. 
+Es decir, si es de Mercadona almacena el nombre en el df FicheroLeido y si no, lo deja en el df NoLeido.
+Esto servirá para comprobar si hay valores repetidos y/o por qué x fichero no fue leido. 
+
+```{r}
+for (f in lista_nombres_ficheros) {
+  resultado <- RegistroFicheros(f, NoLeido, FicheroLeido)
+  NoLeido <- resultado$NoLeido
+  FicheroLeido <- resultado$FicheroLeido
+}
 
 ```
 
+Una vez que recuperamos la informacion sobre las facturas leidas y no leias, verificamos
 
+```{r}
+lista_f_almacenados <- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
+diferencia <- setdiff(lista_nombres_ficheros, lista_f_almacenados)
+diferencia
+
+```
+De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni almacenar. El caso del 'ticket3.pdf' es un caso especial, ya que al ser escaneado, lo detecta como MERCADONA, pero no lee lo valores correctamente. Por eso no es considerado dentro de los df's correspodientes.
 
 # Codigo funcional para una sola factura
 
