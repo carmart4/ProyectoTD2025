@@ -669,26 +669,38 @@ r &lt;- RegistroFicheros(x, NoLeido, FicheroLeido, Tienda)
 NoLeido &lt;- r$NoLeido
 FicheroLeido &lt;- r$FicheroLeido
 Tienda &lt;- r$Tienda</code></pre>
-<p>Una vez que ya tenemos detectados los ficheros con los que vamos a
-trabajar, vamos a extraer la información correspondiente de ellos.</p>
-<ol style="list-style-type: decimal">
-<li><p>Encabezado</p></li>
-<li><p>Productos, identificando el tipo de producto</p></li>
-</ol>
 </div>
 <div id="información-de-los-productos." class="section level1" number="8">
 <h1><span class="header-section-number">8</span> Información de los
 productos.</h1>
+<p>Una vez que ya tenemos detectados los ficheros con los que vamos a
+trabajar, vamos a extraer la información correspondiente a los
+diferentes tipos de productos.</p>
 <pre class="r"><code># Como sabemos que los poductos se describen desde el encabezado &#39;descripcion&#39;, hasta el primer &#39;TOTAL&#39;, buscamos la linea que contenga esa palabra. Por lo tanto:
 
-#indice_encabezado &lt;- grep(paste0(&quot;\\b&quot;, &#39;Descripción&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
-#indice_total &lt;- grep(paste0(&quot;\\b&quot;, &#39;TOTAL&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+lineas &lt;- EsMercadona(x)[[2]]
+
+indice_encabezado &lt;- grep(x=lineas, pattern=&#39;Descripción&#39;)[1]
+indice_total &lt;- grep(x=lineas, pattern=&#39;TOTAL&#39;)[1]
 
 # Leemos los productos, que van desde una linea despues del encabezado descripcion, hasta una linea menos del primer total. 
 
-#productos &lt;- lineas[(indice_encabezado+1):(indice_total-1)]
-#productos &lt;- str_replace_all(productos, &quot;\\s+&quot;, &quot; &quot;) # Eliminamos los espacios multiples
-#productos</code></pre>
+productos &lt;- lineas[(indice_encabezado+1):(indice_total-1)]
+productos &lt;- str_replace_all(productos, &quot;\\s+&quot;, &quot; &quot;) # Eliminamos los espacios multiples
+productos</code></pre>
+<pre><code>##  [1] &quot;5 DONACIÓN 1,00 5,00&quot;             &quot;1 BARREÑO 2,20&quot;                  
+##  [3] &quot;3 PALO ANTIDESLIZANTE 1,90 5,70&quot;  &quot;1 MULTIUSOS 2,55&quot;                
+##  [5] &quot;2 AGUA MINERAL 0,73 1,46&quot;         &quot;2 B.BASURA EXT.C.FÁCIL 1,60 3,20&quot;
+##  [7] &quot;1 ESCURRE FÁCIL 2,85&quot;             &quot;1 CUBO FREGAR C/RUEDAS 3,85&quot;     
+##  [9] &quot;1 FRIEGASUELOS PINO 0,95&quot;         &quot;2 FIBRAS CRUZADAS 2,10 4,20&quot;     
+## [11] &quot;1 LOTE BAYETAS SUAVES 1,20&quot;       &quot;1 FREGONA HILO MIR. 2,80&quot;        
+## [13] &quot;1 LOTE 3 BAYETAS MICRO 1,80&quot;      &quot;1 PARKING 0,00&quot;                  
+## [15] &quot;ENTRADA 08:28 SALIDA 09:08&quot;</code></pre>
+<p>Ya tenemos identificados los productos. Ahora sigue determinar:</p>
+<ol style="list-style-type: decimal">
+<li>Si tiene parking o no</li>
+<li>Qué tipo de producto es</li>
+</ol>
 <hr />
 </div>
 <div id="codigo-funcional-para-una-sola-factura" class="section level1" number="9">
