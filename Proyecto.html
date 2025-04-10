@@ -590,20 +590,18 @@ qué x fichero no fue leido.</p>
 leias, verificamos</p>
 <pre class="r"><code>lista_f_almacenados &lt;- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
 diferencia &lt;- setdiff(lista_nombres_ficheros, lista_f_almacenados)
-diferencia</code></pre>
-<pre><code>##  [1] &quot;20231218 Mercadona 60,47.pdf&quot;  &quot;20231224 Mercadona 37,49.pdf&quot; 
-##  [3] &quot;20231226 Mercadona 25,83.pdf&quot;  &quot;20231230 Mercadona 66,30.pdf&quot; 
-##  [5] &quot;20240102 Mercadona 70,04.pdf&quot;  &quot;20240108 Mercadona 83,73.pdf&quot; 
-##  [7] &quot;20240109 Mercadona 7,35.pdf&quot;   &quot;20240111 Mercadona 41,20.pdf&quot; 
-##  [9] &quot;20240115 Mercadona 117,41.pdf&quot; &quot;20240123 Mercadona 44,13.pdf&quot; 
-## [11] &quot;20240127 Mercadona 108,33.pdf&quot; &quot;20240131 Mercadona 16,82.pdf&quot; 
-## [13] &quot;ticket3.pdf&quot;</code></pre>
+#diferencia</code></pre>
 <p>De estos nombres, identificamos que se trata de ficheros repetidos.
 Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni
 almacenar. El caso del ‘ticket3.pdf’ es un caso especial, ya que al ser
 escaneado, lo detecta como MERCADONA, pero no lee lo valores
 correctamente. Por eso no es considerado dentro de los df’s
 correspodientes.</p>
+<pre class="r"><code>x &lt;- lista_nombres_ficheros[2]
+r &lt;- RegistroFicheros(x, NoLeido, FicheroLeido)
+NoLeido &lt;- r$NoLeido
+FicheroLeido &lt;- r$FicheroLeido</code></pre>
+<hr />
 </div>
 <div id="codigo-funcional-para-una-sola-factura" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Codigo funcional para

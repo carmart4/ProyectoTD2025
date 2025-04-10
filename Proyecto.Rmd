@@ -228,10 +228,96 @@ Una vez que recuperamos la informacion sobre las facturas leidas y no leias, ver
 ```{r}
 lista_f_almacenados <- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
 diferencia <- setdiff(lista_nombres_ficheros, lista_f_almacenados)
-diferencia
+#diferencia
 
 ```
 De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni almacenar. El caso del 'ticket3.pdf' es un caso especial, ya que al ser escaneado, lo detecta como MERCADONA, pero no lee lo valores correctamente. Por eso no es considerado dentro de los df's correspodientes.
+
+
+```{r}
+x <- lista_nombres_ficheros[2]
+r <- RegistroFicheros(x, NoLeido, FicheroLeido)
+NoLeido <- r$NoLeido
+FicheroLeido <- r$FicheroLeido
+
+```
+
+Una vez que ya tenemos detectados los ficheros con los que vamos a trabajar, vamos a extraer la información correspondiente de ellos. 
+
+1. Encabezado
+
+2. Productos, identificando el tipo de producto
+
+```{r}
+ExtraeEncabezado <- function(verifica, Tienda) {
+  if (verifica[[1]]){
+    lineas <- verifica[[2]]
+    
+    info_compra <- grep(x=lineas, pattern='MERCADONA')[1]
+    info_compra_final <- grep(x=lineas, pattern='FACTURA')[1]
+  
+    encabezado <- lineas[info_compra:info_compra_final]
+    
+    direccion <- encabezado[2]
+
+    # Ubicacion 
+    ubicacion <- strsplit(lineas[3], split = ' ')[[1]] 
+    
+    CP <- ubicacion[1]
+    
+    municipio <- ubicacion[2]
+    
+    telefono <- strsplit(lineas[4], split = ': ')[[1]][2]
+    
+    tiempo <- strsplit(lineas[5], split = ' ')[[1]][1:2]
+    
+    fecha <- tiempo[1] # String de la fecha en formato dd/mm/aaaa
+    
+    hora <- tiempo[2]
+    
+    factura <- strsplit(lineas[6], split = ": ")[[1]]
+    factura <- strsplit(factura[2], split = "-")[[1]]
+    
+    id_tienda <- factura[1]
+    
+    n_caja <- factura[2]
+    
+    id_factura <- factura[3]
+    
+    # La información leida anteriormente, la concatenaremos en el df de tiendas. 
+    # Solo si el id_tienda no está.
+    
+    #info_tienda <- c(id_tienda, direccion, CP, municipio, telefono)
+    
+    if (!id_tienda %in% Tienda$IdTienda){
+          Tienda <- Tienda %>%
+                        add_row(
+                          IdTienda = id_tienda,
+                          Direccion = direccion,
+                          CodigoPostal = CP,
+                          Municipio = municipio,
+                          Telefono = telefono
+    )
+    }
+  }
+    return(Tienda)
+}
+```
+
+
+```{r}
+verifica <- EsMercadona(x)
+Tienda <- ExtraeEncabezado(verifica = verifica, Tienda)
+
+```
+
+
+
+
+
+
+
+---
 
 # Codigo funcional para una sola factura
 
