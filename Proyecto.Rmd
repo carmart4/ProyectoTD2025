@@ -89,14 +89,35 @@ rm(list = ls())
 ```
 
 ```{r}
-  # Guardae todos los archivos PDF en la carpeta "data"
-  archivos_pdf <- list.files(path = "data", pattern = "\\.pdf$", full.names = TRUE)
+   # Guardae todos los archivos PDF en la carpeta "data"
+archivos_pdf <- list.files(path = "data", pattern = "\\.pdf$", full.names = TRUE)
   
+  # Creamos una lista con los productos que van por peso para usarlos como palabras clave.
+diccionario_productos <- list(
+  Fruta = c("plátano", "manzana", "pera", "naranja", "kiwi", "mango", "melón", "sandía", "fresa", "uva", "piña", "ciruela", "cereza", "granada", "banana"),
+  Verdura = c("lechuga", "tomate", "cebolla", "zanahoria", "pimiento", "calabacín", "pepino", "espinaca", "acelga", "berenjena", "col", "brócoli"),
+  Pescado = c("salmón", "merluza", "gamba", "atún", "bacalao", "lubina", "dorada", "anchoa", "boquerón"))
+
+  # Función que clasifica el producto
+clasificar_tipo <- function(desc, diccionario) {
+  desc <- tolower(desc)  # todo en minúsculas para evitar errores
+
+  for (tipo in names(diccionario)) {
+    if (length(diccionario[[tipo]]) == 0) next
+    patrones <- paste(diccionario[[tipo]], collapse = "|")
+    if (grepl(patrones, desc)) {
+      return(tipo)
+    }
+  }
+  return("Unitario")
+}
+
   # Crear un dataframe vacío donde se almacenarán todos los productos de todos los tickets
   compras_totales <- data.frame( Cantidad = numeric(),
                                  Descripcion = character(),
                                  PrecioUnitario = numeric(),
                                  Importe = numeric(),
+                                 Tipo = character(),
                                  stringsAsFactors = FALSE
   )
   
@@ -137,7 +158,7 @@ rm(list = ls())
     # Verificar que se encuentren las palabras clave 'Descripción' y 'TOTAL'
     if (length(indice_encabezado) == 0 | length(indice_total) == 0) {
       warning(paste("No se encontraron las palabras clave 'Descripción' o 'TOTAL' en el archivo:", n_pdf))
-      next  # Saltar al siguiente archivo si no se encuentran las palabras clave
+      next  # Saltar al siguiente archivo si no se encuentran las palabras clave, para no procesar datos incompletos o que son incorrectos.
     }
     
     # Extraer las líneas de productos
@@ -171,22 +192,24 @@ rm(list = ls())
                                     descripcion = elementos[2],
                                     precio_unit = as.numeric(str_replace(elementos[3], ",", ".")),
                                     importe = as.numeric(str_replace(elementos[4], ",", ".")),
+                                    tipo = "Unitario",
                                     stringsAsFactors = FALSE )
         }
         else if (str_detect(p, patron_cantidad_1)) {
           elementos <- str_match(p, patron_cantidad_1)[,2:3]
-          # Si la descripción contiene "parking", el if no se ejecuta
-          if (!grepl("PARKING", elementos[1], ignore.case = TRUE)){  
           precio_total <- as.numeric(str_replace(elementos[2], ",", "."))
           resultado <- data.frame( cantidad = 1,
-                                   descripcion = elementos[1],
+                                    descripcion = elementos[1],
                                     precio_unit = precio_total,
                                     importe = precio_total,
+                                    tipo = "Unitario",
                                     stringsAsFactors = FALSE)
-        # Agregar al data frame compra
-        compra <- rbind(compra, resultado)}
-          }
         }
+        
+        # Agregar al data frame compra
+        compra <- rbind(compra, resultado)
+      }
+      
       # Caso de productos por peso
       else if (str_detect(p, patron_peso)) {
         elemento1 <- str_match(p, patron_peso)[,3]
@@ -200,8 +223,10 @@ rm(list = ls())
                                     descripcion = elemento1,
                                     precio_unit = as.numeric(str_replace(elemento2[2], ",", ".")),
                                     importe = as.numeric(str_replace(elemento2[3], ",", ".")),
+                                    tipo = clasificar_tipo(elemento1, diccionario_productos),
                                     stringsAsFactors = FALSE )
-          
+         
+
           # Agregar al data frame compra
           compra <- rbind(compra, resultado)
         }
