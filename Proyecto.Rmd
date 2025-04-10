@@ -175,18 +175,18 @@ rm(list = ls())
         }
         else if (str_detect(p, patron_cantidad_1)) {
           elementos <- str_match(p, patron_cantidad_1)[,2:3]
+          # Si la descripción contiene "parking", el if no se ejecuta
+          if (!grepl("PARKING", elementos[1], ignore.case = TRUE)){  
           precio_total <- as.numeric(str_replace(elementos[2], ",", "."))
           resultado <- data.frame( cantidad = 1,
                                    descripcion = elementos[1],
                                     precio_unit = precio_total,
                                     importe = precio_total,
                                     stringsAsFactors = FALSE)
-        }
-        
         # Agregar al data frame compra
-        compra <- rbind(compra, resultado)
-      }
-      
+        compra <- rbind(compra, resultado)}
+          }
+        }
       # Caso de productos por peso
       else if (str_detect(p, patron_peso)) {
         elemento1 <- str_match(p, patron_peso)[,3]
@@ -215,6 +215,5 @@ rm(list = ls())
   
   # Ver el dataframe final con todas las compras
   compras_totales
-  # Commit Neus
   
 ```
