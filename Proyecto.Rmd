@@ -94,8 +94,8 @@ archivos_pdf <- list.files(path = "data", pattern = "\\.pdf$", full.names = TRUE
   
   # Creamos una lista con los productos que van por peso para usarlos como palabras clave.
 diccionario_productos <- list(
-  Fruta = c("plátano", "manzana", "pera", "naranja", "kiwi", "mango", "melón", "sandía", "fresa", "uva", "piña", "ciruela", "cereza", "granada", "banana"),
-  Verdura = c("lechuga", "tomate", "cebolla", "zanahoria", "pimiento", "calabacín", "pepino", "espinaca", "acelga", "berenjena", "col", "brócoli"),
+  Fruta = c("platano", "manz", "pera", "naranja", "kiwi", "mango", "melón", "sandía", "fresa", "uva", "piña", "ciruela", "cereza", "granada", "banana", "mandarina"),
+  Verdura = c("lechuga", "tomate", "cebolla", "zanahoria", "pimiento", "calabacín", "pepino", "espinaca", "acelga", "berenjena", "col", "brócoli", "limon", "alcachofa", "habas"),
   Pescado = c("salmón", "merluza", "gamba", "atún", "bacalao", "lubina", "dorada", "anchoa", "boquerón"))
 
   # Función que clasifica el producto
@@ -170,6 +170,7 @@ clasificar_tipo <- function(desc, diccionario) {
                           Descripcion = character(),
                           PrecioUnitario = numeric(),
                           Importe = numeric(),
+                          Tipo = character(),
                           stringsAsFactors = FALSE
     )
     
