@@ -415,8 +415,6 @@ Aplicamos un primer filtro para los pescados y, frutas y verduras.
 ```{r}
 # Solo si se ha comprado pescado, servira este filtro, para diferenciar entre unitarios y por peso.
 
-EsMercadona(x)[[2]]
-
 productos <- DetectaParking(productos)[[1]]
 productos
 
