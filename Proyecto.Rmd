@@ -158,9 +158,13 @@ EsMercadona <- function(NombrePDF){
   lineas <- strsplit(texto, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
   lineas <- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
   
-  Mercadona <- grepl('MERCADONA', lineas[1])  # Valor bool para saber si es de Mercadona o no. 
+  # Para verificar que es de Mercadona y que se ha leido correctamente la factura, vamos a evaluar la primera linea.
   
-  if (!Mercadona){
+  Mercadona <- grepl('MERCADONA', lineas[1])  # Valor bool para saber si es de Mercadona o no. 
+  CIF <- grepl('A-46103834', lineas[1])
+  
+  if ((!Mercadona) | (!CIF)){
+    Mercadona <- FALSE
     lineas <- list()
   } 
   
@@ -176,7 +180,7 @@ EsMercadona <- function(NombrePDF){
 # Funcion que almacena la informacion de todas las tiendas leidas. 
 
 ```{r}
-ExtraeEncabezado <- function(lineas, Tienda) {
+ExtraeEncabezado <- function(lineas) {
   
     # Obtenemos el rango de filas que contienen el encabezado
 
@@ -213,20 +217,9 @@ ExtraeEncabezado <- function(lineas, Tienda) {
     
     id_factura <- factura[3]
     
-    # La información leida anteriormente, la concatenaremos en el df de tiendas. 
-    # Solo si el id_tienda no está.
+    valores <- list(direccion, CP, municipio, telefono, fecha, hora, id_tienda, n_caja, id_factura)
     
-    if (!id_tienda %in% Tienda$IdTienda){
-          Tienda <- Tienda %>%
-                        add_row(
-                          IdTienda = id_tienda,
-                          Direccion = direccion,
-                          CodigoPostal = CP,
-                          Municipio = municipio,
-                          Telefono = telefono
-    )
-    }
-    return(Tienda)
+    return(valores)
 }
 ```
 
@@ -242,41 +235,46 @@ La información de las tiendas. 1 dataframe
 # Le paso el dataframe de los ficheros leidos y no leidos para que los modifique, 
 # si se añade un nuevo fichero. 
 
-RegistroFicheros <- function(Nombrepdf, NoLeido, FicheroLeido, Tienda) {
+RegistroFicheros <- function(Nombrepdf, DF_ficheros_noleidos, DF_ficheros_leidos, Tienda_leida) {
   
   verifica <- EsMercadona(Nombrepdf)
   
-  if ((verifica[[1]] == FALSE) && !(Nombrepdf %in% NoLeido$NombreFichero)) {
-    NoLeido <- NoLeido %>%
+  if ((verifica[[1]] == FALSE) && !(Nombrepdf %in% DF_ficheros_noleidos$NombreFichero)) {
+    DF_ficheros_noleidos <- DF_ficheros_noleidos %>%
       add_row( NombreFichero = Nombrepdf )
   }
+  
   else if (verifica[[1]] == TRUE) {
     
     lineas <- verifica[[2]]
     
-    info_compra <- grep(x=lineas, pattern='MERCADONA')[1]
-    info_compra_final <- grep(x=lineas, pattern='FACTURA')[1]
-  
-    encabezado <- lineas[info_compra:info_compra_final]
+    informacion <- ExtraeEncabezado(lineas)
     
-    factura <- strsplit(lineas[6], split = ": ")[[1]]
-    factura <- strsplit(factura[2], split = "-")[[1]]
-
-    id_factura <- factura[3]
+    id_factura <- informacion[[9]]
+    id_tienda <- informacion[[7]]
     
-    if (!id_factura %in% FicheroLeido$FacturaFichero){
+    if (!id_factura %in% DF_ficheros_leidos$FacturaFichero){
       
-      FicheroLeido <- FicheroLeido %>%
+      DF_ficheros_leidos <- DF_ficheros_leidos %>%
                 add_row(
                   FacturaFichero = id_factura,
                   NombreFichero = Nombrepdf
                 )
     }
     
-    Tienda = ExtraeEncabezado(lineas, Tienda)
-    
+    if (!id_tienda %in% Tienda_leida$IdTienda){
+          Tienda_leida <- Tienda_leida %>%
+                        dplyr::add_row(
+                          IdTienda = informacion[[7]],
+                          Direccion = informacion[[1]],
+                          CodigoPostal = informacion[[2]],
+                          Municipio = informacion[[3]],
+                          Telefono = informacion[[4]]
+    )
+    }
   }
-  valores <- list (NoLeido = NoLeido, FicheroLeido = FicheroLeido, Tienda = Tienda)
+  
+  valores <- list(NoLeido = DF_ficheros_noleidos, FicheroLeido = DF_ficheros_leidos, TiendaLeida = Tienda_leida)
   # Devuelve los dataframes con los ficheros que han sido leidos y los que no.
   return(valores)
 }
@@ -294,7 +292,7 @@ for (f in lista_nombres_ficheros) {
   resultado <- RegistroFicheros(f, NoLeido, FicheroLeido, Tienda)
   NoLeido <- resultado$NoLeido
   FicheroLeido <- resultado$FicheroLeido
-  Tienda <- resultado$Tienda
+  Tienda <- resultado$TiendaLeida
 }
 
 ```
@@ -311,11 +309,21 @@ De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron le
 
 
 ```{r}
-x <- lista_nombres_ficheros[2]
-r <- RegistroFicheros(x, NoLeido, FicheroLeido, Tienda)
+#x <- lista_nombres_ficheros[2]
+x <- '20240323 Mercadona 234,20.pdf'
+# <- "ticket3.pdf"
+
+verifica <- EsMercadona(x)
+verifica
+
+lineas <- verifica[[2]]
+lineas
+
+r <- RegistroFicheros(Nombrepdf = x,NoLeido, FicheroLeido, Tienda)
 NoLeido <- r$NoLeido
 FicheroLeido <- r$FicheroLeido
-Tienda <- r$Tienda
+Tienda <- r$TiendaLeida
+
 
 ```
 
@@ -328,13 +336,12 @@ Una vez que ya tenemos detectados los ficheros con los que vamos a trabajar, vam
 # buscamos la linea que contenga esa palabra. Por lo tanto:
 
 lineas <- EsMercadona(x)[[2]]
+lineas
 
 indice_encabezado <- grep(x=lineas, pattern='Descripción')[1]
 indice_total <- grep(x=lineas, pattern='TOTAL')[1]
 
 # Leemos los productos, que van desde una linea despues del encabezado descripcion, hasta una linea menos del primer total. 
-
-lineas[indice_encabezado:indice_total]
 
 productos <- lineas[(indice_encabezado+1):(indice_total-1)]
 productos <- str_replace_all(productos, "\\s+", " ") # Eliminamos los espacios multiples
@@ -376,17 +383,16 @@ patron_precio_peso <- "^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$"
 
 ```{r}
 # Como parking está al final del todo, es el filtro que aplicamos primero.
-
 DetectaParking <- function(ListaProductos){
   
   parking <- FALSE
   
-  if (any(grepl(x=ListaProductos, pattern='PARKING')[1])) {
+  if (any(grepl(x=ListaProductos, pattern='PARKING'))) {
     parking <- TRUE
-    indice_parking <- grepl(x=ListaProductos, pattern='PARKING')[1]
-    productos <- ListaProductos[1:(indice_parking-1)]
+    indice_parking <- grep(x=ListaProductos, pattern='PARKING')
+    ListaProductos <- ListaProductos[1:(indice_parking-1)]
   }
-  valores <- c(ListaProductos, parking)
+  valores <- list(ListaProductos, parking)
   return(valores)
 }
 
@@ -394,8 +400,106 @@ DetectaParking <- function(ListaProductos){
 
 
 ```{r}
-DetectaParking(productos)
+DetectaParking(productos)[[2]] # Valor bool para saber si tiene parking o no
+DetectaParking(productos)[[1]] # Lista de productos con el parking descartado
 ```
+
+Dato que tenemos orden de productos: 
+
+1. Unitario
+2. Pescado
+3. Frutas y verduras
+
+Aplicamos un primer filtro para los pescados y, frutas y verduras. 
+
+```{r}
+# Solo si se ha comprado pescado, servira este filtro, para diferenciar entre unitarios y por peso.
+
+EsMercadona(x)[[2]]
+
+productos <- DetectaParking(productos)[[1]]
+productos
+
+Pescado <- FALSE
+
+if (any(grepl(x=productos, pattern='PESCADO'))) {
+  
+  Pescado <- TRUE
+  indice_pescado <- grep(x=productos, pattern='PESCADO')
+  productos_peso <- productos[(indice_pescado+1):length(productos)]
+  productos <- productos[0:(indice_pescado-1)]
+  
+}
+
+productos_peso[1]
+productos_peso[2]
+str_match(productos_peso, patron_peso) 
+
+if (Pescado) {
+  
+  ListaCompra <- list()
+  indice <- 1 # indice de la lista para añadir los productos  
+  i <- 1
+  
+  while (i <= length(productos_peso)){
+    p <- productos_peso[i]
+    
+    if (grepl(x=p, pattern=patron_pescado)) {
+      elemento1 <- p
+      
+      if (i + 1 <= length(productos_peso)){
+        i <- i + 1 
+        info <- productos_peso[i]
+        elemento2 <- str_match(info, patron_precio_peso)[2:4]
+        
+        # Una vez tenemos info del producto, lo añadimos a la lista 
+        
+        ListaCompra[[indice]] <- list( Fecha = fecha,
+                                       IdTienda = id_tienda,
+                                       IdFactura = id_factura,
+                                        Producto = elemento1,
+                                        Cantidad = elemento2[1],
+                                        PrecioUnitario = elemento2[2],
+                                        Importe = elemento2[3],
+                                        TipoProducto = tipo_producto[2],
+                                        Parking = parking )
+        indice <- indice + 1
+      }
+    }
+    
+    else if (grepl(x=p, pattern=patron_peso)) {
+        
+        elemento1 <- str_match(p, patron_peso)[,3]
+        
+        if (i + 1 <= length(productos_peso)){
+          i <- i + 1 
+          info <- productos_peso[i]
+          elemento2 <- str_match(info, patron_precio_peso)[2:4]
+          ListaCompra[[indice]] <- list(  Fecha = fecha,
+                                          IdTienda = id_tienda,
+                                          IdFactura = id_factura,
+                                          Producto = elemento1,
+                                          Cantidad = elemento2[1],
+                                          PrecioUnitario = elemento2[2],
+                                          Importe = elemento2[3],
+                                          TipoProducto = tipo_producto[3],
+                                          Parking = parking)
+          indice <- indice + 1
+          }
+    }
+    
+    i <- i + 1 
+    
+  }
+  
+}
+
+Compra <- bind_rows(Compra, bind_rows(ListaCompra))
+
+Compra
+
+```
+
 
 
 
