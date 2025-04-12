@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2025-04-08" />
+<meta name="date" content="2025-04-12" />
 
 <title>Análisis de Tickets de Supermercado: Mini Proyecto 2025</title>
 
@@ -382,56 +382,85 @@ Ferrer Font, Neus<br> Navarro García, Marta<br> Rodríguez Simón,
 Alba<br> Aissa Djellouli, Mohammed<br> Balbastre Aparisi, Héctor<br>
 Ruiz Ripoll, Joan<br> Martinez Torres, Carlos Santiago
 </center></h4>
-<h4 class="date">2025-04-08</h4>
+<h4 class="date">2025-04-12</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#lo-que-necesitamos-para-trabajar." id="toc-lo-que-necesitamos-para-trabajar."><span class="toc-section-number">1</span> Lo que necesitamos para
-trabajar.</a></li>
+<li><a href="#importacion-de-librerias" id="toc-importacion-de-librerias"><span class="toc-section-number">1</span> Importacion de librerias</a>
+<ul>
+<li><a href="#funcion-para-instalar-y-cargar-librerias-nuevas" id="toc-funcion-para-instalar-y-cargar-librerias-nuevas"><span class="toc-section-number">1.1</span> Funcion para instalar y cargar
+librerias nuevas</a></li>
+</ul></li>
 <li><a href="#como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar" id="toc-como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar"><span class="toc-section-number">2</span> Como vamos a almacenar la
 informacion? Que informacion queremos almacenar?</a></li>
-<li><a href="#carga-de-ficheros" id="toc-carga-de-ficheros"><span class="toc-section-number">3</span> Carga de ficheros</a></li>
-<li><a href="#funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no" id="toc-funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no"><span class="toc-section-number">4</span> Funcion EsMercadona, que comprueba
+<li><a href="#funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no" id="toc-funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no"><span class="toc-section-number">3</span> Funcion EsMercadona, que comprueba
 si la factura es de Mercadona o no</a></li>
-<li><a href="#funcion-que-almacena-el-nombre-de-los-ficheros-que-son-de-mercadona-y-lo-que-no." id="toc-funcion-que-almacena-el-nombre-de-los-ficheros-que-son-de-mercadona-y-lo-que-no."><span class="toc-section-number">5</span> Funcion que almacena el nombre de
-los ficheros que son de Mercadona, y lo que no.</a></li>
-<li><a href="#codigo-funcional-para-una-sola-factura" id="toc-codigo-funcional-para-una-sola-factura"><span class="toc-section-number">6</span> Codigo funcional para una sola
-factura</a></li>
-<li><a href="#información-de-los-productos." id="toc-información-de-los-productos."><span class="toc-section-number">7</span> Información de los
-productos.</a></li>
-<li><a href="#identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso." id="toc-identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso."><span class="toc-section-number">8</span> Identificamos el patron de los
-diferentes productos, ya que pueden ser de tipo unitario, o por
-peso.</a></li>
-<li><a href="#aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto." id="toc-aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto."><span class="toc-section-number">9</span> Aplicamos los diferentes filtros
-para determinar el tipo de producto.</a></li>
-<li><a href="#tratamos-productos-por-peso" id="toc-tratamos-productos-por-peso"><span class="toc-section-number">10</span> Tratamos productos por
-peso</a></li>
-<li><a href="#tratamos-productos-por-unidad" id="toc-tratamos-productos-por-unidad"><span class="toc-section-number">11</span> Tratamos productos por unidad</a>
+<li><a href="#funcion-que-lee-la-informacion-de-la-tienda-y-de-los-productos-por-factura" id="toc-funcion-que-lee-la-informacion-de-la-tienda-y-de-los-productos-por-factura"><span class="toc-section-number">4</span> Funcion que lee la informacion de la
+tienda y de los productos por factura</a></li>
+<li><a href="#filtro-1" id="toc-filtro-1"><span class="toc-section-number">5</span> Filtro 1</a>
 <ul>
-<li><a href="#nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking." id="toc-nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking."><span class="toc-section-number">11.0.1</span> NOTA: HAce falta revisar los
-productos con pescado, y las facturas que tienen parking.</a></li>
-<li><a href="#también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles" id="toc-también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles"><span class="toc-section-number">11.0.2</span> También, revisar por qué se
-están duplicando los valores en estos bucles;</a></li>
-<li><a href="#mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea" id="toc-mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea"><span class="toc-section-number">11.0.3</span> mejorar para dejar con una
-función, a la que se le pase una línea</a></li>
-<li><a href="#y-por-cada-linea-que-lea-la-añada-al-dataframe." id="toc-y-por-cada-linea-que-lea-la-añada-al-dataframe."><span class="toc-section-number">11.0.4</span> y por cada linea que lea, la
-añada al dataframe.</a></li>
+<li><a href="#funcion-que-detecta-si-hay-parking-o-no" id="toc-funcion-que-detecta-si-hay-parking-o-no"><span class="toc-section-number">5.1</span> Funcion que detecta si hay parking
+o no</a></li>
+</ul></li>
+<li><a href="#filtro-2" id="toc-filtro-2"><span class="toc-section-number">6</span> Filtro 2</a>
+<ul>
+<li><a href="#funcion-que-detecta-si-hubo-compra-de-pescado-o-no.-ayuda-en-la-lectura-e-identificacion-de-los-productos" id="toc-funcion-que-detecta-si-hubo-compra-de-pescado-o-no.-ayuda-en-la-lectura-e-identificacion-de-los-productos"><span class="toc-section-number">6.1</span> Funcion que detecta si hubo compra
+de pescado o no. Ayuda en la lectura e identificacion de los
+productos</a></li>
+</ul></li>
+<li><a href="#patrones-para-diferenciar-a-los-productos-y-sus-respectivos-precios" id="toc-patrones-para-diferenciar-a-los-productos-y-sus-respectivos-precios"><span class="toc-section-number">7</span> Patrones para diferenciar a los
+productos y sus respectivos precios</a></li>
+<li><a href="#funcion-que-registra-datos-de-los-productos-si-tiene-pescado." id="toc-funcion-que-registra-datos-de-los-productos-si-tiene-pescado."><span class="toc-section-number">8</span> Funcion que registra datos de los
+productos si tiene pescado.</a></li>
+<li><a href="#funcion-que-registra-datos-de-los-productos-cuando-no-se-ha-comprado-pescado" id="toc-funcion-que-registra-datos-de-los-productos-cuando-no-se-ha-comprado-pescado"><span class="toc-section-number">9</span> Funcion que registra datos de los
+productos cuando no se ha comprado pescado</a></li>
+<li><a href="#general" id="toc-general"><span class="toc-section-number">10</span> General</a></li>
+<li><a href="#verificacion-de-las-funciones-anteriores-para-todos-los-ficheros" id="toc-verificacion-de-las-funciones-anteriores-para-todos-los-ficheros"><span class="toc-section-number">11</span> Verificacion de las funciones
+anteriores para todos los ficheros</a>
+<ul>
+<li><a href="#carga-de-todos-los-ficheros" id="toc-carga-de-todos-los-ficheros"><span class="toc-section-number">11.1</span> Carga de todos los
+ficheros</a></li>
+<li><a href="#bucle-para-cargar-la-informacion-de-cada-fichero" id="toc-bucle-para-cargar-la-informacion-de-cada-fichero"><span class="toc-section-number">11.2</span> Bucle para cargar la informacion
+de cada fichero</a></li>
+</ul></li>
+<li><a href="#comprobacion-de-los-ficheros-no-leidos" id="toc-comprobacion-de-los-ficheros-no-leidos"><span class="toc-section-number">12</span> Comprobacion de los ficheros no
+leidos</a>
+<ul>
+<li><a href="#comparamos-los-ficheros-que-fueron-leidos" id="toc-comparamos-los-ficheros-que-fueron-leidos"><span class="toc-section-number">12.1</span> Comparamos los ficheros que
+fueron leidos</a></li>
+<li><a href="#verificamos-los-valores-na-ya-que-no-deberian-haber" id="toc-verificamos-los-valores-na-ya-que-no-deberian-haber"><span class="toc-section-number">12.2</span> Verificamos los valores NA, ya
+que no deberian haber</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lo-que-necesitamos-para-trabajar." class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Lo que necesitamos para
-trabajar.</h1>
-<p>Instalación de las librerias.</p>
-<pre class="r"><code>#install.packages(&quot;pdftools&quot;)</code></pre>
-<p>Importacion de las librerias.</p>
-<pre class="r"><code>rm(list = ls())
-library(pdftools)</code></pre>
+<div id="importacion-de-librerias" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Importacion de
+librerias</h1>
+<pre class="r"><code># Limpiamos el entorno
+rm(list = ls())
+
+# Creamos un vector con los paquetes que vamos a utilizar 
+paquetes &lt;- c(&quot;pdftools&quot;, &quot;dplyr&quot;, &quot;stringr&quot;, &quot;dplyr&quot;, &quot;ggplot2&quot;, &quot;tidyverse&quot;)</code></pre>
+<p>Implementamos una funcion que nos permite cargar las librerias que no
+están disponibles hasta el momento</p>
+<div id="funcion-para-instalar-y-cargar-librerias-nuevas" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Funcion para instalar
+y cargar librerias nuevas</h2>
+<pre class="r"><code>instalar_y_cargar &lt;- function(paquetes) {
+  
+  nuevos &lt;- setdiff(paquetes, rownames(installed.packages()))
+  
+  if (length(nuevos)) { install.packages(nuevos) }
+
+  invisible(lapply(paquetes, library, character.only = TRUE))
+}</code></pre>
+<pre class="r"><code># Cargamos las librerias
+instalar_y_cargar(paquetes)</code></pre>
+<pre><code>## Warning: package &#39;pdftools&#39; was built under R version 4.4.3</code></pre>
 <pre><code>## Using poppler version 23.08.0</code></pre>
-<pre class="r"><code>library(dplyr)</code></pre>
 <pre><code>## 
 ## Adjuntando el paquete: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -440,41 +469,41 @@ library(pdftools)</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(stringr)</code></pre>
-<p><em>NOTA: Mejorar la instalación e importanción de librerias para
-que, en caso de que ya esté instalada la libreria, solo se cargue, sin
-actualizarse o instalarse de nuevo. (Pensando en que un ordenador sin
-esas librerias)</em></p>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ forcats   1.0.0     ✔ readr     2.1.5
+## ✔ lubridate 1.9.3     ✔ tibble    3.2.1
+## ✔ purrr     1.0.2     ✔ tidyr     1.3.1
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
 </div>
 <div id="como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Como vamos a almacenar
 la informacion? Que informacion queremos almacenar?</h1>
-<pre class="r"><code># Dataframe que contendrá el nombre del fichero leido y la factura a la que pertenece. En caso de no ser leido, porque no pertenece a Mercadona, identificaremos cual fichero ha sido y lo almacenaremos en otro df.
+<pre class="r"><code># Dataframe que contendrá el nombre del fichero leido y la factura a la que pertenece. 
 
 FicheroLeido &lt;- data.frame( FacturaFichero = character(),
                         NombreFichero = character(),
-                        stringsAsFactors = FALSE
-                        )
+                        stringsAsFactors = FALSE)
+
+# En caso de no ser leido, porque no pertenece a Mercadona, guardaremos cual fichero ha sido 
+# y lo almacenaremos en otro df, para identificarlo posteriormente.
 
 NoLeido &lt;- data.frame( NombreFichero = character(),
-                        stringsAsFactors = FALSE
-                        )
-
+                        stringsAsFactors = FALSE)
 
 # Dataframe que contendrá la información de las diferentes tiendas de las facturas.  
-# Dado que no vamos a hacer operaciones con el id, CP o telefono, estas variables las guardaremos como char. 
 
 Tienda &lt;- data.frame( IdTienda = character(),
                       Direccion = character(),
                       CodigoPostal = character(),
                       Municipio = character(),
                       Telefono = character(),
-                      stringsAsFactors = FALSE
-) 
+                      stringsAsFactors = FALSE )
 
 # Dataframe que contendra la informacion de las compras realizadas. 
-
-# En principio, todo irá en character. Cuando estén todos los datos, se hara la limpieza sobre el df. 
 
 Compra &lt;- data.frame( Fecha = character(),
                       IdTienda = character(),
@@ -485,536 +514,664 @@ Compra &lt;- data.frame( Fecha = character(),
                       Importe = character(),
                       TipoProducto = character(),
                       Parking = logical(), 
-                      stringsAsFactors = FALSE
-) </code></pre>
+                      stringsAsFactors = FALSE ) </code></pre>
 </div>
-<div id="carga-de-ficheros" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Carga de ficheros</h1>
-<pre class="r"><code># Ficheros a trabajar 
-lista_ficheros &lt;- list.files(path = &#39;data/&#39;, pattern = &quot;\\.pdf$&quot;)
-fichero &lt;- lista_ficheros[1]
-fichero</code></pre>
-<pre><code>## [1] &quot;1.pdf&quot;</code></pre>
-</div>
-<div id="funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Funcion EsMercadona,
+<div id="funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Funcion EsMercadona,
 que comprueba si la factura es de Mercadona o no</h1>
-<pre class="r"><code># Funcion para comprobar si es factura de mercadona.
-
-# Dado que solo se puede devolver un objeto, vamos a devolver una lista con:
-# valor booleano y los valores leidos. 
-
-EsMercadona &lt;- function(NombreFichero){
+<pre class="r"><code>EsMercadona &lt;- function(NombrePDF){
+  
+  # Recibe el nombre el fichero en formato pdf
+  
   carpeta &lt;- &#39;data/&#39;
-  nombre_pdf &lt;- paste0(carpeta, NombreFichero)
+  fichero &lt;- paste0(carpeta, NombrePDF)
   
-  pdf_completo &lt;- pdf_text(nombre_pdf) # Extrae el texto del pdf.
-  lineas &lt;- strsplit(pdf_completo, &quot;\n&quot;)[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
+  texto &lt;- pdf_text(fichero) # Extrae el texto del pdf.
   
-  Mercadona &lt;- grepl(&#39;MERCADONA&#39;, lineas[1])  
+  #texto &lt;- iconv(texto, from = &quot;latin1&quot;, to = &quot;UTF-8&quot;) # Corregimos el error para valores extraños.
+
+  lineas &lt;- strsplit(texto, &quot;\n&quot;)[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
+  lineas &lt;- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
   
-  if (!Mercadona){
+  # Para verificar que es de Mercadona y que se ha leido correctamente la factura, vamos a evaluar la primera linea.
+  
+  Mercadona &lt;- grepl(&#39;MERCADONA&#39;, lineas[1])  # Valor bool para saber si es de Mercadona. 
+  CIF &lt;- grepl(&#39;A-46103834&#39;, lineas[1]) # Valor bool para saber si reconoce el CIF de Mercadona.
+  
+  if ((!Mercadona) | (!CIF)){
+    Mercadona &lt;- FALSE # Esto es preventivo, para el caso del ticket3.pdf
     lineas &lt;- list()
-  }
+  } 
   
-  informacion &lt;- list(Mercadona, lineas)
+  # Mercadona = Valor bool
+  # lineas = lista de las lineas leidas; sera vacia en caso de no ser de Mercadona
   
-  return(informacion)
+  Informacion &lt;- list(Mercadona, lineas)
+  
+  return(Informacion)
 }</code></pre>
-<pre class="r"><code># Prueba
-EsMercadona(fichero)[[1]]</code></pre>
-<pre><code>## [1] FALSE</code></pre>
 </div>
-<div id="funcion-que-almacena-el-nombre-de-los-ficheros-que-son-de-mercadona-y-lo-que-no." class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Funcion que almacena el
-nombre de los ficheros que son de Mercadona, y lo que no.</h1>
-<pre class="r"><code># Funcion para almacenar los ficheros leidos.
-
-# Le paso el dataframe de los ficheros leidos y no leidos. 
-
-RegistroFicheros &lt;- function(f, NoLeido, FicheroLeido) {
+<div id="funcion-que-lee-la-informacion-de-la-tienda-y-de-los-productos-por-factura" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Funcion que lee la
+informacion de la tienda y de los productos por factura</h1>
+<pre class="r"><code># lineas &#39;recuperadas&#39; de la funcion EsMercadona
+ExtraeInformacion &lt;- function(Lineas) {
   
-  if (!EsMercadona(f)[[1]] &amp;&amp; !(f %in% NoLeido$NombreFichero)) {
-    NoLeido &lt;- NoLeido %&gt;%
-      add_row( NombreFichero = f )
-  }
-  else {
-    
-    info_compra &lt;- grep(paste0(&quot;\\b&quot;, &#39;MERCADONA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
-    info_compra_final &lt;- grep(paste0(&quot;\\b&quot;, &#39;FACTURA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+    # Obtenemos el rango de filas que contienen el encabezado, fijo
+
+    info_compra &lt;- grep(x=Lineas, pattern=&#39;MERCADONA&#39;)[[1]]
+    info_compra_final &lt;- grep(x=Lineas, pattern=&#39;FACTURA&#39;)[[1]]
   
-    encabezado &lt;- lineas[info_compra:info_compra_final]
+    # Definimos el encabezado y extraemos informacion 
     
-    factura &lt;- strsplit(lineas[6], split = &quot;: &quot;)[[1]]
+    encabezado &lt;- Lineas[info_compra:info_compra_final]
+    
+    direccion &lt;- encabezado[2]
+
+    # Ubicacion (CP y municipio)
+    ubicacion &lt;- strsplit(encabezado[3], split = &#39; &#39;)[[1]] 
+    
+    CP &lt;- ubicacion[1]
+    municipio &lt;- ubicacion[2]
+    
+    telefono &lt;- strsplit(encabezado[4], split = &#39;: &#39;)[[1]][2]
+    
+    # Tiempo (fecha y hora)
+    tiempo &lt;- strsplit(encabezado[5], split = &#39; &#39;)[[1]][1:2]
+    
+    fecha &lt;- tiempo[1] # String de la fecha en formato dd/mm/aaaa
+    hora &lt;- tiempo[2] # 00:00
+    
+    # Factura (tienda, caja, idfactura)
+    factura &lt;- strsplit(encabezado[6], split = &quot;: &quot;)[[1]]
     factura &lt;- strsplit(factura[2], split = &quot;-&quot;)[[1]]
-
+    
+    id_tienda &lt;- factura[1]
+    n_caja &lt;- factura[2]
     id_factura &lt;- factura[3]
     
-    if (!id_factura %in% FicheroLeido$FacturaFichero){
-      
-      FicheroLeido &lt;- FicheroLeido %&gt;%
-                add_row(
-                  FacturaFichero = id_factura,
-                  NombreFichero = nombre_pdf
-                )
-    }
+    # Esta es la informacion del encabezado. Fija para cada factura 
+    InformacionCompra &lt;- list(direccion, CP, municipio, telefono, fecha, hora, id_tienda, n_caja, id_factura)
+    
+    # Obtenemos el rango de filas que contienen los productos
+    
+    # ^Descripci ayudará a evitar errores con la tilde, por el momento
+    
+    indice_inicio_productos &lt;- grep(x=Lineas, pattern=&#39;^Descripci&#39;)[[1]]
+    indice_final_productos &lt;- grep(x=Lineas, pattern=&#39;TOTAL&#39;)[[1]]
+    
+    inicio &lt;- indice_inicio_productos+1
+    final &lt;- indice_final_productos-1
+    
+    Productos &lt;- Lineas[inicio:final]
+    Productos &lt;- str_replace_all(Productos, &quot;\\s+&quot;, &quot; &quot;) # Eliminamos los espacios multiples
+    
+    
+    # InformacionCompra = lista con la informacion del encabezado
+    # Productos = lista con los productos que contiene la factura
+    valores &lt;- list(InformacionCompra, Productos)
+    
+    return(valores)
+}</code></pre>
+</div>
+<div id="filtro-1" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Filtro 1</h1>
+<div id="funcion-que-detecta-si-hay-parking-o-no" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Funcion que detecta
+si hay parking o no</h2>
+<pre class="r"><code># Como parking está al final del todo, es el filtro que aplicamos primero.
+# ListaProductos = lista &#39;recuperada&#39; de ExtraerInformacion
+DetectaParking &lt;- function(ListaProductos){
+  
+  Parking &lt;- FALSE
+  
+  if (any(grepl(x=ListaProductos, pattern=&#39;PARKING&#39;))) {
+    Parking &lt;- TRUE
+    indice_parking &lt;- grep(x=ListaProductos, pattern=&#39;PARKING&#39;)
+    final &lt;- indice_parking-1
+    ListaProductos &lt;- ListaProductos[1:final]
   }
-  valores &lt;- list (NoLeido = NoLeido, FicheroLeido = FicheroLeido)
+  
+  # Parking = Valor bool para saber si tiene parking o no
+
+  valores &lt;- list(Parking, ListaProductos)
   return(valores)
 }</code></pre>
-<pre class="r"><code># Prueba
-resultado &lt;- RegistroFicheros(fichero, NoLeido, FicheroLeido)
-
-# Reasignar resultados a los originales
-NoLeido &lt;- resultado$NoLeido
-FicheroLeido &lt;- resultado$FicheroLeido</code></pre>
 </div>
-<div id="codigo-funcional-para-una-sola-factura" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Codigo funcional para
-una sola factura</h1>
-<p>Lectura de un solo fichero pdf, de prueba.</p>
-<p>Es una factura del mercadona?</p>
-<pre class="r"><code># Carga de los pdf 
+</div>
+<div id="filtro-2" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Filtro 2</h1>
+<div id="funcion-que-detecta-si-hubo-compra-de-pescado-o-no.-ayuda-en-la-lectura-e-identificacion-de-los-productos" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Funcion que detecta
+si hubo compra de pescado o no. Ayuda en la lectura e identificacion de
+los productos</h2>
+<pre class="r"><code># ListaProductos = Lista &#39;recuperada&#39; del filtro anterior
+DetectaPescado &lt;- function(ListaProductos){
+  
+  Pescado &lt;- FALSE
+  
+  # ^ indica el inicio de la linea 
+  # $ indica el final de la linea
+  # Lo empleamos para que PESCADO sea el unico valor en la linea, y no confundir con otros productos
+  
+  if (any(grepl(x=ListaProductos, pattern=&#39;^PESCADO$&#39;))) {
+    
+    Pescado &lt;- TRUE
 
-
-
-#nombre_pdf &lt;- &#39;data/ticket_dia_03_02_2025_14_10.pdf&#39; # Factura de otro supermercado
-nombre_pdf &lt;- &#39;data/20240323 Mercadona 234,20.pdf&#39; # Factura con pescado
-#nombre_pdf &lt;- &#39;data/20241228 Mercadona 32,50 Ôé¼.pdf&#39;
-#nombre_pdf &lt;- &#39;data/20250224 Mercadona 75,48 Ôé¼.pdf&#39; # Con Parking
-
-
-
-pdf_completo &lt;- pdf_text(nombre_pdf) # Extrae el texto del pdf.
-lineas &lt;- strsplit(pdf_completo, &quot;\n&quot;)[[1]] # Divide el texto en diferentes lineas, por cada salto de linea. 
-
-#lineas &lt;- sub(&quot;^\\s+&quot;, &quot;&quot;, lineas) # Eliminamos los espacios en blanco a la izq de cada linea.
-lineas &lt;- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
-
-
-# Verificamos que sea una factura de Mercadona.
-
-Mercadona &lt;- grepl(&#39;MERCADONA&#39;, lineas[1])  
-Mercadona # Solo si es TRUE, debe continuar. De no ser así, es que la factura no es de Mercadona.</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<p>Información encabezado, FIJO.</p>
-<p>Solo si es una factura del Mercadona:</p>
-<pre class="r"><code># De ser una factura del mercadona (Mercadona == TRUE), continuamos...
-
-if (Mercadona) {
+    # Guardo la posicion del primer PESCADO
+    PrimerPescado &lt;- grep(x=ListaProductos, pattern=&#39;^PESCADO$&#39;)[1]
+    
+    final &lt;- PrimerPescado-1
+    
+    Productos &lt;- ListaProductos[0:final]
+    
+    # Eliminamos los otros PESCADO. Es decir, tomamos los opuestos
+    inicio &lt;- PrimerPescado+1
+    
+    ListaProductosPeso &lt;- ListaProductos[inicio:length(ListaProductos)]
+    
+    indices &lt;- !grepl(x=ListaProductosPeso, pattern=&#39;^PESCADO$&#39;)
+    
+    ProductosPeso &lt;- ListaProductosPeso[indices] 
   
-  info_compra &lt;- grep(paste0(&quot;\\b&quot;, &#39;MERCADONA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
-  info_compra_final &lt;- grep(paste0(&quot;\\b&quot;, &#39;FACTURA&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
+    }
   
-  encabezado &lt;- lineas[info_compra:info_compra_final]
+  # Pescado = Valor bool para saber si tiene pescado
+  # Productos = Todos los productos unitarios, o por peso, si no tiene PESCADO
+  # ProductosPeso = Los productos, pescados y, frutas y verdutas
   
-}
-
-encabezado</code></pre>
-<pre><code>## [1] &quot;MERCADONA, S.A. A-46103834&quot;           
-## [2] &quot;C/ ALICANTE 83&quot;                       
-## [3] &quot;03801 ALCOI/ALCOY&quot;                    
-## [4] &quot;TELÉFONO: 965366422&quot;                  
-## [5] &quot;23/03/2024 13:04  OP: 79063&quot;          
-## [6] &quot;FACTURA SIMPLIFICADA: 4530-021-052628&quot;</code></pre>
-<p>Una vez que tenemos identificado el ‘espacio’ del encabezado,
-extraemos la información.</p>
-<pre class="r"><code>if (Mercadona) {
+  if (Pescado){
+    valores &lt;- list(Pescado, Productos, ProductosPeso)
+  } else {
+    valores &lt;- list(Pescado, ListaProductos)
+  }
   
-  direccion &lt;- encabezado[2]
-  
-  # Ubicacion 
-  ubicacion &lt;- strsplit(lineas[3], split = &#39; &#39;)[[1]] 
-  
-  CP &lt;- ubicacion[1]
-  
-  municipio &lt;- ubicacion[2]
-  
-  telefono &lt;- strsplit(lineas[4], split = &#39;: &#39;)[[1]][2]
-  
-  tiempo &lt;- strsplit(lineas[5], split = &#39; &#39;)[[1]][1:2]
-  
-  fecha &lt;- tiempo[1] # String de la fecha en formato dd/mm/aaaa
-  fecha
-  
-  hora &lt;- tiempo[2]
-  hora
-  
-  factura &lt;- strsplit(lineas[6], split = &quot;: &quot;)[[1]]
-  factura &lt;- strsplit(factura[2], split = &quot;-&quot;)[[1]]
-  
-  id_tienda &lt;- factura[1]
-  id_tienda
-  
-  n_caja &lt;- factura[2]
-  n_caja
-  
-  id_factura &lt;- factura[3]
-  id_factura
-  
+  return(valores)
 }</code></pre>
-<pre><code>## [1] &quot;052628&quot;</code></pre>
-<pre class="r"><code># Añadimos información del fichero, si pertenece a mercadona o no.
-
-if ((Mercadona) &amp; (!id_factura %in% FicheroLeido$FacturaFichero)) {
-  FicheroLeido &lt;- FicheroLeido %&gt;%
-                add_row(
-                  NombreFichero = nombre_pdf,
-                  FacturaFichero = id_factura
-                )
-} else if ((!Mercadona) &amp; ((!nombre_pdf %in% NoLeido$NombreFichero))){
-    NoLeido &lt;- NoLeido %&gt;%
-                add_row(
-                  NombreFichero = nombre_pdf
-                )
-}
-
-# La información leida anteriormente, la concatenaremos en el df anteriormente creado. 
-# Solo si el id_tienda no está.
-
-info_tienda &lt;- c(id_tienda, direccion, CP, municipio, telefono)
-info_tienda</code></pre>
-<pre><code>## [1] &quot;4530&quot;           &quot;C/ ALICANTE 83&quot; &quot;03801&quot;          &quot;ALCOI/ALCOY&quot;   
-## [5] &quot;965366422&quot;</code></pre>
-<pre class="r"><code>if ((Mercadona) &amp; (!id_tienda %in% Tienda$IdTienda)){
-  Tienda &lt;- Tienda %&gt;%
-                add_row(
-                  IdTienda = id_tienda,
-                  Direccion = direccion,
-                  CodigoPostal = CP,
-                  Municipio = municipio,
-                  Telefono = telefono
-    )
-}</code></pre>
-<p>NOTA: Automatizar para que lea cada fichero de la carpeta y almacene
-la información en los dataframes correspondientes. Corregir para que en
-nombre del fichero no aparezca ‘data/’.</p>
 </div>
-<div id="información-de-los-productos." class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Información de los
-productos.</h1>
-<pre class="r"><code># Como sabemos que los poductos se describen desde el encabezado &#39;descripcion&#39;, hasta el primer &#39;TOTAL&#39;, buscamos la linea que contenga esa palabra. Por lo tanto:
-
-indice_encabezado &lt;- grep(paste0(&quot;\\b&quot;, &#39;Descripción&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
-indice_total &lt;- grep(paste0(&quot;\\b&quot;, &#39;TOTAL&#39;, &quot;\\b&quot;), lineas, ignore.case = TRUE)[1]
-
-# Leemos los productos, que van desde una linea despues del encabezado descripcion, hasta una linea menos del primer total. 
-
-productos &lt;- lineas[(indice_encabezado+1):(indice_total-1)]
-productos &lt;- str_replace_all(productos, &quot;\\s+&quot;, &quot; &quot;) # Eliminamos los espacios multiples
-productos</code></pre>
-<pre><code>##  [1] &quot;2 JUDÍA PLANA 350 GR 1,50 3,00&quot; &quot;3 ESP VERDE FINO 1,99 5,97&quot;    
-##  [3] &quot;1 FRESÓN 1,3 KG 3,10&quot;           &quot;1 MIX DE SETAS INTENSO 4,62&quot;   
-##  [5] &quot;1 PAN 51% INTEGRAL 5UN 1,30&quot;    &quot;1 PAN ESPELTA INTEGRAL 1,40&quot;   
-##  [7] &quot;1 PAT. CLASSICAS 1,75&quot;          &quot;1 MINI EMP PISTO P6 1,70&quot;      
-##  [9] &quot;1 GALL DIGESTIVE 1,75&quot;          &quot;1 MINI SALADAS 24 UN 2,50&quot;     
-## [11] &quot;1 NARANJA 5 KG. 5,95&quot;           &quot;1 REBUENAS 1,20&quot;               
-## [13] &quot;1 CEBOLLA TIERNA 1,29&quot;          &quot;1 RABANITOS 1,10&quot;              
-## [15] &quot;1 ICEBERG 0,99&quot;                 &quot;1 ACEITUNA PARTIDA 3,90&quot;       
-## [17] &quot;1 DEO AXE DARK TEMPT. 3,15&quot;     &quot;1 TARTA QUESO 1,80&quot;            
-## [19] &quot;1 QUESO AÑEJO FUERTE 19,25&quot;     &quot;1 CORTEZA DE CERDO 1,00&quot;       
-## [21] &quot;1 CONOS 0,75&quot;                   &quot;1 CHAMPÚ H&amp;S MENTOL 4,25&quot;      
-## [23] &quot;1 PIMENTON DULCE D.O 1,75&quot;      &quot;1 AZAFRAN HEBRA 1,70&quot;          
-## [25] &quot;1 CRUNCHY PICANTE 1,00&quot;         &quot;1 CARAMELO REGALIZ 1,95&quot;       
-## [27] &quot;1 LONGANIZA PASCUA 2,43&quot;        &quot;1 COSTILLA CHURRASCO 5,38&quot;     
-## [29] &quot;1 COSTILLA CHURRASCO 4,44&quot;      &quot;1 BACALAO AHUMADO 3,20&quot;        
-## [31] &quot;1 FIGATELL 3,77&quot;                &quot;1 COSTILLA CARNOSA 5,11&quot;       
-## [33] &quot;1 QUESO LONCHAS OVEJA 2,72&quot;     &quot;1 EMBUTIDO LONCHEADO 4,90&quot;     
-## [35] &quot;1 HAMBURGUESA DE LOMO 3,70&quot;     &quot;1 1/2 CONEJO TROCEADO 5,71&quot;    
-## [37] &quot;1 1/2 POLLO PART CERT 6,91&quot;     &quot;1 ALAS PARTIDAS CERT 4,00&quot;     
-## [39] &quot;1 QUESO LONCHAS OVEJA 2,68&quot;     &quot;1 VINO BAHIA DE DENIA 4,90&quot;    
-## [41] &quot;1 MARINA ALTA 4,95&quot;             &quot;2 TINTO BOBAL 2,90 5,80&quot;       
-## [43] &quot;1 SALCHICHON CEBO LONC 1,89&quot;    &quot;1 MAXI HAMBURGUESA 0,90&quot;       
-## [45] &quot;1 JAMÓN COCIDO 92% 2,41&quot;        &quot;1 JAMON CEBO IBERICO 7,73&quot;     
-## [47] &quot;1 JAMON CEBO IBERICO 8,55&quot;      &quot;1 JAMON CEBO IBERICO 8,03&quot;     
-## [49] &quot;1 GARROFON 1,50&quot;                &quot;2 FLTE BACALAO 5,30 10,60&quot;     
-## [51] &quot;1 BERBERECHO 5,95&quot;              &quot;1 CAÑAILLA 2,90&quot;               
-## [53] &quot;PESCADO&quot;                        &quot;SEPIA LONJA&quot;                   
-## [55] &quot;0,714 kg 13,95 €/kg 9,96&quot;       &quot;BACALADILLA&quot;                   
-## [57] &quot;1,098 kg 3,95 €/kg 4,34&quot;        &quot;QUISQUILLA MEDIANA&quot;            
-## [59] &quot;0,278 kg 27,90 €/kg 7,76&quot;       &quot;1 ALCACHOFA&quot;                   
-## [61] &quot;0,814 kg 2,25 €/kg 1,83&quot;        &quot;1 HABAS&quot;                       
-## [63] &quot;2,102 kg 3,95 €/kg 8,30&quot;        &quot;1 MANDARINA&quot;                   
-## [65] &quot;0,828 kg 1,99 €/kg 1,65&quot;        &quot;1 TOMATE NEGRO&quot;                
-## [67] &quot;0,440 kg 2,69 €/kg 1,18&quot;</code></pre>
 </div>
-<div id="identificamos-el-patron-de-los-diferentes-productos-ya-que-pueden-ser-de-tipo-unitario-o-por-peso." class="section level1" number="8">
-<h1><span class="header-section-number">8</span> Identificamos el patron
-de los diferentes productos, ya que pueden ser de tipo unitario, o por
-peso.</h1>
+<div id="patrones-para-diferenciar-a-los-productos-y-sus-respectivos-precios" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Patrones para
+diferenciar a los productos y sus respectivos precios</h1>
 <pre class="r"><code># Sabemos que disponemos de 3 tipos de productos
-tipo_producto &lt;- c(&#39;Unitario&#39;, &#39;Pescado&#39;, &#39;Fruta y verdura&#39;)
+TipoProducto &lt;- c(&#39;Unitario&#39;, &#39;Pescado&#39;, &#39;Fruta y verdura&#39;)
 
-# Los productos al peso, como pescado, frutas y verduras están al final. Sabiendo que pescado está en primer lugar, podemos hacer un primer filtro. 
+# ^([0-9]+) --- Permite que el primer elemento sea un numero 
+# Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea --- (.+?)
+# Luego de otro espacio, \\s , lee el valor unitario --- ([0-9]+,[0-9]{2})
+# Luego de otro espacio, \\s , lee el importe total, indicando el final de la linea --- ([0-9]+,[0-9]{2})$
 
-# Extraer los valores de cada linea con el formato de cantidad, descripcion, preciounitario, importe. 
-# - ^([0-9]+) - El primer elemento, que es un número.
-# - Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea (.+?)
-# - Luego de otro espacio, \\s , lee el valor unitario ([0-9]+,[0-9]{2})
-# - Luego de otro espacio, \\s , lee el importe total ([0-9]+,[0-9]{2})$, indicando que es el final de la linea. 
-
-# Formato normal (cantidad &gt; 1)
+# Formato normal, para productos unitarios con mas de una unidad
 patron_normal &lt;- &quot;^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$&quot;
 
-# Caso 2: Cuando cantidad es 1 (sin precio unitario)
+# Caso 2: Cuando cantidad es 1. Es decir, sin precio unitario
 patron_cantidad_1 &lt;- &quot;^1\\s(.+?)\\s+([0-9]+,[0-9]{2})$&quot;
 
 # Caso 3: Productos por peso, tanto pescado como fruteria.
-patron_pescado &lt;- &quot;^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$&quot;
+
+# ^[A-ZÁÉÍÓÚÑ]+ --- La primera parte del texto sea una palabra en mayúscula
+# (?:\\s+[A-ZÁÉÍÓÚÑ]+)* --- Después de la primera palabra, pueden haber más; puede o no ocurrir
+# \\s*(?:[0-9/]+)? --- Puede o no leer los numeros con las barras; ?? hace que sea opcional
+# (?:\\s+[A-ZÁÉÍÓÚÑ]+)*$ --- Pueden haber más palabras en mayúsculas
+
+patron_pescado &lt;- &quot;(?i)^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*\\s*(?:[0-9/]+)?(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$&quot;
+
 patron_peso &lt;- &quot;^([0-9]+)\\s(.+)$&quot;
+
 patron_precio_peso &lt;- &quot;^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$&quot;</code></pre>
 </div>
-<div id="aplicamos-los-diferentes-filtros-para-determinar-el-tipo-de-producto." class="section level1" number="9">
-<h1><span class="header-section-number">9</span> Aplicamos los
-diferentes filtros para determinar el tipo de producto.</h1>
-<pre class="r"><code># FORMATO
+<div id="funcion-que-registra-datos-de-los-productos-si-tiene-pescado." class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Funcion que registra
+datos de los productos si tiene pescado.</h1>
+<p>NOTA: Esta funcion solo sirve si se ha comprado pescado. Por eso se
+creo la funcion anterior para detectar si había pescado o no en la
+compra</p>
+<pre class="r"><code># InformacionCompra = lista recuperada de ExtraerInformacion
+# Parking = valor bool recuperado de DetectaParking
+# ListaProductosUnitarios = lista recuperada de la funcion DetectaPescado
+# ListaProductosPeso = lista recuperada de la funcion DetectaPescado, siempre que se haya comprado pescado
+# ProductosRegistrados = dataframe Compra, que contendrá todos los productos leidos
 
-# Unitarios
-# Pescado
-# Futeria
-# Parking
-
-# Como sabemos que parking solo estará en las ultimas dos lineas, lo descartamos primero. 
-# Con esto sabemos si tiene parking. 
-
-parking &lt;- FALSE
-
-if (any(grepl(paste0(&quot;\\b&quot;, &#39;PARKING&#39;, &quot;\\b&quot;), productos, ignore.case = TRUE))) {
-  parking &lt;- TRUE
-  indice_parking &lt;- grep(paste0(&quot;\\b&quot;, &#39;PARKING&#39;, &quot;\\b&quot;), productos, ignore.case = TRUE)[1]
-  productos &lt;- productos[1:(indice_parking-1)]
-}
-
-productos</code></pre>
-<pre><code>##  [1] &quot;2 JUDÍA PLANA 350 GR 1,50 3,00&quot; &quot;3 ESP VERDE FINO 1,99 5,97&quot;    
-##  [3] &quot;1 FRESÓN 1,3 KG 3,10&quot;           &quot;1 MIX DE SETAS INTENSO 4,62&quot;   
-##  [5] &quot;1 PAN 51% INTEGRAL 5UN 1,30&quot;    &quot;1 PAN ESPELTA INTEGRAL 1,40&quot;   
-##  [7] &quot;1 PAT. CLASSICAS 1,75&quot;          &quot;1 MINI EMP PISTO P6 1,70&quot;      
-##  [9] &quot;1 GALL DIGESTIVE 1,75&quot;          &quot;1 MINI SALADAS 24 UN 2,50&quot;     
-## [11] &quot;1 NARANJA 5 KG. 5,95&quot;           &quot;1 REBUENAS 1,20&quot;               
-## [13] &quot;1 CEBOLLA TIERNA 1,29&quot;          &quot;1 RABANITOS 1,10&quot;              
-## [15] &quot;1 ICEBERG 0,99&quot;                 &quot;1 ACEITUNA PARTIDA 3,90&quot;       
-## [17] &quot;1 DEO AXE DARK TEMPT. 3,15&quot;     &quot;1 TARTA QUESO 1,80&quot;            
-## [19] &quot;1 QUESO AÑEJO FUERTE 19,25&quot;     &quot;1 CORTEZA DE CERDO 1,00&quot;       
-## [21] &quot;1 CONOS 0,75&quot;                   &quot;1 CHAMPÚ H&amp;S MENTOL 4,25&quot;      
-## [23] &quot;1 PIMENTON DULCE D.O 1,75&quot;      &quot;1 AZAFRAN HEBRA 1,70&quot;          
-## [25] &quot;1 CRUNCHY PICANTE 1,00&quot;         &quot;1 CARAMELO REGALIZ 1,95&quot;       
-## [27] &quot;1 LONGANIZA PASCUA 2,43&quot;        &quot;1 COSTILLA CHURRASCO 5,38&quot;     
-## [29] &quot;1 COSTILLA CHURRASCO 4,44&quot;      &quot;1 BACALAO AHUMADO 3,20&quot;        
-## [31] &quot;1 FIGATELL 3,77&quot;                &quot;1 COSTILLA CARNOSA 5,11&quot;       
-## [33] &quot;1 QUESO LONCHAS OVEJA 2,72&quot;     &quot;1 EMBUTIDO LONCHEADO 4,90&quot;     
-## [35] &quot;1 HAMBURGUESA DE LOMO 3,70&quot;     &quot;1 1/2 CONEJO TROCEADO 5,71&quot;    
-## [37] &quot;1 1/2 POLLO PART CERT 6,91&quot;     &quot;1 ALAS PARTIDAS CERT 4,00&quot;     
-## [39] &quot;1 QUESO LONCHAS OVEJA 2,68&quot;     &quot;1 VINO BAHIA DE DENIA 4,90&quot;    
-## [41] &quot;1 MARINA ALTA 4,95&quot;             &quot;2 TINTO BOBAL 2,90 5,80&quot;       
-## [43] &quot;1 SALCHICHON CEBO LONC 1,89&quot;    &quot;1 MAXI HAMBURGUESA 0,90&quot;       
-## [45] &quot;1 JAMÓN COCIDO 92% 2,41&quot;        &quot;1 JAMON CEBO IBERICO 7,73&quot;     
-## [47] &quot;1 JAMON CEBO IBERICO 8,55&quot;      &quot;1 JAMON CEBO IBERICO 8,03&quot;     
-## [49] &quot;1 GARROFON 1,50&quot;                &quot;2 FLTE BACALAO 5,30 10,60&quot;     
-## [51] &quot;1 BERBERECHO 5,95&quot;              &quot;1 CAÑAILLA 2,90&quot;               
-## [53] &quot;PESCADO&quot;                        &quot;SEPIA LONJA&quot;                   
-## [55] &quot;0,714 kg 13,95 €/kg 9,96&quot;       &quot;BACALADILLA&quot;                   
-## [57] &quot;1,098 kg 3,95 €/kg 4,34&quot;        &quot;QUISQUILLA MEDIANA&quot;            
-## [59] &quot;0,278 kg 27,90 €/kg 7,76&quot;       &quot;1 ALCACHOFA&quot;                   
-## [61] &quot;0,814 kg 2,25 €/kg 1,83&quot;        &quot;1 HABAS&quot;                       
-## [63] &quot;2,102 kg 3,95 €/kg 8,30&quot;        &quot;1 MANDARINA&quot;                   
-## [65] &quot;0,828 kg 1,99 €/kg 1,65&quot;        &quot;1 TOMATE NEGRO&quot;                
-## [67] &quot;0,440 kg 2,69 €/kg 1,18&quot;</code></pre>
-<pre class="r"><code># Solo si se ha comprado pescado, servira este filtro, para diferenciar entre unitarios y por peso.
-
-Peso &lt;- FALSE
-
-if (any(grepl(&#39;\\bPESCADO\\b&#39;, productos, ignore.case = TRUE))) {
-  Peso &lt;- TRUE
-  indice_pescado &lt;- grep(&quot;\\bPESCADO\\b&quot;, productos, ignore.case = TRUE)[1]
-  productos_peso &lt;- productos[(indice_pescado+1):length(productos)]
-  productos &lt;- productos[0:(indice_pescado-1)]
-} 
-
-productos</code></pre>
-<pre><code>##  [1] &quot;2 JUDÍA PLANA 350 GR 1,50 3,00&quot; &quot;3 ESP VERDE FINO 1,99 5,97&quot;    
-##  [3] &quot;1 FRESÓN 1,3 KG 3,10&quot;           &quot;1 MIX DE SETAS INTENSO 4,62&quot;   
-##  [5] &quot;1 PAN 51% INTEGRAL 5UN 1,30&quot;    &quot;1 PAN ESPELTA INTEGRAL 1,40&quot;   
-##  [7] &quot;1 PAT. CLASSICAS 1,75&quot;          &quot;1 MINI EMP PISTO P6 1,70&quot;      
-##  [9] &quot;1 GALL DIGESTIVE 1,75&quot;          &quot;1 MINI SALADAS 24 UN 2,50&quot;     
-## [11] &quot;1 NARANJA 5 KG. 5,95&quot;           &quot;1 REBUENAS 1,20&quot;               
-## [13] &quot;1 CEBOLLA TIERNA 1,29&quot;          &quot;1 RABANITOS 1,10&quot;              
-## [15] &quot;1 ICEBERG 0,99&quot;                 &quot;1 ACEITUNA PARTIDA 3,90&quot;       
-## [17] &quot;1 DEO AXE DARK TEMPT. 3,15&quot;     &quot;1 TARTA QUESO 1,80&quot;            
-## [19] &quot;1 QUESO AÑEJO FUERTE 19,25&quot;     &quot;1 CORTEZA DE CERDO 1,00&quot;       
-## [21] &quot;1 CONOS 0,75&quot;                   &quot;1 CHAMPÚ H&amp;S MENTOL 4,25&quot;      
-## [23] &quot;1 PIMENTON DULCE D.O 1,75&quot;      &quot;1 AZAFRAN HEBRA 1,70&quot;          
-## [25] &quot;1 CRUNCHY PICANTE 1,00&quot;         &quot;1 CARAMELO REGALIZ 1,95&quot;       
-## [27] &quot;1 LONGANIZA PASCUA 2,43&quot;        &quot;1 COSTILLA CHURRASCO 5,38&quot;     
-## [29] &quot;1 COSTILLA CHURRASCO 4,44&quot;      &quot;1 BACALAO AHUMADO 3,20&quot;        
-## [31] &quot;1 FIGATELL 3,77&quot;                &quot;1 COSTILLA CARNOSA 5,11&quot;       
-## [33] &quot;1 QUESO LONCHAS OVEJA 2,72&quot;     &quot;1 EMBUTIDO LONCHEADO 4,90&quot;     
-## [35] &quot;1 HAMBURGUESA DE LOMO 3,70&quot;     &quot;1 1/2 CONEJO TROCEADO 5,71&quot;    
-## [37] &quot;1 1/2 POLLO PART CERT 6,91&quot;     &quot;1 ALAS PARTIDAS CERT 4,00&quot;     
-## [39] &quot;1 QUESO LONCHAS OVEJA 2,68&quot;     &quot;1 VINO BAHIA DE DENIA 4,90&quot;    
-## [41] &quot;1 MARINA ALTA 4,95&quot;             &quot;2 TINTO BOBAL 2,90 5,80&quot;       
-## [43] &quot;1 SALCHICHON CEBO LONC 1,89&quot;    &quot;1 MAXI HAMBURGUESA 0,90&quot;       
-## [45] &quot;1 JAMÓN COCIDO 92% 2,41&quot;        &quot;1 JAMON CEBO IBERICO 7,73&quot;     
-## [47] &quot;1 JAMON CEBO IBERICO 8,55&quot;      &quot;1 JAMON CEBO IBERICO 8,03&quot;     
-## [49] &quot;1 GARROFON 1,50&quot;                &quot;2 FLTE BACALAO 5,30 10,60&quot;     
-## [51] &quot;1 BERBERECHO 5,95&quot;              &quot;1 CAÑAILLA 2,90&quot;</code></pre>
-<pre class="r"><code>productos_peso</code></pre>
-<pre><code>##  [1] &quot;SEPIA LONJA&quot;              &quot;0,714 kg 13,95 €/kg 9,96&quot;
-##  [3] &quot;BACALADILLA&quot;              &quot;1,098 kg 3,95 €/kg 4,34&quot; 
-##  [5] &quot;QUISQUILLA MEDIANA&quot;       &quot;0,278 kg 27,90 €/kg 7,76&quot;
-##  [7] &quot;1 ALCACHOFA&quot;              &quot;0,814 kg 2,25 €/kg 1,83&quot; 
-##  [9] &quot;1 HABAS&quot;                  &quot;2,102 kg 3,95 €/kg 8,30&quot; 
-## [11] &quot;1 MANDARINA&quot;              &quot;0,828 kg 1,99 €/kg 1,65&quot; 
-## [13] &quot;1 TOMATE NEGRO&quot;           &quot;0,440 kg 2,69 €/kg 1,18&quot;</code></pre>
-</div>
-<div id="tratamos-productos-por-peso" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> Tratamos productos por
-peso</h1>
-<pre class="r"><code># En caso de haber productos por peso, identificamos:
-
-if (Peso) {
+RegistraProductosConFiltro &lt;- function (InformacionCompra, Parking, ListaProductosUnitarios, ListaProductosPeso, ProductosRegistrados){
   
-  ListaCompra &lt;- list()
-  indice &lt;- 1 # indice de la lista para añadir los productos  
+  fecha &lt;- InformacionCompra[[1]][[5]]
+  idtienda &lt;- InformacionCompra[[1]][[7]]
+  idfactura &lt;- InformacionCompra[[1]][[9]]
+  
+  # Tratamiento para los productos unitarios
+  
   i &lt;- 1
   
-  while (i &lt;= length(productos_peso)){
-    p &lt;- productos_peso[i]
+  while (i &lt;= length(ListaProductosUnitarios)){
     
-    if (grepl(patron_pescado, p)) {
-      elemento1 &lt;- p
+    p &lt;- ListaProductosUnitarios[i]
+    
+    if (grepl(x=p, pattern=patron_cantidad_1)){
       
-      if (i + 1 &lt;= length(productos_peso)){
-        i &lt;- i + 1 
-        info &lt;- productos_peso[i]
-        elemento2 &lt;- str_match(info, patron_precio_peso)[2:4]
-        
-        # Una vez tenemos info del producto, lo añadimos a la lista 
-        
-        ListaCompra[[indice]] &lt;- list( Fecha = fecha,
-                                       IdTienda = id_tienda,
-                                       IdFactura = id_factura,
-                                        Producto = elemento1,
-                                        Cantidad = elemento2[1],
-                                        PrecioUnitario = elemento2[2],
-                                        Importe = elemento2[3],
-                                        TipoProducto = tipo_producto[2],
-                                        Parking = parking )
-        indice &lt;- indice + 1
-      }
+      detalleproducto &lt;- str_match(string=p, pattern=patron_cantidad_1)[2:3]
+      
+      nombreproducto &lt;- detalleproducto[1]
+      precio &lt;- detalleproducto[2]
+      importe &lt;- detalleproducto[2]
+      tproducto &lt;- TipoProducto[1]
+      
+      valores &lt;- data.frame(
+                    Fecha = fecha, 
+                    IdTienda = idtienda, 
+                    IdFactura = idfactura, 
+                    Producto = nombreproducto, 
+                    Cantidad = &#39;1&#39;, 
+                    PrecioUnitario = precio, 
+                    Importe = importe, 
+                    TipoProducto = tproducto, 
+                    Parking = Parking,
+                    stringsAsFactors = FALSE)
+      
+      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
+      
+    } else {
+      # Si no sigue el patron de una unidad, seguirá el patrón de más de una unidad
+      
+      detalleproducto &lt;- str_match(string=p, pattern=patron_normal)[2:5]
+      
+      cantidad &lt;- detalleproducto[1]
+      nombreproducto &lt;- detalleproducto[2]
+      precio &lt;- detalleproducto[3]
+      importe &lt;- detalleproducto[4]
+      tproducto &lt;- TipoProducto[1]
+      
+      valores &lt;- data.frame(
+                    Fecha = fecha, 
+                    IdTienda = idtienda, 
+                    IdFactura = idfactura, 
+                    Producto = nombreproducto, 
+                    Cantidad = cantidad, 
+                    PrecioUnitario = precio, 
+                    Importe = importe, 
+                    TipoProducto = tproducto,
+                    Parking = Parking,
+                    stringsAsFactors = FALSE)
+      
+      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
+      
     }
-    
-    else if (grepl(patron_peso, p)) {
-        
-        elemento1 &lt;- str_match(p, patron_peso)[,3]
-        
-        if (i + 1 &lt;= length(productos_peso)){
-          i &lt;- i + 1 
-          info &lt;- productos_peso[i]
-          elemento2 &lt;- str_match(info, patron_precio_peso)[2:4]
-          ListaCompra[[indice]] &lt;- list(  Fecha = fecha,
-                                          IdTienda = id_tienda,
-                                          IdFactura = id_factura,
-                                          Producto = elemento1,
-                                          Cantidad = elemento2[1],
-                                          PrecioUnitario = elemento2[2],
-                                          Importe = elemento2[3],
-                                          TipoProducto = tipo_producto[3],
-                                          Parking = parking)
-          indice &lt;- indice + 1
-          }
-    }
-    
-    i &lt;- i + 1 
-    
+    i &lt;- i + 1
   }
   
-}
-
-Compra &lt;- bind_rows(Compra, bind_rows(ListaCompra))
-
-Compra</code></pre>
-<pre><code>##        Fecha IdTienda IdFactura           Producto Cantidad PrecioUnitario
-## 1 23/03/2024     4530    052628        SEPIA LONJA    0,714          13,95
-## 2 23/03/2024     4530    052628        BACALADILLA    1,098           3,95
-## 3 23/03/2024     4530    052628 QUISQUILLA MEDIANA    0,278          27,90
-## 4 23/03/2024     4530    052628          ALCACHOFA    0,814           2,25
-## 5 23/03/2024     4530    052628              HABAS    2,102           3,95
-## 6 23/03/2024     4530    052628          MANDARINA    0,828           1,99
-## 7 23/03/2024     4530    052628       TOMATE NEGRO    0,440           2,69
-##   Importe    TipoProducto Parking
-## 1    9,96         Pescado   FALSE
-## 2    4,34         Pescado   FALSE
-## 3    7,76         Pescado   FALSE
-## 4    1,83 Fruta y verdura   FALSE
-## 5    8,30 Fruta y verdura   FALSE
-## 6    1,65 Fruta y verdura   FALSE
-## 7    1,18 Fruta y verdura   FALSE</code></pre>
-</div>
-<div id="tratamos-productos-por-unidad" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> Tratamos productos por
-unidad</h1>
-<p>’```{r,}</p>
-<p>i &lt;- 1</p>
-<p>while (i &lt;= length(productos)){ p &lt;- productos[i]</p>
-<p>if ((grepl(patron_normal, p)) | (grepl(patron_cantidad_1, p))) {</p>
-<pre><code>if (str_detect(p, patron_normal)) {
-  elementos &lt;- str_match(p, patron_normal)[,2:5]
-  resultado &lt;- data.frame( cantidad = as.numeric(elementos[1]),
-                            descripcion = elementos[2],
-                            precio_unit = as.numeric(str_replace(elementos[3], &quot;,&quot;, &quot;.&quot;)),
-                            importe = as.numeric(str_replace(elementos[4], &quot;,&quot;, &quot;.&quot;)),
-                            stringsAsFactors = FALSE )
+  # Tratamiento para los datos por peso
   
-}
-else if (str_detect(p, patron_cantidad_1)) {
-  elementos &lt;- str_match(p, patron_cantidad_1)[,2:3]
-  precio_total &lt;- as.numeric(str_replace(elementos[2], &quot;,&quot;, &quot;.&quot;))
-  resultado &lt;- data.frame( cantidad = 1,
-                            descripcion = elementos[1],
-                            precio_unit = precio_total,
-                            importe = precio_total,
-                            stringsAsFactors = FALSE)
-}
-
-# Agregar al data frame compra
-compra &lt;- rbind(compra, resultado)</code></pre>
-<p>}</p>
-<p>else if (str_detect(p, patron_peso)){</p>
-<pre><code>elemento1 &lt;- str_match(p, patron_peso)[,3]
-
-# Verificar que existe siguiente línea
-if (i + 1 &lt;= length(productos)) {
-  i &lt;- i + 1 # Salto para leer la siguiente linea
-  peso &lt;- productos[i]
-  elemento2 &lt;- str_match(peso, patron_precio_peso)[2:4]
-  resultado &lt;- data.frame( cantidad = elemento2[1],
-                            descripcion = elemento1,
-                            precio_unit = as.numeric(str_replace(elemento2[2], &quot;,&quot;, &quot;.&quot;)),
-                            importe = as.numeric(str_replace(elemento2[3], &quot;,&quot;, &quot;.&quot;)),
-                            stringsAsFactors = FALSE )
-
-  # Agregar al data frame compra
-  compra &lt;- rbind(compra, resultado)
+  i &lt;- 1
+  
+  while (i &lt;= length(ListaProductosPeso)){
+    
+    p &lt;- ListaProductosPeso[i]
+    
+    if (grepl(x=p, pattern=patron_pescado)){
+      
+      nombreproducto &lt;- p
+      
+      i &lt;- i + 1
+      
+      detalleproducto &lt;- ListaProductosPeso[i]
+      detalleproducto &lt;- str_match(string=detalleproducto, pattern=patron_precio_peso)[2:4]
+  
+      cantidad &lt;- detalleproducto[1]
+      precio &lt;- detalleproducto[2]
+      importe &lt;- detalleproducto[3]
+      tproducto &lt;- TipoProducto[2]
+      
+      valores &lt;- data.frame(
+                    Fecha = fecha, 
+                    IdTienda = idtienda, 
+                    IdFactura = idfactura, 
+                    Producto = nombreproducto, 
+                    Cantidad = cantidad, 
+                    PrecioUnitario = precio, 
+                    Importe = importe, 
+                    TipoProducto = tproducto,
+                    Parking = Parking,
+                    stringsAsFactors = FALSE)
+      
+      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
+      
+    } else {
+      
+      # Si no sigue el patron de pescado, seguirá el patron de frutas y verduras; por peso. 
+      
+      nombreproductopeso &lt;- str_match(string=p, pattern=patron_peso)[2:3]
+      
+      cantidad &lt;- nombreproductopeso[1]
+      nombreproducto &lt;- nombreproductopeso[2]
+      
+      i &lt;- i + 1
+      
+      detalleproducto &lt;- ListaProductosPeso[i]
+      detalleproducto &lt;- str_match(string=detalleproducto, pattern=patron_precio_peso)[2:4]
+  
+      cantidad &lt;- detalleproducto[1]
+      precio &lt;- detalleproducto[2]
+      importe &lt;- detalleproducto[3]
+      tproducto &lt;- TipoProducto[3]
+      
+      valores &lt;- data.frame(
+                    Fecha = fecha, 
+                    IdTienda = idtienda, 
+                    IdFactura = idfactura, 
+                    Producto = nombreproducto, 
+                    Cantidad = cantidad, 
+                    PrecioUnitario = precio, 
+                    Importe = importe, 
+                    TipoProducto = tproducto, 
+                    Parking = Parking,
+                    stringsAsFactors = FALSE)
+      
+      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
+    }
+    i &lt;- i + 1
+  }
+  
+  # Solo devolverá el dataframe que contiene los productos registrados
+  
+  return(ProductosRegistrados)
 }</code></pre>
-<p>} i &lt;- i + 1 }</p>
-<div id="nota-hace-falta-revisar-los-productos-con-pescado-y-las-facturas-que-tienen-parking." class="section level3" number="11.0.1">
-<h3><span class="header-section-number">11.0.1</span> NOTA: HAce falta
-revisar los productos con pescado, y las facturas que tienen
-parking.</h3>
 </div>
-<div id="también-revisar-por-qué-se-están-duplicando-los-valores-en-estos-bucles" class="section level3" number="11.0.2">
-<h3><span class="header-section-number">11.0.2</span> También, revisar
-por qué se están duplicando los valores en estos bucles;</h3>
+<div id="funcion-que-registra-datos-de-los-productos-cuando-no-se-ha-comprado-pescado" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Funcion que registra
+datos de los productos cuando no se ha comprado pescado</h1>
+<pre class="r"><code>RegistraProductosSinFiltro &lt;- function (InformacionCompra, Parking, ListaProductos, ProductosRegistrados){
+  
+  fecha &lt;- InformacionCompra[[1]][[5]]
+  idtienda &lt;- InformacionCompra[[1]][[7]]
+  idfactura &lt;- InformacionCompra[[1]][[9]]
+  
+  # Tratamiento para los productos unitarios
+
+  i &lt;- 1
+    
+  while (i &lt;= length(ListaProductos)) {
+    
+    p &lt;- ListaProductos[i]
+    
+    if (grepl(x=p, pattern=patron_normal) | grepl(x=p, pattern=patron_cantidad_1)){
+      
+      tproducto &lt;- TipoProducto[1]
+      
+      if (grepl(x=p, pattern=patron_normal)) {
+        
+        # Productos que tienen mas de una cantidad 
+        
+        detalleproducto &lt;- str_match(string=p, pattern=patron_normal)[2:5]
+        
+        cantidad &lt;- detalleproducto[1]
+        nombreproducto &lt;- detalleproducto[2]
+        precio &lt;- detalleproducto[3]
+        importe &lt;- detalleproducto[4]
+        
+        valores &lt;- data.frame(
+                      Fecha = fecha, 
+                      IdTienda = idtienda, 
+                      IdFactura = idfactura, 
+                      Producto = nombreproducto, 
+                      Cantidad = cantidad, 
+                      PrecioUnitario = precio, 
+                      Importe = importe, 
+                      TipoProducto = tproducto,
+                      Parking = Parking,
+                    stringsAsFactors = FALSE)
+        
+        ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
+        
+      } else if (grepl(x=p, pattern=patron_cantidad_1)){
+        
+        # Productos que tienen una (1) cantidad 
+          
+        cantidad &lt;- &#39;1&#39;
+        
+        detalleproducto &lt;- str_match(string=p, pattern=patron_cantidad_1)[2:3]
+        
+        nombreproducto &lt;- detalleproducto[1]
+        precio &lt;- detalleproducto[2]
+        
+        valores &lt;- data.frame(
+                      Fecha = fecha, 
+                      IdTienda = idtienda, 
+                      IdFactura = idfactura, 
+                      Producto = nombreproducto, 
+                      Cantidad = cantidad, 
+                      PrecioUnitario = precio, 
+                      Importe = precio, 
+                      TipoProducto = tproducto,
+                      Parking = Parking,
+                    stringsAsFactors = FALSE)
+        
+        ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
+      }
+      
+    } else {
+      
+      # Si no tienen el patron normal o de una cantidad, entonces es un producto por peso 
+      
+      # Tratamiento producto por peso, para frutas y verduras
+      
+      tproducto &lt;- TipoProducto[3]
+      
+      nombreproductopeso &lt;- str_match(string=p, pattern=patron_peso)[2:3]
+      
+      cantidad &lt;- nombreproductopeso[1]
+      nombreproducto &lt;- nombreproductopeso[2]
+      
+      i &lt;- i + 1
+      
+      detalleproducto &lt;- ListaProductos[i]
+      detalleproducto &lt;- str_match(string=detalleproducto, pattern=patron_precio_peso)[2:4]
+  
+      cantidad &lt;- detalleproducto[1]
+      precio &lt;- detalleproducto[2]
+      importe &lt;- detalleproducto[3]
+      
+      valores &lt;- data.frame(
+                    Fecha = fecha, 
+                    IdTienda = idtienda, 
+                    IdFactura = idfactura, 
+                    Producto = nombreproducto, 
+                    Cantidad = cantidad, 
+                    PrecioUnitario = precio, 
+                    Importe = importe, 
+                    TipoProducto = tproducto, 
+                    Parking = Parking,
+                    stringsAsFactors = FALSE)
+      
+      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
+    }
+    i &lt;- i + 1
+  }
+  
+  # Solo devolverá el dataframe que contiene los productos registrados
+  return(ProductosRegistrados)
+  
+}</code></pre>
 </div>
-<div id="mejorar-para-dejar-con-una-función-a-la-que-se-le-pase-una-línea" class="section level3" number="11.0.3">
-<h3><span class="header-section-number">11.0.3</span> mejorar para dejar
-con una función, a la que se le pase una línea</h3>
+<div id="general" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> General</h1>
+<p>Funcion que almacena:</p>
+<ol style="list-style-type: decimal">
+<li><p>El nombre de los ficheros que no fueron leidos.</p></li>
+<li><p>El nombre de los ficheros que fueron leidos; los que corresponden
+a Mercadona.</p></li>
+<li><p>Información de todas las tiendas que fueron leidas.</p></li>
+<li><p>Información sobre productos y compras realizadas</p></li>
+</ol>
+<pre class="r"><code># Funcion para almacenar los ficheros leidos y los que no. 
+
+# Le paso el dataframe de los ficheros leidos y no leidos para que los modifique, 
+# si se añade un nuevo fichero. 
+
+RegistroFicheros &lt;- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, DF_Tiendas, DF_Compras) {
+  
+  Verifica &lt;- EsMercadona(Nombrepdf)
+  
+  # Bool para saber si es de mercadona o no
+  V &lt;- Verifica[[1]]
+  
+  if (V) {
+    
+    # Solo si es de Mercadona 
+    
+    # Todas las lineas leidas
+    Lineas &lt;- Verifica[[2]]
+    
+    Informacion &lt;- ExtraeInformacion(Lineas)
+    
+    # Todo el bloque que contiene los productos, incluido el Parking
+    Productos &lt;- Informacion[[2]]
+    
+    # FILTRO 1
+    filtro1 &lt;- DetectaParking(Productos)
+    
+    # Valor bool para saber si tiene parking o no
+    ValorParking &lt;- filtro1[[1]]
+    
+    # Todo el bloque que contiene los productos sin el parking
+    Productos &lt;- filtro1[[2]]
+    
+    # FILTRO 2
+    filtro2 &lt;- DetectaPescado(Productos)
+    
+    # Valor bool para saber si tiene pescado o no
+    Pescado &lt;- filtro2[[1]]
+    
+    direccion &lt;- Informacion[[1]][[1]]
+    codpos &lt;- Informacion[[1]][[2]]
+    municipio &lt;- Informacion[[1]][[3]]
+    tel &lt;- Informacion[[1]][[4]]
+    id_tienda &lt;- Informacion[[1]][[7]]
+    id_factura &lt;- Informacion[[1]][[9]]
+    
+    # Añadimos los ficheros que fueron leidos correctamente y además, añadimos la factura a la que 
+    # corresponde para verificar posteriormente
+    
+    if (!id_factura %in% DF_FicherosLeidos$FacturaFichero){
+      
+      valores &lt;- data.frame( FacturaFichero = id_factura,
+                             NombreFichero = Nombrepdf,
+                             stringsAsFactors = FALSE )
+      
+      DF_FicherosLeidos &lt;- rbind(DF_FicherosLeidos, valores)
+      
+    }
+    
+    if (!id_tienda %in% DF_Tiendas$IdTienda){
+      
+      valores &lt;- data.frame( IdTienda = id_tienda,
+                              Direccion = direccion,
+                              CodigoPostal = codpos,
+                              Municipio = municipio,
+                              Telefono = tel,
+                             stringsAsFactors = FALSE )
+      
+      DF_Tiendas &lt;- rbind(DF_Tiendas, valores)
+    }
+    
+    # INFORMACION SOBRE LOS PRODUCTOS COMPRADOS
+    
+    if (Pescado) {
+      
+      ProductosUnitarios &lt;- filtro2[[2]]
+      ProductosPeso &lt;- filtro2[[3]]
+      
+      DF_Compras &lt;- RegistraProductosConFiltro( InformacionCompra = Informacion,
+                                 Parking = ValorParking,
+                                 ListaProductosUnitarios = ProductosUnitarios,
+                                 ListaProductosPeso = ProductosPeso,
+                                 ProductosRegistrados = DF_Compras
+                                 )
+    } else {
+      
+      Productos &lt;- filtro2[[2]]
+      
+      DF_Compras &lt;- RegistraProductosSinFiltro ( InformacionCompra = Informacion,
+                                             Parking = ValorParking,
+                                             ListaProductos = Productos,
+                                             ProductosRegistrados = DF_Compras)
+    }
+
+  } else {
+    
+    # Si no es de Mercadona
+    # INFORMACION GENERAL DE LOS FICHEROS
+    
+    if (!(Nombrepdf %in% DF_FicherosNoLeidos$NombreFichero)) {
+      
+      valor &lt;- data.frame(NombreFichero = Nombrepdf,
+                           stringsAsFactors = FALSE )
+    
+      DF_FicherosNoLeidos &lt;- rbind(DF_FicherosNoLeidos, valor)
+    }
+  }
+
+  valores &lt;- list(FicherosNoLeidos = DF_FicherosNoLeidos,
+                  FicherosLeidos = DF_FicherosLeidos,
+                  Tiendas = DF_Tiendas,
+                  Compras = DF_Compras)
+  
+  # Devuelve todos los dataframes con la respectiva información
+  
+  return(valores)
+}</code></pre>
 </div>
-<div id="y-por-cada-linea-que-lea-la-añada-al-dataframe." class="section level3" number="11.0.4">
-<h3><span class="header-section-number">11.0.4</span> y por cada linea
-que lea, la añada al dataframe.</h3>
-<p>```’’’</p>
+<div id="verificacion-de-las-funciones-anteriores-para-todos-los-ficheros" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Verificacion de las
+funciones anteriores para todos los ficheros</h1>
+<div id="carga-de-todos-los-ficheros" class="section level2" number="11.1">
+<h2><span class="header-section-number">11.1</span> Carga de todos los
+ficheros</h2>
+<pre class="r"><code>#lista_ficheros &lt;- list.files(path = &#39;data/&#39;, pattern = &quot;\\.pdf$&quot;)
+lista_nombres_ficheros &lt;- list.files(path = &#39;data/&#39;)
+length(lista_nombres_ficheros)</code></pre>
+<pre><code>## [1] 355</code></pre>
+</div>
+<div id="bucle-para-cargar-la-informacion-de-cada-fichero" class="section level2" number="11.2">
+<h2><span class="header-section-number">11.2</span> Bucle para cargar la
+informacion de cada fichero</h2>
+<pre class="r"><code>for (f in lista_nombres_ficheros) {
+  
+  Resultado &lt;- RegistroFicheros (Nombrepdf = f,
+                                 DF_FicherosNoLeidos = NoLeido, 
+                                 DF_FicherosLeidos = FicheroLeido, 
+                                 DF_Tiendas = Tienda, 
+                                 DF_Compras = Compra)
+  
+  NoLeido &lt;- Resultado$FicherosNoLeidos
+  FicheroLeido &lt;- Resultado$FicherosLeidos
+  Tienda &lt;- Resultado$Tiendas
+  Compra &lt;- Resultado$Compras
+  
+}</code></pre>
+</div>
+</div>
+<div id="comprobacion-de-los-ficheros-no-leidos" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> Comprobacion de los
+ficheros no leidos</h1>
+<div id="comparamos-los-ficheros-que-fueron-leidos" class="section level2" number="12.1">
+<h2><span class="header-section-number">12.1</span> Comparamos los
+ficheros que fueron leidos</h2>
+<p>Una vez que recuperamos la informacion sobre las facturas leidas y no
+leias, verificamos</p>
+<pre class="r"><code>lista_f_almacenados &lt;- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
+diferencia &lt;- setdiff(lista_nombres_ficheros, lista_f_almacenados)
+#diferencia</code></pre>
+<p>De estos nombres, identificamos que se trata de ficheros repetidos.
+Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni
+almacenar.</p>
+</div>
+<div id="verificamos-los-valores-na-ya-que-no-deberian-haber" class="section level2" number="12.2">
+<h2><span class="header-section-number">12.2</span> Verificamos los
+valores NA, ya que no deberian haber</h2>
+<pre class="r"><code>df_con_na &lt;- Compra[apply(Compra, 1, function(x) any(is.na(x))), ]
+df_con_na</code></pre>
+<pre><code>## [1] Fecha          IdTienda       IdFactura      Producto       Cantidad      
+## [6] PrecioUnitario Importe        TipoProducto   Parking       
+## &lt;0 rows&gt; (o 0- extensión row.names)</code></pre>
 </div>
 </div>
 
