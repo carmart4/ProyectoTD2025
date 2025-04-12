@@ -425,16 +425,25 @@ ficheros</a></li>
 <li><a href="#bucle-para-cargar-la-informacion-de-cada-fichero" id="toc-bucle-para-cargar-la-informacion-de-cada-fichero"><span class="toc-section-number">11.2</span> Bucle para cargar la informacion
 de cada fichero</a></li>
 </ul></li>
+<li><a href="#comprobacion-de-los-ficheros-no-leidos" id="toc-comprobacion-de-los-ficheros-no-leidos"><span class="toc-section-number">12</span> Comprobacion de los ficheros no
+leidos</a>
+<ul>
+<li><a href="#comparamos-los-ficheros-que-fueron-leidos" id="toc-comparamos-los-ficheros-que-fueron-leidos"><span class="toc-section-number">12.1</span> Comparamos los ficheros que
+fueron leidos</a></li>
+<li><a href="#verificamos-los-valores-na-ya-que-no-deberian-haber" id="toc-verificamos-los-valores-na-ya-que-no-deberian-haber"><span class="toc-section-number">12.2</span> Verificamos los valores NA, ya
+que no deberian haber</a></li>
+</ul></li>
 </ul>
 </div>
 
 <div id="importacion-de-librerias" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Importacion de
 librerias</h1>
-<p>Limpiamos el entorno</p>
-<pre class="r"><code>rm(list = ls())</code></pre>
-<p>Creamos un vector con los paquetes que vamos a utilizar</p>
-<pre class="r"><code>paquetes &lt;- c(&quot;pdftools&quot;, &quot;dplyr&quot;, &quot;stringr&quot;, &quot;dplyr&quot;, &quot;ggplot2&quot;, &quot;tidyverse&quot;)</code></pre>
+<pre class="r"><code># Limpiamos el entorno
+rm(list = ls())
+
+# Creamos un vector con los paquetes que vamos a utilizar 
+paquetes &lt;- c(&quot;pdftools&quot;, &quot;dplyr&quot;, &quot;stringr&quot;, &quot;dplyr&quot;, &quot;ggplot2&quot;, &quot;tidyverse&quot;)</code></pre>
 <p>Implementamos una funcion que nos permite cargar las librerias que no
 están disponibles hasta el momento</p>
 <div id="funcion-para-instalar-y-cargar-librerias-nuevas" class="section level2" number="1.1">
@@ -448,8 +457,8 @@ y cargar librerias nuevas</h2>
 
   invisible(lapply(paquetes, library, character.only = TRUE))
 }</code></pre>
-<p>Cargamos</p>
-<pre class="r"><code>instalar_y_cargar(paquetes)</code></pre>
+<pre class="r"><code># Cargamos las librerias
+instalar_y_cargar(paquetes)</code></pre>
 <pre><code>## Warning: package &#39;pdftools&#39; was built under R version 4.4.3</code></pre>
 <pre><code>## Using poppler version 23.08.0</code></pre>
 <pre><code>## 
@@ -647,15 +656,25 @@ DetectaPescado &lt;- function(ListaProductos){
   
   if (any(grepl(x=ListaProductos, pattern=&#39;^PESCADO$&#39;))) {
     
-  Pescado &lt;- TRUE
-  indice_pescado &lt;- grep(x=ListaProductos, pattern=&#39;^PESCADO$&#39;)
+    Pescado &lt;- TRUE
+
+    # Guardo la posicion del primer PESCADO
+    PrimerPescado &lt;- grep(x=ListaProductos, pattern=&#39;^PESCADO$&#39;)[1]
+    
+    final &lt;- PrimerPescado-1
+    
+    Productos &lt;- ListaProductos[0:final]
+    
+    # Eliminamos los otros PESCADO. Es decir, tomamos los opuestos
+    inicio &lt;- PrimerPescado+1
+    
+    ListaProductosPeso &lt;- ListaProductos[inicio:length(ListaProductos)]
+    
+    indices &lt;- !grepl(x=ListaProductosPeso, pattern=&#39;^PESCADO$&#39;)
+    
+    ProductosPeso &lt;- ListaProductosPeso[indices] 
   
-  iniciopescado &lt;- indice_pescado+1
-  antespescado &lt;- indice_pescado-1
-  
-  ProductosPeso &lt;- ListaProductos[iniciopescado:length(ListaProductos)]
-  Productos &lt;- ListaProductos[0:antespescado]
-  }
+    }
   
   # Pescado = Valor bool para saber si tiene pescado
   # Productos = Todos los productos unitarios, o por peso, si no tiene PESCADO
@@ -677,11 +696,10 @@ diferenciar a los productos y sus respectivos precios</h1>
 <pre class="r"><code># Sabemos que disponemos de 3 tipos de productos
 TipoProducto &lt;- c(&#39;Unitario&#39;, &#39;Pescado&#39;, &#39;Fruta y verdura&#39;)
 
-# Extraer los valores de cada linea con el formato de cantidad, descripcion, preciounitario, importe. 
-# - ^([0-9]+) - El primer elemento, que es un número.
-# - Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea (.+?)
-# - Luego de otro espacio, \\s , lee el valor unitario ([0-9]+,[0-9]{2})
-# - Luego de otro espacio, \\s , lee el importe total ([0-9]+,[0-9]{2})$, indicando que es el final de la linea. 
+# ^([0-9]+) --- Permite que el primer elemento sea un numero 
+# Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea --- (.+?)
+# Luego de otro espacio, \\s , lee el valor unitario --- ([0-9]+,[0-9]{2})
+# Luego de otro espacio, \\s , lee el importe total, indicando el final de la linea --- ([0-9]+,[0-9]{2})$
 
 # Formato normal, para productos unitarios con mas de una unidad
 patron_normal &lt;- &quot;^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$&quot;
@@ -690,8 +708,16 @@ patron_normal &lt;- &quot;^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]
 patron_cantidad_1 &lt;- &quot;^1\\s(.+?)\\s+([0-9]+,[0-9]{2})$&quot;
 
 # Caso 3: Productos por peso, tanto pescado como fruteria.
-patron_pescado &lt;- &quot;^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$&quot;
+
+# ^[A-ZÁÉÍÓÚÑ]+ --- La primera parte del texto sea una palabra en mayúscula
+# (?:\\s+[A-ZÁÉÍÓÚÑ]+)* --- Después de la primera palabra, pueden haber más; puede o no ocurrir
+# \\s*(?:[0-9/]+)? --- Puede o no leer los numeros con las barras; ?? hace que sea opcional
+# (?:\\s+[A-ZÁÉÍÓÚÑ]+)*$ --- Pueden haber más palabras en mayúsculas
+
+patron_pescado &lt;- &quot;(?i)^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*\\s*(?:[0-9/]+)?(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$&quot;
+
 patron_peso &lt;- &quot;^([0-9]+)\\s(.+)$&quot;
+
 patron_precio_peso &lt;- &quot;^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$&quot;</code></pre>
 </div>
 <div id="funcion-que-registra-datos-de-los-productos-si-tiene-pescado." class="section level1" number="8">
@@ -1121,145 +1147,14 @@ informacion de cada fichero</h2>
   Compra &lt;- Resultado$Compras
   
 }</code></pre>
-<pre><code>## Warning in iniciopescado:length(ListaProductos): numerical expression has 2
-## elements: only the first used</code></pre>
-<pre><code>## Warning in 0:antespescado: numerical expression has 2 elements: only the first
-## used</code></pre>
-<pre><code>## Warning in iniciopescado:length(ListaProductos): numerical expression has 2
-## elements: only the first used</code></pre>
-<pre><code>## Warning in 0:antespescado: numerical expression has 2 elements: only the first
-## used</code></pre>
-<pre><code>## Warning in iniciopescado:length(ListaProductos): numerical expression has 2
-## elements: only the first used</code></pre>
-<pre><code>## Warning in 0:antespescado: numerical expression has 2 elements: only the first
-## used</code></pre>
-<pre class="r"><code># Facturas
-x &lt;- lista_nombres_ficheros[2]
-#x &lt;- &#39;ticket_dia_03_02_2025_14_10.pdf&#39; # Factura de otro supermercado
-#x &lt;- &#39;20240323 Mercadona 234,20.pdf&#39; # Factura con pescado
-#x&lt;- &#39;20250224 Mercadona 75,48 Ôé¼.pdf&#39; # Con Parking
-#x &lt;- &#39;20231205 Mercadona 58,00.pdf&#39; # Sin Pescado</code></pre>
-<pre class="r"><code>Verifica &lt;- EsMercadona(x)
-
-# Bool para saber si es de mercadona o no
-V &lt;- Verifica[[1]]
-V</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code># Todas las lineas leidas
-Lineas &lt;- Verifica[[2]]
-Lineas</code></pre>
-<pre><code>##  [1] &quot;MERCADONA, S.A. A-46103834&quot;                           
-##  [2] &quot;CTRA. GARRUCHA A VERA S/N&quot;                            
-##  [3] &quot;04630 GARRUCHA&quot;                                       
-##  [4] &quot;TELÉFONO: 950133380&quot;                                  
-##  [5] &quot;25/11/2023 09:09 OP: 78800&quot;                           
-##  [6] &quot;FACTURA SIMPLIFICADA: 2916-010-520925&quot;                
-##  [7] &quot;&quot;                                                     
-##  [8] &quot;&quot;                                                     
-##  [9] &quot;&quot;                                                     
-## [10] &quot;&quot;                                                     
-## [11] &quot;Descripción                P. Unit        Importe&quot;    
-## [12] &quot;5   DONACIÓN                      1,00           5,00&quot;
-## [13] &quot;1   BARREÑO                                      2,20&quot;
-## [14] &quot;3   PALO ANTIDESLIZANTE           1,90           5,70&quot;
-## [15] &quot;1   MULTIUSOS                                    2,55&quot;
-## [16] &quot;2   AGUA MINERAL                  0,73           1,46&quot;
-## [17] &quot;2   B.BASURA EXT.C.FÁCIL          1,60           3,20&quot;
-## [18] &quot;1   ESCURRE FÁCIL                                2,85&quot;
-## [19] &quot;1   CUBO FREGAR C/RUEDAS                         3,85&quot;
-## [20] &quot;1   FRIEGASUELOS PINO                            0,95&quot;
-## [21] &quot;2   FIBRAS CRUZADAS               2,10           4,20&quot;
-## [22] &quot;1   LOTE BAYETAS SUAVES                          1,20&quot;
-## [23] &quot;1   FREGONA HILO MIR.                            2,80&quot;
-## [24] &quot;1   LOTE 3 BAYETAS MICRO                         1,80&quot;
-## [25] &quot;1   PARKING                                      0,00&quot;
-## [26] &quot;ENTRADA 08:28 SALIDA 09:08&quot;                           
-## [27] &quot;TOTAL (€)       37,76&quot;                                
-## [28] &quot;TARJETA BANCARIA         37,76&quot;                       
-## [29] &quot;&quot;                                                     
-## [30] &quot;IVA        BASE IMPONIBLE (€)    CUOTA (€)&quot;           
-## [31] &quot;10%                1,33            0,13&quot;              
-## [32] &quot;21%               25,87            5,43&quot;              
-## [33] &quot;TOTAL              27,20            5,56&quot;             
-## [34] &quot;&quot;                                                     
-## [35] &quot;DONACIÓN A BANCO DE&quot;                                  
-## [36] &quot;ALIMENTOS NO REEMBOLSABLE                        5,00&quot;
-## [37] &quot;&quot;                                                     
-## [38] &quot;TARJ. BANCARIA: **** **** **** 4422&quot;                  
-## [39] &quot;N.C: 072700743                           AUT: 612848&quot; 
-## [40] &quot;AID: A0000000031010                       ARC: 3030&quot;  
-## [41] &quot;&quot;                                                     
-## [42] &quot;&quot;                                                     
-## [43] &quot;VISA CREDITO/DEB&quot;                                     
-## [44] &quot;Importe: 37,76 €                      VISA DEBITO&quot;    
-## [45] &quot;&quot;                                                     
-## [46] &quot;&quot;                                                     
-## [47] &quot;&quot;                                                     
-## [48] &quot;&quot;                                                     
-## [49] &quot;SE ADMITEN DEVOLUCIONES CON TICKET&quot;                   
-## [50] &quot;&quot;                                                     
-## [51] &quot;DISPONE DE 20 MINUTOS&quot;                                
-## [52] &quot;PARA RETIRAR SU VEHÍCULO&quot;</code></pre>
-<pre class="r"><code>info_compra &lt;- grep(x=Lineas, pattern=&#39;MERCADONA&#39;)[[1]]
-info_compra_final &lt;- grep(x=Lineas, pattern=&#39;FACTURA&#39;)[[1]]
-
-Informacion &lt;- ExtraeInformacion(Lineas)
-Informacion</code></pre>
-<pre><code>## [[1]]
-## [[1]][[1]]
-## [1] &quot;CTRA. GARRUCHA A VERA S/N&quot;
-## 
-## [[1]][[2]]
-## [1] &quot;04630&quot;
-## 
-## [[1]][[3]]
-## [1] &quot;GARRUCHA&quot;
-## 
-## [[1]][[4]]
-## [1] &quot;950133380&quot;
-## 
-## [[1]][[5]]
-## [1] &quot;25/11/2023&quot;
-## 
-## [[1]][[6]]
-## [1] &quot;09:09&quot;
-## 
-## [[1]][[7]]
-## [1] &quot;2916&quot;
-## 
-## [[1]][[8]]
-## [1] &quot;010&quot;
-## 
-## [[1]][[9]]
-## [1] &quot;520925&quot;
-## 
-## 
-## [[2]]
-##  [1] &quot;5 DONACIÓN 1,00 5,00&quot;             &quot;1 BARREÑO 2,20&quot;                  
-##  [3] &quot;3 PALO ANTIDESLIZANTE 1,90 5,70&quot;  &quot;1 MULTIUSOS 2,55&quot;                
-##  [5] &quot;2 AGUA MINERAL 0,73 1,46&quot;         &quot;2 B.BASURA EXT.C.FÁCIL 1,60 3,20&quot;
-##  [7] &quot;1 ESCURRE FÁCIL 2,85&quot;             &quot;1 CUBO FREGAR C/RUEDAS 3,85&quot;     
-##  [9] &quot;1 FRIEGASUELOS PINO 0,95&quot;         &quot;2 FIBRAS CRUZADAS 2,10 4,20&quot;     
-## [11] &quot;1 LOTE BAYETAS SUAVES 1,20&quot;       &quot;1 FREGONA HILO MIR. 2,80&quot;        
-## [13] &quot;1 LOTE 3 BAYETAS MICRO 1,80&quot;      &quot;1 PARKING 0,00&quot;                  
-## [15] &quot;ENTRADA 08:28 SALIDA 09:08&quot;</code></pre>
-<pre class="r"><code># Todo el bloque que contiene los productos, incluido el Parking
-Productos &lt;- Informacion[[2]]
-
-# FILTRO 1
-filtro1 &lt;- DetectaParking(Productos)
-
-# Valor bool para saber si tiene parking o no
-ValorParking &lt;- filtro1[[1]]
-
-# Todo el bloque que contiene los productos sin el parking
-Productos &lt;- filtro1[[2]]
-
-# FILTRO 2
-filtro2 &lt;- DetectaPescado(Productos)
-
-# Valor bool para saber si tiene pescado o no
-Pescado &lt;- filtro2[[1]]</code></pre>
+</div>
+</div>
+<div id="comprobacion-de-los-ficheros-no-leidos" class="section level1" number="12">
+<h1><span class="header-section-number">12</span> Comprobacion de los
+ficheros no leidos</h1>
+<div id="comparamos-los-ficheros-que-fueron-leidos" class="section level2" number="12.1">
+<h2><span class="header-section-number">12.1</span> Comparamos los
+ficheros que fueron leidos</h2>
 <p>Una vez que recuperamos la informacion sobre las facturas leidas y no
 leias, verificamos</p>
 <pre class="r"><code>lista_f_almacenados &lt;- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
@@ -1267,10 +1162,16 @@ diferencia &lt;- setdiff(lista_nombres_ficheros, lista_f_almacenados)
 #diferencia</code></pre>
 <p>De estos nombres, identificamos que se trata de ficheros repetidos.
 Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni
-almacenar. El caso del ‘ticket3.pdf’ es un caso especial, ya que al ser
-escaneado, lo detecta como MERCADONA, pero no lee lo valores
-correctamente. Por eso no es considerado dentro de los df’s
-correspodientes.</p>
+almacenar.</p>
+</div>
+<div id="verificamos-los-valores-na-ya-que-no-deberian-haber" class="section level2" number="12.2">
+<h2><span class="header-section-number">12.2</span> Verificamos los
+valores NA, ya que no deberian haber</h2>
+<pre class="r"><code>df_con_na &lt;- Compra[apply(Compra, 1, function(x) any(is.na(x))), ]
+df_con_na</code></pre>
+<pre><code>## [1] Fecha          IdTienda       IdFactura      Producto       Cantidad      
+## [6] PrecioUnitario Importe        TipoProducto   Parking       
+## &lt;0 rows&gt; (o 0- extensión row.names)</code></pre>
 </div>
 </div>
 

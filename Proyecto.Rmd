@@ -62,20 +62,20 @@ language:
 
 # Importacion de librerias 
 
-Limpiamos el entorno
+
 ```{r}
+# Limpiamos el entorno
 rm(list = ls())
 
-```
-
-Creamos un vector con los paquetes que vamos a utilizar 
-```{r}
+# Creamos un vector con los paquetes que vamos a utilizar 
 paquetes <- c("pdftools", "dplyr", "stringr", "dplyr", "ggplot2", "tidyverse")
+
 ```
 
 Implementamos una funcion que nos permite cargar las librerias que no están disponibles hasta el momento
 
 ## Funcion para instalar y cargar librerias nuevas
+
 ```{r}
 instalar_y_cargar <- function(paquetes) {
   
@@ -85,15 +85,12 @@ instalar_y_cargar <- function(paquetes) {
 
   invisible(lapply(paquetes, library, character.only = TRUE))
 }
-
 ```
-
-Cargamos
 
 ```{r}
+# Cargamos las librerias
 instalar_y_cargar(paquetes)
 ```
-
 
 # Como vamos a almacenar la informacion? Que informacion queremos almacenar? 
 
@@ -273,15 +270,25 @@ DetectaPescado <- function(ListaProductos){
   
   if (any(grepl(x=ListaProductos, pattern='^PESCADO$'))) {
     
-  Pescado <- TRUE
-  indice_pescado <- grep(x=ListaProductos, pattern='^PESCADO$')
+    Pescado <- TRUE
+
+    # Guardo la posicion del primer PESCADO
+    PrimerPescado <- grep(x=ListaProductos, pattern='^PESCADO$')[1]
+    
+    final <- PrimerPescado-1
+    
+    Productos <- ListaProductos[0:final]
+    
+    # Eliminamos los otros PESCADO. Es decir, tomamos los opuestos
+    inicio <- PrimerPescado+1
+    
+    ListaProductosPeso <- ListaProductos[inicio:length(ListaProductos)]
+    
+    indices <- !grepl(x=ListaProductosPeso, pattern='^PESCADO$')
+    
+    ProductosPeso <- ListaProductosPeso[indices] 
   
-  iniciopescado <- indice_pescado+1
-  antespescado <- indice_pescado-1
-  
-  ProductosPeso <- ListaProductos[iniciopescado:length(ListaProductos)]
-  Productos <- ListaProductos[0:antespescado]
-  }
+    }
   
   # Pescado = Valor bool para saber si tiene pescado
   # Productos = Todos los productos unitarios, o por peso, si no tiene PESCADO
@@ -304,11 +311,10 @@ DetectaPescado <- function(ListaProductos){
 # Sabemos que disponemos de 3 tipos de productos
 TipoProducto <- c('Unitario', 'Pescado', 'Fruta y verdura')
 
-# Extraer los valores de cada linea con el formato de cantidad, descripcion, preciounitario, importe. 
-# - ^([0-9]+) - El primer elemento, que es un número.
-# - Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea (.+?)
-# - Luego de otro espacio, \\s , lee el valor unitario ([0-9]+,[0-9]{2})
-# - Luego de otro espacio, \\s , lee el importe total ([0-9]+,[0-9]{2})$, indicando que es el final de la linea. 
+# ^([0-9]+) --- Permite que el primer elemento sea un numero 
+# Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea --- (.+?)
+# Luego de otro espacio, \\s , lee el valor unitario --- ([0-9]+,[0-9]{2})
+# Luego de otro espacio, \\s , lee el importe total, indicando el final de la linea --- ([0-9]+,[0-9]{2})$
 
 # Formato normal, para productos unitarios con mas de una unidad
 patron_normal <- "^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$"
@@ -317,11 +323,16 @@ patron_normal <- "^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$"
 patron_cantidad_1 <- "^1\\s(.+?)\\s+([0-9]+,[0-9]{2})$"
 
 # Caso 3: Productos por peso, tanto pescado como fruteria.
-patron_pescado <- "^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$"
 
-# patron_pescado <- "(?i)^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*\\s*(?:[0-9/]+)?(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$"
+# ^[A-ZÁÉÍÓÚÑ]+ --- La primera parte del texto sea una palabra en mayúscula
+# (?:\\s+[A-ZÁÉÍÓÚÑ]+)* --- Después de la primera palabra, pueden haber más; puede o no ocurrir
+# \\s*(?:[0-9/]+)? --- Puede o no leer los numeros con las barras; ?? hace que sea opcional
+# (?:\\s+[A-ZÁÉÍÓÚÑ]+)*$ --- Pueden haber más palabras en mayúsculas
+
+patron_pescado <- "(?i)^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*\\s*(?:[0-9/]+)?(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$"
 
 patron_peso <- "^([0-9]+)\\s(.+)$"
+
 patron_precio_peso <- "^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$"
 
 ```
@@ -761,66 +772,9 @@ for (f in lista_nombres_ficheros) {
 }
 ```
 
-### Prueba para factura individual
+# Comprobacion de los ficheros no leidos 
 
-```{r}
-# Facturas
-
-#x <- 'ticket_dia_03_02_2025_14_10.pdf' # Factura de otro supermercado
-#x <- '20240323 Mercadona 234,20.pdf' # Factura con pescado
-#x<- '20250224 Mercadona 75,48 Ôé¼.pdf' # Con Parking
-#x <- '20231205 Mercadona 58,00.pdf' # Sin Pescado
-
-# CASOS A VERIFICAR O: 
-
-#  20240202 Mercadona 132,73.pdf
-# 20240112 Mercadona 135,59
-# 20240210 Mercadona 164,29.pdf
-
-
-```
-
-
-```{r}
-Verifica <- EsMercadona(x)
-
-# Bool para saber si es de mercadona o no
-V <- Verifica[[1]]
-V
-
-# Todas las lineas leidas
-Lineas <- Verifica[[2]]
-Lineas
-
-
-info_compra <- grep(x=Lineas, pattern='MERCADONA')[[1]]
-info_compra_final <- grep(x=Lineas, pattern='FACTURA')[[1]]
-
-Informacion <- ExtraeInformacion(Lineas)
-Informacion
-
-# Todo el bloque que contiene los productos, incluido el Parking
-Productos <- Informacion[[2]]
-
-# FILTRO 1
-filtro1 <- DetectaParking(Productos)
-
-# Valor bool para saber si tiene parking o no
-ValorParking <- filtro1[[1]]
-
-# Todo el bloque que contiene los productos sin el parking
-Productos <- filtro1[[2]]
-
-# FILTRO 2
-filtro2 <- DetectaPescado(Productos)
-
-# Valor bool para saber si tiene pescado o no
-Pescado <- filtro2[[1]]
-
-
-
-
-```
+## Comparamos los ficheros que fueron leidos  
 
 Una vez que recuperamos la informacion sobre las facturas leidas y no leias, verificamos
 
@@ -830,10 +784,14 @@ diferencia <- setdiff(lista_nombres_ficheros, lista_f_almacenados)
 #diferencia
 
 ```
-De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni almacenar. El caso del 'ticket3.pdf' es un caso especial, ya que al ser escaneado, lo detecta como MERCADONA, pero no lee lo valores correctamente. Por eso no es considerado dentro de los df's correspodientes.
+
+De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni almacenar. 
+
+## Verificamos los valores NA, ya que no deberian haber
 
 ```{r}
 df_con_na <- Compra[apply(Compra, 1, function(x) any(is.na(x))), ]
+df_con_na
 
 ```
 
