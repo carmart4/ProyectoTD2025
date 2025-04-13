@@ -60,8 +60,48 @@ language:
     solution: 'Solución. '
 ---
 
+Contexto:
+Actualmente, las grandes empresas gestionan volúmenes significativos de productos, lo que conlleva elevados costes asociados al transporte y almacenamiento. Por este motivo, resulta fundamental optimizar cada etapa del proceso logístico. Con base en nuestro conocimiento en Big Data, nuestro equipo se enfocará en analizar y comprender las tendencias de los consumidores, con el objetivo de reducir costes operativos.
+
+Grupo:
+Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y preferencias reales de los consumidores a partir del análisis de tickets de compra. Al extraer patrones y correlaciones dentro de estos datos, buscamos generar conocimiento útil para anticipar comportamientos, mejorar la planificación comercial y ajustar la oferta a la demanda real. Esta aproximación nos permitirá aportar valor estratégico desde el análisis de datos, con el foco puesto en reducir ineficiencias, mejorar la toma de decisiones y apoyar la sostenibilidad operativa del negocio desde una perspectiva basada en la evidencia.
 
 
+1)¿Qué frutas tienen mayor venta en primavera?
+
+2)¿Qué eventos locales o festivos generan picos de venta significativos? (Ej. Navidad)
+
+3)¿Existen diferencias significativas en las preferencias de compra según zonas (urbana vs rural)?
+
+4)¿Qué categorías tienen mayor tendencia a generar compras adicionales (por ejemplo, comprar galletas con café)?
+
+5)¿Qué productos muestran mayor consistencia de compra independientemente de cambios en su precio?
+
+6)¿Cuántos productos compra en promedio una persona por ticket?
+
+7)¿Cuál es el gasto promedio por compra y Cómo varía según el día/hora?
+
+8)¿Qué categorías de productos (fruta, verdura… )suelen comprarse juntas con mayor frecuencia?
+
+9)¿Hay diferencias de consumo en días laborales vs. fines de semana?
+
+10)¿Cuál es el mejor horario para comprar? (Menos concurrencia)
+
+11)¿Cuál es el mejor día para comprar? (Menos concurrencia)
+
+12)¿Qué mes es mejor para comprar x fruta? (El mes con mayor compra de frutas y verduras)
+
+13)¿Cuál ha sido el producto, unitario, más comprado y cuál ha sido el cambio de su precio a lo largo del tiempo?
+
+14)¿Cuáles son los productos con mayor facturación total? (Top 5 de los más facturados)
+
+15)¿Cómo varían las ventas a lo largo del mes? ¿Hay más compras a fin de mes?
+
+16)¿Cuál es la tasa de personas que al comprar, tienen parking? (Compras con parking/Total de compras)
+
+17)¿Qué productos aparecen con mayor frecuencia en los tickets de alto valor (€)?
+
+18)¿Qué combinaciones de productos se repiten con más frecuencia en una misma compra?
 
 ```{r include=FALSE}
 # Importacion de librerias 
