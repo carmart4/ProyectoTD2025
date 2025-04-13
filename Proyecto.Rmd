@@ -871,8 +871,7 @@ df_con_na
 
 ```
 
-# Introduccion 
-
 ```{r}
+head(Compra, 15)
 
 ```
