@@ -12,11 +12,7 @@ author: |
   </center>
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    echo: true
-    number_sections: true
-    theme: lumen
-    toc: true
+  pdf_document: default
   bookdown::pdf_document2:
     toc: true
     toc_depth: 3
@@ -30,7 +26,11 @@ output:
     echo: true
     number_sections: true
     toc: true
-  pdf_document: default
+  html_document:
+    echo: true
+    number_sections: true
+    theme: lumen
+    toc: true
   bookdown::html_document2:
     echo: true
     number_sections: true
@@ -60,12 +60,17 @@ language:
     solution: 'Solución. '
 ---
 
-Contexto:
+# Introducción
+
+## Contexto:
+
 Actualmente, las grandes empresas gestionan volúmenes significativos de productos, lo que conlleva elevados costes asociados al transporte y almacenamiento. Por este motivo, resulta fundamental optimizar cada etapa del proceso logístico. Con base en nuestro conocimiento en Big Data, nuestro equipo se enfocará en analizar y comprender las tendencias de los consumidores, con el objetivo de reducir costes operativos.
 
-Grupo:
+## Grupo:
+
 Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y preferencias reales de los consumidores a partir del análisis de tickets de compra. Al extraer patrones y correlaciones dentro de estos datos, buscamos generar conocimiento útil para anticipar comportamientos, mejorar la planificación comercial y ajustar la oferta a la demanda real. Esta aproximación nos permitirá aportar valor estratégico desde el análisis de datos, con el foco puesto en reducir ineficiencias, mejorar la toma de decisiones y apoyar la sostenibilidad operativa del negocio desde una perspectiva basada en la evidencia.
 
+## Preguntas planteadas
 
 1)¿Qué frutas tienen mayor venta en primavera?
 
@@ -112,6 +117,7 @@ rm(list = ls())
 ```
 
 
+
 ```{r include=FALSE}
 # Implementamos una funcion que nos permite cargar las librerias que no están disponibles hasta el momento
 instalar_y_cargar <- function(paquetes) {
@@ -123,6 +129,8 @@ instalar_y_cargar <- function(paquetes) {
   invisible(lapply(paquetes, library, character.only = TRUE))
 }
 ```
+
+
 
 ```{r include=FALSE}
 # Creamos un vector con los paquetes que vamos a utilizar 
@@ -825,6 +833,7 @@ length(lista_nombres_ficheros)
 ```
 
 
+
 ```{r include=FALSE}
 
 ## Bucle para cargar la informacion de cada fichero
@@ -871,8 +880,10 @@ df_con_na
 
 ```
 
-#Importación de los datos.
+# Importación de los datos.
+
 ```{r TablaProductos, echo = FALSE, results ='asis'}
+
 kable(head(Compra, 15), caption = "Productos Leídos")
 
 ```

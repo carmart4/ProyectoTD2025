@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2025-04-12" />
+<meta name="date" content="2025-04-13" />
 
 <title>Análisis de Tickets de Supermercado: Mini Proyecto 2025</title>
 
@@ -382,797 +382,279 @@ Ferrer Font, Neus<br> Navarro García, Marta<br> Rodríguez Simón,
 Alba<br> Aissa Djellouli, Mohammed<br> Balbastre Aparisi, Héctor<br>
 Ruiz Ripoll, Joan<br> Martinez Torres, Carlos Santiago
 </center></h4>
-<h4 class="date">2025-04-12</h4>
+<h4 class="date">2025-04-13</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#importacion-de-librerias" id="toc-importacion-de-librerias"><span class="toc-section-number">1</span> Importacion de librerias</a>
+<li><a href="#introducción" id="toc-introducción"><span class="toc-section-number">1</span> Introducción</a>
 <ul>
-<li><a href="#funcion-para-instalar-y-cargar-librerias-nuevas" id="toc-funcion-para-instalar-y-cargar-librerias-nuevas"><span class="toc-section-number">1.1</span> Funcion para instalar y cargar
-librerias nuevas</a></li>
+<li><a href="#contexto" id="toc-contexto"><span class="toc-section-number">1.1</span> Contexto:</a></li>
+<li><a href="#grupo" id="toc-grupo"><span class="toc-section-number">1.2</span> Grupo:</a></li>
+<li><a href="#preguntas-planteadas" id="toc-preguntas-planteadas"><span class="toc-section-number">1.3</span> Preguntas planteadas</a></li>
 </ul></li>
-<li><a href="#como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar" id="toc-como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar"><span class="toc-section-number">2</span> Como vamos a almacenar la
-informacion? Que informacion queremos almacenar?</a></li>
-<li><a href="#funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no" id="toc-funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no"><span class="toc-section-number">3</span> Funcion EsMercadona, que comprueba
-si la factura es de Mercadona o no</a></li>
-<li><a href="#funcion-que-lee-la-informacion-de-la-tienda-y-de-los-productos-por-factura" id="toc-funcion-que-lee-la-informacion-de-la-tienda-y-de-los-productos-por-factura"><span class="toc-section-number">4</span> Funcion que lee la informacion de la
-tienda y de los productos por factura</a></li>
-<li><a href="#filtro-1" id="toc-filtro-1"><span class="toc-section-number">5</span> Filtro 1</a>
-<ul>
-<li><a href="#funcion-que-detecta-si-hay-parking-o-no" id="toc-funcion-que-detecta-si-hay-parking-o-no"><span class="toc-section-number">5.1</span> Funcion que detecta si hay parking
-o no</a></li>
-</ul></li>
-<li><a href="#filtro-2" id="toc-filtro-2"><span class="toc-section-number">6</span> Filtro 2</a>
-<ul>
-<li><a href="#funcion-que-detecta-si-hubo-compra-de-pescado-o-no.-ayuda-en-la-lectura-e-identificacion-de-los-productos" id="toc-funcion-que-detecta-si-hubo-compra-de-pescado-o-no.-ayuda-en-la-lectura-e-identificacion-de-los-productos"><span class="toc-section-number">6.1</span> Funcion que detecta si hubo compra
-de pescado o no. Ayuda en la lectura e identificacion de los
-productos</a></li>
-</ul></li>
-<li><a href="#patrones-para-diferenciar-a-los-productos-y-sus-respectivos-precios" id="toc-patrones-para-diferenciar-a-los-productos-y-sus-respectivos-precios"><span class="toc-section-number">7</span> Patrones para diferenciar a los
-productos y sus respectivos precios</a></li>
-<li><a href="#funcion-que-registra-datos-de-los-productos-si-tiene-pescado." id="toc-funcion-que-registra-datos-de-los-productos-si-tiene-pescado."><span class="toc-section-number">8</span> Funcion que registra datos de los
-productos si tiene pescado.</a></li>
-<li><a href="#funcion-que-registra-datos-de-los-productos-cuando-no-se-ha-comprado-pescado" id="toc-funcion-que-registra-datos-de-los-productos-cuando-no-se-ha-comprado-pescado"><span class="toc-section-number">9</span> Funcion que registra datos de los
-productos cuando no se ha comprado pescado</a></li>
-<li><a href="#general" id="toc-general"><span class="toc-section-number">10</span> General</a></li>
-<li><a href="#verificacion-de-las-funciones-anteriores-para-todos-los-ficheros" id="toc-verificacion-de-las-funciones-anteriores-para-todos-los-ficheros"><span class="toc-section-number">11</span> Verificacion de las funciones
-anteriores para todos los ficheros</a>
-<ul>
-<li><a href="#carga-de-todos-los-ficheros" id="toc-carga-de-todos-los-ficheros"><span class="toc-section-number">11.1</span> Carga de todos los
-ficheros</a></li>
-<li><a href="#bucle-para-cargar-la-informacion-de-cada-fichero" id="toc-bucle-para-cargar-la-informacion-de-cada-fichero"><span class="toc-section-number">11.2</span> Bucle para cargar la informacion
-de cada fichero</a></li>
-</ul></li>
-<li><a href="#comprobacion-de-los-ficheros-no-leidos" id="toc-comprobacion-de-los-ficheros-no-leidos"><span class="toc-section-number">12</span> Comprobacion de los ficheros no
-leidos</a>
-<ul>
-<li><a href="#comparamos-los-ficheros-que-fueron-leidos" id="toc-comparamos-los-ficheros-que-fueron-leidos"><span class="toc-section-number">12.1</span> Comparamos los ficheros que
-fueron leidos</a></li>
-<li><a href="#verificamos-los-valores-na-ya-que-no-deberian-haber" id="toc-verificamos-los-valores-na-ya-que-no-deberian-haber"><span class="toc-section-number">12.2</span> Verificamos los valores NA, ya
-que no deberian haber</a></li>
-</ul></li>
+<li><a href="#importación-de-los-datos." id="toc-importación-de-los-datos."><span class="toc-section-number">2</span> Importación de los datos.</a></li>
 </ul>
 </div>
 
-<div id="importacion-de-librerias" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Importacion de
-librerias</h1>
-<pre class="r"><code># Limpiamos el entorno
-rm(list = ls())
-
-# Creamos un vector con los paquetes que vamos a utilizar 
-paquetes &lt;- c(&quot;pdftools&quot;, &quot;dplyr&quot;, &quot;stringr&quot;, &quot;dplyr&quot;, &quot;ggplot2&quot;, &quot;tidyverse&quot;)</code></pre>
-<p>Implementamos una funcion que nos permite cargar las librerias que no
-están disponibles hasta el momento</p>
-<div id="funcion-para-instalar-y-cargar-librerias-nuevas" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Funcion para instalar
-y cargar librerias nuevas</h2>
-<pre class="r"><code>instalar_y_cargar &lt;- function(paquetes) {
-  
-  nuevos &lt;- setdiff(paquetes, rownames(installed.packages()))
-  
-  if (length(nuevos)) { install.packages(nuevos) }
-
-  invisible(lapply(paquetes, library, character.only = TRUE))
-}</code></pre>
-<pre class="r"><code># Cargamos las librerias
-instalar_y_cargar(paquetes)</code></pre>
-<pre><code>## Warning: package &#39;pdftools&#39; was built under R version 4.4.3</code></pre>
-<pre><code>## Using poppler version 23.08.0</code></pre>
-<pre><code>## 
-## Adjuntando el paquete: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ forcats   1.0.0     ✔ readr     2.1.5
-## ✔ lubridate 1.9.3     ✔ tibble    3.2.1
-## ✔ purrr     1.0.2     ✔ tidyr     1.3.1
-## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<div id="introducción" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introducción</h1>
+<div id="contexto" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Contexto:</h2>
+<p>Actualmente, las grandes empresas gestionan volúmenes significativos
+de productos, lo que conlleva elevados costes asociados al transporte y
+almacenamiento. Por este motivo, resulta fundamental optimizar cada
+etapa del proceso logístico. Con base en nuestro conocimiento en Big
+Data, nuestro equipo se enfocará en analizar y comprender las tendencias
+de los consumidores, con el objetivo de reducir costes operativos.</p>
+</div>
+<div id="grupo" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Grupo:</h2>
+<p>Nuestro objetivo al responder estas preguntas es profundizar en los
+hábitos y preferencias reales de los consumidores a partir del análisis
+de tickets de compra. Al extraer patrones y correlaciones dentro de
+estos datos, buscamos generar conocimiento útil para anticipar
+comportamientos, mejorar la planificación comercial y ajustar la oferta
+a la demanda real. Esta aproximación nos permitirá aportar valor
+estratégico desde el análisis de datos, con el foco puesto en reducir
+ineficiencias, mejorar la toma de decisiones y apoyar la sostenibilidad
+operativa del negocio desde una perspectiva basada en la evidencia.</p>
+</div>
+<div id="preguntas-planteadas" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Preguntas
+planteadas</h2>
+<p>1)¿Qué frutas tienen mayor venta en primavera?</p>
+<p>2)¿Qué eventos locales o festivos generan picos de venta
+significativos? (Ej. Navidad)</p>
+<p>3)¿Existen diferencias significativas en las preferencias de compra
+según zonas (urbana vs rural)?</p>
+<p>4)¿Qué categorías tienen mayor tendencia a generar compras
+adicionales (por ejemplo, comprar galletas con café)?</p>
+<p>5)¿Qué productos muestran mayor consistencia de compra
+independientemente de cambios en su precio?</p>
+<p>6)¿Cuántos productos compra en promedio una persona por ticket?</p>
+<p>7)¿Cuál es el gasto promedio por compra y Cómo varía según el
+día/hora?</p>
+<p>8)¿Qué categorías de productos (fruta, verdura… )suelen comprarse
+juntas con mayor frecuencia?</p>
+<p>9)¿Hay diferencias de consumo en días laborales vs. fines de
+semana?</p>
+<p>10)¿Cuál es el mejor horario para comprar? (Menos concurrencia)</p>
+<p>11)¿Cuál es el mejor día para comprar? (Menos concurrencia)</p>
+<p>12)¿Qué mes es mejor para comprar x fruta? (El mes con mayor compra
+de frutas y verduras)</p>
+<p>13)¿Cuál ha sido el producto, unitario, más comprado y cuál ha sido
+el cambio de su precio a lo largo del tiempo?</p>
+<p>14)¿Cuáles son los productos con mayor facturación total? (Top 5 de
+los más facturados)</p>
+<p>15)¿Cómo varían las ventas a lo largo del mes? ¿Hay más compras a fin
+de mes?</p>
+<p>16)¿Cuál es la tasa de personas que al comprar, tienen parking?
+(Compras con parking/Total de compras)</p>
+<p>17)¿Qué productos aparecen con mayor frecuencia en los tickets de
+alto valor (€)?</p>
+<p>18)¿Qué combinaciones de productos se repiten con más frecuencia en
+una misma compra?</p>
 </div>
 </div>
-<div id="como-vamos-a-almacenar-la-informacion-que-informacion-queremos-almacenar" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Como vamos a almacenar
-la informacion? Que informacion queremos almacenar?</h1>
-<pre class="r"><code># Dataframe que contendrá el nombre del fichero leido y la factura a la que pertenece. 
-
-FicheroLeido &lt;- data.frame( FacturaFichero = character(),
-                        NombreFichero = character(),
-                        stringsAsFactors = FALSE)
-
-# En caso de no ser leido, porque no pertenece a Mercadona, guardaremos cual fichero ha sido 
-# y lo almacenaremos en otro df, para identificarlo posteriormente.
-
-NoLeido &lt;- data.frame( NombreFichero = character(),
-                        stringsAsFactors = FALSE)
-
-# Dataframe que contendrá la información de las diferentes tiendas de las facturas.  
-
-Tienda &lt;- data.frame( IdTienda = character(),
-                      Direccion = character(),
-                      CodigoPostal = character(),
-                      Municipio = character(),
-                      Telefono = character(),
-                      stringsAsFactors = FALSE )
-
-# Dataframe que contendra la informacion de las compras realizadas. 
-
-Compra &lt;- data.frame( Fecha = character(),
-                      IdTienda = character(),
-                      IdFactura = character(),
-                      Producto = character(),
-                      Cantidad = character(),
-                      PrecioUnitario = character(),
-                      Importe = character(),
-                      TipoProducto = character(),
-                      Parking = logical(), 
-                      stringsAsFactors = FALSE ) </code></pre>
-</div>
-<div id="funcion-esmercadona-que-comprueba-si-la-factura-es-de-mercadona-o-no" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Funcion EsMercadona,
-que comprueba si la factura es de Mercadona o no</h1>
-<pre class="r"><code>EsMercadona &lt;- function(NombrePDF){
-  
-  # Recibe el nombre el fichero en formato pdf
-  
-  carpeta &lt;- &#39;data/&#39;
-  fichero &lt;- paste0(carpeta, NombrePDF)
-  
-  texto &lt;- pdf_text(fichero) # Extrae el texto del pdf.
-  
-  #texto &lt;- iconv(texto, from = &quot;latin1&quot;, to = &quot;UTF-8&quot;) # Corregimos el error para valores extraños.
-
-  lineas &lt;- strsplit(texto, &quot;\n&quot;)[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
-  lineas &lt;- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
-  
-  # Para verificar que es de Mercadona y que se ha leido correctamente la factura, vamos a evaluar la primera linea.
-  
-  Mercadona &lt;- grepl(&#39;MERCADONA&#39;, lineas[1])  # Valor bool para saber si es de Mercadona. 
-  CIF &lt;- grepl(&#39;A-46103834&#39;, lineas[1]) # Valor bool para saber si reconoce el CIF de Mercadona.
-  
-  if ((!Mercadona) | (!CIF)){
-    Mercadona &lt;- FALSE # Esto es preventivo, para el caso del ticket3.pdf
-    lineas &lt;- list()
-  } 
-  
-  # Mercadona = Valor bool
-  # lineas = lista de las lineas leidas; sera vacia en caso de no ser de Mercadona
-  
-  Informacion &lt;- list(Mercadona, lineas)
-  
-  return(Informacion)
-}</code></pre>
-</div>
-<div id="funcion-que-lee-la-informacion-de-la-tienda-y-de-los-productos-por-factura" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Funcion que lee la
-informacion de la tienda y de los productos por factura</h1>
-<pre class="r"><code># lineas &#39;recuperadas&#39; de la funcion EsMercadona
-ExtraeInformacion &lt;- function(Lineas) {
-  
-    # Obtenemos el rango de filas que contienen el encabezado, fijo
-
-    info_compra &lt;- grep(x=Lineas, pattern=&#39;MERCADONA&#39;)[[1]]
-    info_compra_final &lt;- grep(x=Lineas, pattern=&#39;FACTURA&#39;)[[1]]
-  
-    # Definimos el encabezado y extraemos informacion 
-    
-    encabezado &lt;- Lineas[info_compra:info_compra_final]
-    
-    direccion &lt;- encabezado[2]
-
-    # Ubicacion (CP y municipio)
-    ubicacion &lt;- strsplit(encabezado[3], split = &#39; &#39;)[[1]] 
-    
-    CP &lt;- ubicacion[1]
-    municipio &lt;- ubicacion[2]
-    
-    telefono &lt;- strsplit(encabezado[4], split = &#39;: &#39;)[[1]][2]
-    
-    # Tiempo (fecha y hora)
-    tiempo &lt;- strsplit(encabezado[5], split = &#39; &#39;)[[1]][1:2]
-    
-    fecha &lt;- tiempo[1] # String de la fecha en formato dd/mm/aaaa
-    hora &lt;- tiempo[2] # 00:00
-    
-    # Factura (tienda, caja, idfactura)
-    factura &lt;- strsplit(encabezado[6], split = &quot;: &quot;)[[1]]
-    factura &lt;- strsplit(factura[2], split = &quot;-&quot;)[[1]]
-    
-    id_tienda &lt;- factura[1]
-    n_caja &lt;- factura[2]
-    id_factura &lt;- factura[3]
-    
-    # Esta es la informacion del encabezado. Fija para cada factura 
-    InformacionCompra &lt;- list(direccion, CP, municipio, telefono, fecha, hora, id_tienda, n_caja, id_factura)
-    
-    # Obtenemos el rango de filas que contienen los productos
-    
-    # ^Descripci ayudará a evitar errores con la tilde, por el momento
-    
-    indice_inicio_productos &lt;- grep(x=Lineas, pattern=&#39;^Descripci&#39;)[[1]]
-    indice_final_productos &lt;- grep(x=Lineas, pattern=&#39;TOTAL&#39;)[[1]]
-    
-    inicio &lt;- indice_inicio_productos+1
-    final &lt;- indice_final_productos-1
-    
-    Productos &lt;- Lineas[inicio:final]
-    Productos &lt;- str_replace_all(Productos, &quot;\\s+&quot;, &quot; &quot;) # Eliminamos los espacios multiples
-    
-    
-    # InformacionCompra = lista con la informacion del encabezado
-    # Productos = lista con los productos que contiene la factura
-    valores &lt;- list(InformacionCompra, Productos)
-    
-    return(valores)
-}</code></pre>
-</div>
-<div id="filtro-1" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> Filtro 1</h1>
-<div id="funcion-que-detecta-si-hay-parking-o-no" class="section level2" number="5.1">
-<h2><span class="header-section-number">5.1</span> Funcion que detecta
-si hay parking o no</h2>
-<pre class="r"><code># Como parking está al final del todo, es el filtro que aplicamos primero.
-# ListaProductos = lista &#39;recuperada&#39; de ExtraerInformacion
-DetectaParking &lt;- function(ListaProductos){
-  
-  Parking &lt;- FALSE
-  
-  if (any(grepl(x=ListaProductos, pattern=&#39;PARKING&#39;))) {
-    Parking &lt;- TRUE
-    indice_parking &lt;- grep(x=ListaProductos, pattern=&#39;PARKING&#39;)
-    final &lt;- indice_parking-1
-    ListaProductos &lt;- ListaProductos[1:final]
-  }
-  
-  # Parking = Valor bool para saber si tiene parking o no
-
-  valores &lt;- list(Parking, ListaProductos)
-  return(valores)
-}</code></pre>
-</div>
-</div>
-<div id="filtro-2" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Filtro 2</h1>
-<div id="funcion-que-detecta-si-hubo-compra-de-pescado-o-no.-ayuda-en-la-lectura-e-identificacion-de-los-productos" class="section level2" number="6.1">
-<h2><span class="header-section-number">6.1</span> Funcion que detecta
-si hubo compra de pescado o no. Ayuda en la lectura e identificacion de
-los productos</h2>
-<pre class="r"><code># ListaProductos = Lista &#39;recuperada&#39; del filtro anterior
-DetectaPescado &lt;- function(ListaProductos){
-  
-  Pescado &lt;- FALSE
-  
-  # ^ indica el inicio de la linea 
-  # $ indica el final de la linea
-  # Lo empleamos para que PESCADO sea el unico valor en la linea, y no confundir con otros productos
-  
-  if (any(grepl(x=ListaProductos, pattern=&#39;^PESCADO$&#39;))) {
-    
-    Pescado &lt;- TRUE
-
-    # Guardo la posicion del primer PESCADO
-    PrimerPescado &lt;- grep(x=ListaProductos, pattern=&#39;^PESCADO$&#39;)[1]
-    
-    final &lt;- PrimerPescado-1
-    
-    Productos &lt;- ListaProductos[0:final]
-    
-    # Eliminamos los otros PESCADO. Es decir, tomamos los opuestos
-    inicio &lt;- PrimerPescado+1
-    
-    ListaProductosPeso &lt;- ListaProductos[inicio:length(ListaProductos)]
-    
-    indices &lt;- !grepl(x=ListaProductosPeso, pattern=&#39;^PESCADO$&#39;)
-    
-    ProductosPeso &lt;- ListaProductosPeso[indices] 
-  
-    }
-  
-  # Pescado = Valor bool para saber si tiene pescado
-  # Productos = Todos los productos unitarios, o por peso, si no tiene PESCADO
-  # ProductosPeso = Los productos, pescados y, frutas y verdutas
-  
-  if (Pescado){
-    valores &lt;- list(Pescado, Productos, ProductosPeso)
-  } else {
-    valores &lt;- list(Pescado, ListaProductos)
-  }
-  
-  return(valores)
-}</code></pre>
-</div>
-</div>
-<div id="patrones-para-diferenciar-a-los-productos-y-sus-respectivos-precios" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Patrones para
-diferenciar a los productos y sus respectivos precios</h1>
-<pre class="r"><code># Sabemos que disponemos de 3 tipos de productos
-TipoProducto &lt;- c(&#39;Unitario&#39;, &#39;Pescado&#39;, &#39;Fruta y verdura&#39;)
-
-# ^([0-9]+) --- Permite que el primer elemento sea un numero 
-# Luego de un espacio, \\s , lee cualquier caracter, excepto salto de linea --- (.+?)
-# Luego de otro espacio, \\s , lee el valor unitario --- ([0-9]+,[0-9]{2})
-# Luego de otro espacio, \\s , lee el importe total, indicando el final de la linea --- ([0-9]+,[0-9]{2})$
-
-# Formato normal, para productos unitarios con mas de una unidad
-patron_normal &lt;- &quot;^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$&quot;
-
-# Caso 2: Cuando cantidad es 1. Es decir, sin precio unitario
-patron_cantidad_1 &lt;- &quot;^1\\s(.+?)\\s+([0-9]+,[0-9]{2})$&quot;
-
-# Caso 3: Productos por peso, tanto pescado como fruteria.
-
-# ^[A-ZÁÉÍÓÚÑ]+ --- La primera parte del texto sea una palabra en mayúscula
-# (?:\\s+[A-ZÁÉÍÓÚÑ]+)* --- Después de la primera palabra, pueden haber más; puede o no ocurrir
-# \\s*(?:[0-9/]+)? --- Puede o no leer los numeros con las barras; ?? hace que sea opcional
-# (?:\\s+[A-ZÁÉÍÓÚÑ]+)*$ --- Pueden haber más palabras en mayúsculas
-
-patron_pescado &lt;- &quot;(?i)^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*\\s*(?:[0-9/]+)?(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$&quot;
-
-patron_peso &lt;- &quot;^([0-9]+)\\s(.+)$&quot;
-
-patron_precio_peso &lt;- &quot;^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$&quot;</code></pre>
-</div>
-<div id="funcion-que-registra-datos-de-los-productos-si-tiene-pescado." class="section level1" number="8">
-<h1><span class="header-section-number">8</span> Funcion que registra
-datos de los productos si tiene pescado.</h1>
-<p>NOTA: Esta funcion solo sirve si se ha comprado pescado. Por eso se
-creo la funcion anterior para detectar si había pescado o no en la
-compra</p>
-<pre class="r"><code># InformacionCompra = lista recuperada de ExtraerInformacion
-# Parking = valor bool recuperado de DetectaParking
-# ListaProductosUnitarios = lista recuperada de la funcion DetectaPescado
-# ListaProductosPeso = lista recuperada de la funcion DetectaPescado, siempre que se haya comprado pescado
-# ProductosRegistrados = dataframe Compra, que contendrá todos los productos leidos
-
-RegistraProductosConFiltro &lt;- function (InformacionCompra, Parking, ListaProductosUnitarios, ListaProductosPeso, ProductosRegistrados){
-  
-  fecha &lt;- InformacionCompra[[1]][[5]]
-  idtienda &lt;- InformacionCompra[[1]][[7]]
-  idfactura &lt;- InformacionCompra[[1]][[9]]
-  
-  # Tratamiento para los productos unitarios
-  
-  i &lt;- 1
-  
-  while (i &lt;= length(ListaProductosUnitarios)){
-    
-    p &lt;- ListaProductosUnitarios[i]
-    
-    if (grepl(x=p, pattern=patron_cantidad_1)){
-      
-      detalleproducto &lt;- str_match(string=p, pattern=patron_cantidad_1)[2:3]
-      
-      nombreproducto &lt;- detalleproducto[1]
-      precio &lt;- detalleproducto[2]
-      importe &lt;- detalleproducto[2]
-      tproducto &lt;- TipoProducto[1]
-      
-      valores &lt;- data.frame(
-                    Fecha = fecha, 
-                    IdTienda = idtienda, 
-                    IdFactura = idfactura, 
-                    Producto = nombreproducto, 
-                    Cantidad = &#39;1&#39;, 
-                    PrecioUnitario = precio, 
-                    Importe = importe, 
-                    TipoProducto = tproducto, 
-                    Parking = Parking,
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
-      
-    } else {
-      # Si no sigue el patron de una unidad, seguirá el patrón de más de una unidad
-      
-      detalleproducto &lt;- str_match(string=p, pattern=patron_normal)[2:5]
-      
-      cantidad &lt;- detalleproducto[1]
-      nombreproducto &lt;- detalleproducto[2]
-      precio &lt;- detalleproducto[3]
-      importe &lt;- detalleproducto[4]
-      tproducto &lt;- TipoProducto[1]
-      
-      valores &lt;- data.frame(
-                    Fecha = fecha, 
-                    IdTienda = idtienda, 
-                    IdFactura = idfactura, 
-                    Producto = nombreproducto, 
-                    Cantidad = cantidad, 
-                    PrecioUnitario = precio, 
-                    Importe = importe, 
-                    TipoProducto = tproducto,
-                    Parking = Parking,
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
-      
-    }
-    i &lt;- i + 1
-  }
-  
-  # Tratamiento para los datos por peso
-  
-  i &lt;- 1
-  
-  while (i &lt;= length(ListaProductosPeso)){
-    
-    p &lt;- ListaProductosPeso[i]
-    
-    if (grepl(x=p, pattern=patron_pescado)){
-      
-      nombreproducto &lt;- p
-      
-      i &lt;- i + 1
-      
-      detalleproducto &lt;- ListaProductosPeso[i]
-      detalleproducto &lt;- str_match(string=detalleproducto, pattern=patron_precio_peso)[2:4]
-  
-      cantidad &lt;- detalleproducto[1]
-      precio &lt;- detalleproducto[2]
-      importe &lt;- detalleproducto[3]
-      tproducto &lt;- TipoProducto[2]
-      
-      valores &lt;- data.frame(
-                    Fecha = fecha, 
-                    IdTienda = idtienda, 
-                    IdFactura = idfactura, 
-                    Producto = nombreproducto, 
-                    Cantidad = cantidad, 
-                    PrecioUnitario = precio, 
-                    Importe = importe, 
-                    TipoProducto = tproducto,
-                    Parking = Parking,
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
-      
-    } else {
-      
-      # Si no sigue el patron de pescado, seguirá el patron de frutas y verduras; por peso. 
-      
-      nombreproductopeso &lt;- str_match(string=p, pattern=patron_peso)[2:3]
-      
-      cantidad &lt;- nombreproductopeso[1]
-      nombreproducto &lt;- nombreproductopeso[2]
-      
-      i &lt;- i + 1
-      
-      detalleproducto &lt;- ListaProductosPeso[i]
-      detalleproducto &lt;- str_match(string=detalleproducto, pattern=patron_precio_peso)[2:4]
-  
-      cantidad &lt;- detalleproducto[1]
-      precio &lt;- detalleproducto[2]
-      importe &lt;- detalleproducto[3]
-      tproducto &lt;- TipoProducto[3]
-      
-      valores &lt;- data.frame(
-                    Fecha = fecha, 
-                    IdTienda = idtienda, 
-                    IdFactura = idfactura, 
-                    Producto = nombreproducto, 
-                    Cantidad = cantidad, 
-                    PrecioUnitario = precio, 
-                    Importe = importe, 
-                    TipoProducto = tproducto, 
-                    Parking = Parking,
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
-    }
-    i &lt;- i + 1
-  }
-  
-  # Solo devolverá el dataframe que contiene los productos registrados
-  
-  return(ProductosRegistrados)
-}</code></pre>
-</div>
-<div id="funcion-que-registra-datos-de-los-productos-cuando-no-se-ha-comprado-pescado" class="section level1" number="9">
-<h1><span class="header-section-number">9</span> Funcion que registra
-datos de los productos cuando no se ha comprado pescado</h1>
-<pre class="r"><code>RegistraProductosSinFiltro &lt;- function (InformacionCompra, Parking, ListaProductos, ProductosRegistrados){
-  
-  fecha &lt;- InformacionCompra[[1]][[5]]
-  idtienda &lt;- InformacionCompra[[1]][[7]]
-  idfactura &lt;- InformacionCompra[[1]][[9]]
-  
-  # Tratamiento para los productos unitarios
-
-  i &lt;- 1
-    
-  while (i &lt;= length(ListaProductos)) {
-    
-    p &lt;- ListaProductos[i]
-    
-    if (grepl(x=p, pattern=patron_normal) | grepl(x=p, pattern=patron_cantidad_1)){
-      
-      tproducto &lt;- TipoProducto[1]
-      
-      if (grepl(x=p, pattern=patron_normal)) {
-        
-        # Productos que tienen mas de una cantidad 
-        
-        detalleproducto &lt;- str_match(string=p, pattern=patron_normal)[2:5]
-        
-        cantidad &lt;- detalleproducto[1]
-        nombreproducto &lt;- detalleproducto[2]
-        precio &lt;- detalleproducto[3]
-        importe &lt;- detalleproducto[4]
-        
-        valores &lt;- data.frame(
-                      Fecha = fecha, 
-                      IdTienda = idtienda, 
-                      IdFactura = idfactura, 
-                      Producto = nombreproducto, 
-                      Cantidad = cantidad, 
-                      PrecioUnitario = precio, 
-                      Importe = importe, 
-                      TipoProducto = tproducto,
-                      Parking = Parking,
-                    stringsAsFactors = FALSE)
-        
-        ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
-        
-      } else if (grepl(x=p, pattern=patron_cantidad_1)){
-        
-        # Productos que tienen una (1) cantidad 
-          
-        cantidad &lt;- &#39;1&#39;
-        
-        detalleproducto &lt;- str_match(string=p, pattern=patron_cantidad_1)[2:3]
-        
-        nombreproducto &lt;- detalleproducto[1]
-        precio &lt;- detalleproducto[2]
-        
-        valores &lt;- data.frame(
-                      Fecha = fecha, 
-                      IdTienda = idtienda, 
-                      IdFactura = idfactura, 
-                      Producto = nombreproducto, 
-                      Cantidad = cantidad, 
-                      PrecioUnitario = precio, 
-                      Importe = precio, 
-                      TipoProducto = tproducto,
-                      Parking = Parking,
-                    stringsAsFactors = FALSE)
-        
-        ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
-      }
-      
-    } else {
-      
-      # Si no tienen el patron normal o de una cantidad, entonces es un producto por peso 
-      
-      # Tratamiento producto por peso, para frutas y verduras
-      
-      tproducto &lt;- TipoProducto[3]
-      
-      nombreproductopeso &lt;- str_match(string=p, pattern=patron_peso)[2:3]
-      
-      cantidad &lt;- nombreproductopeso[1]
-      nombreproducto &lt;- nombreproductopeso[2]
-      
-      i &lt;- i + 1
-      
-      detalleproducto &lt;- ListaProductos[i]
-      detalleproducto &lt;- str_match(string=detalleproducto, pattern=patron_precio_peso)[2:4]
-  
-      cantidad &lt;- detalleproducto[1]
-      precio &lt;- detalleproducto[2]
-      importe &lt;- detalleproducto[3]
-      
-      valores &lt;- data.frame(
-                    Fecha = fecha, 
-                    IdTienda = idtienda, 
-                    IdFactura = idfactura, 
-                    Producto = nombreproducto, 
-                    Cantidad = cantidad, 
-                    PrecioUnitario = precio, 
-                    Importe = importe, 
-                    TipoProducto = tproducto, 
-                    Parking = Parking,
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados &lt;- rbind(ProductosRegistrados, valores)
-    }
-    i &lt;- i + 1
-  }
-  
-  # Solo devolverá el dataframe que contiene los productos registrados
-  return(ProductosRegistrados)
-  
-}</code></pre>
-</div>
-<div id="general" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> General</h1>
-<p>Funcion que almacena:</p>
-<ol style="list-style-type: decimal">
-<li><p>El nombre de los ficheros que no fueron leidos.</p></li>
-<li><p>El nombre de los ficheros que fueron leidos; los que corresponden
-a Mercadona.</p></li>
-<li><p>Información de todas las tiendas que fueron leidas.</p></li>
-<li><p>Información sobre productos y compras realizadas</p></li>
-</ol>
-<pre class="r"><code># Funcion para almacenar los ficheros leidos y los que no. 
-
-# Le paso el dataframe de los ficheros leidos y no leidos para que los modifique, 
-# si se añade un nuevo fichero. 
-
-RegistroFicheros &lt;- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, DF_Tiendas, DF_Compras) {
-  
-  Verifica &lt;- EsMercadona(Nombrepdf)
-  
-  # Bool para saber si es de mercadona o no
-  V &lt;- Verifica[[1]]
-  
-  if (V) {
-    
-    # Solo si es de Mercadona 
-    
-    # Todas las lineas leidas
-    Lineas &lt;- Verifica[[2]]
-    
-    Informacion &lt;- ExtraeInformacion(Lineas)
-    
-    # Todo el bloque que contiene los productos, incluido el Parking
-    Productos &lt;- Informacion[[2]]
-    
-    # FILTRO 1
-    filtro1 &lt;- DetectaParking(Productos)
-    
-    # Valor bool para saber si tiene parking o no
-    ValorParking &lt;- filtro1[[1]]
-    
-    # Todo el bloque que contiene los productos sin el parking
-    Productos &lt;- filtro1[[2]]
-    
-    # FILTRO 2
-    filtro2 &lt;- DetectaPescado(Productos)
-    
-    # Valor bool para saber si tiene pescado o no
-    Pescado &lt;- filtro2[[1]]
-    
-    direccion &lt;- Informacion[[1]][[1]]
-    codpos &lt;- Informacion[[1]][[2]]
-    municipio &lt;- Informacion[[1]][[3]]
-    tel &lt;- Informacion[[1]][[4]]
-    id_tienda &lt;- Informacion[[1]][[7]]
-    id_factura &lt;- Informacion[[1]][[9]]
-    
-    # Añadimos los ficheros que fueron leidos correctamente y además, añadimos la factura a la que 
-    # corresponde para verificar posteriormente
-    
-    if (!id_factura %in% DF_FicherosLeidos$FacturaFichero){
-      
-      valores &lt;- data.frame( FacturaFichero = id_factura,
-                             NombreFichero = Nombrepdf,
-                             stringsAsFactors = FALSE )
-      
-      DF_FicherosLeidos &lt;- rbind(DF_FicherosLeidos, valores)
-      
-    }
-    
-    if (!id_tienda %in% DF_Tiendas$IdTienda){
-      
-      valores &lt;- data.frame( IdTienda = id_tienda,
-                              Direccion = direccion,
-                              CodigoPostal = codpos,
-                              Municipio = municipio,
-                              Telefono = tel,
-                             stringsAsFactors = FALSE )
-      
-      DF_Tiendas &lt;- rbind(DF_Tiendas, valores)
-    }
-    
-    # INFORMACION SOBRE LOS PRODUCTOS COMPRADOS
-    
-    if (Pescado) {
-      
-      ProductosUnitarios &lt;- filtro2[[2]]
-      ProductosPeso &lt;- filtro2[[3]]
-      
-      DF_Compras &lt;- RegistraProductosConFiltro( InformacionCompra = Informacion,
-                                 Parking = ValorParking,
-                                 ListaProductosUnitarios = ProductosUnitarios,
-                                 ListaProductosPeso = ProductosPeso,
-                                 ProductosRegistrados = DF_Compras
-                                 )
-    } else {
-      
-      Productos &lt;- filtro2[[2]]
-      
-      DF_Compras &lt;- RegistraProductosSinFiltro ( InformacionCompra = Informacion,
-                                             Parking = ValorParking,
-                                             ListaProductos = Productos,
-                                             ProductosRegistrados = DF_Compras)
-    }
-
-  } else {
-    
-    # Si no es de Mercadona
-    # INFORMACION GENERAL DE LOS FICHEROS
-    
-    if (!(Nombrepdf %in% DF_FicherosNoLeidos$NombreFichero)) {
-      
-      valor &lt;- data.frame(NombreFichero = Nombrepdf,
-                           stringsAsFactors = FALSE )
-    
-      DF_FicherosNoLeidos &lt;- rbind(DF_FicherosNoLeidos, valor)
-    }
-  }
-
-  valores &lt;- list(FicherosNoLeidos = DF_FicherosNoLeidos,
-                  FicherosLeidos = DF_FicherosLeidos,
-                  Tiendas = DF_Tiendas,
-                  Compras = DF_Compras)
-  
-  # Devuelve todos los dataframes con la respectiva información
-  
-  return(valores)
-}</code></pre>
-</div>
-<div id="verificacion-de-las-funciones-anteriores-para-todos-los-ficheros" class="section level1" number="11">
-<h1><span class="header-section-number">11</span> Verificacion de las
-funciones anteriores para todos los ficheros</h1>
-<div id="carga-de-todos-los-ficheros" class="section level2" number="11.1">
-<h2><span class="header-section-number">11.1</span> Carga de todos los
-ficheros</h2>
-<pre class="r"><code>#lista_ficheros &lt;- list.files(path = &#39;data/&#39;, pattern = &quot;\\.pdf$&quot;)
-lista_nombres_ficheros &lt;- list.files(path = &#39;data/&#39;)
-length(lista_nombres_ficheros)</code></pre>
-<pre><code>## [1] 355</code></pre>
-</div>
-<div id="bucle-para-cargar-la-informacion-de-cada-fichero" class="section level2" number="11.2">
-<h2><span class="header-section-number">11.2</span> Bucle para cargar la
-informacion de cada fichero</h2>
-<pre class="r"><code>for (f in lista_nombres_ficheros) {
-  
-  Resultado &lt;- RegistroFicheros (Nombrepdf = f,
-                                 DF_FicherosNoLeidos = NoLeido, 
-                                 DF_FicherosLeidos = FicheroLeido, 
-                                 DF_Tiendas = Tienda, 
-                                 DF_Compras = Compra)
-  
-  NoLeido &lt;- Resultado$FicherosNoLeidos
-  FicheroLeido &lt;- Resultado$FicherosLeidos
-  Tienda &lt;- Resultado$Tiendas
-  Compra &lt;- Resultado$Compras
-  
-}</code></pre>
-</div>
-</div>
-<div id="comprobacion-de-los-ficheros-no-leidos" class="section level1" number="12">
-<h1><span class="header-section-number">12</span> Comprobacion de los
-ficheros no leidos</h1>
-<div id="comparamos-los-ficheros-que-fueron-leidos" class="section level2" number="12.1">
-<h2><span class="header-section-number">12.1</span> Comparamos los
-ficheros que fueron leidos</h2>
-<p>Una vez que recuperamos la informacion sobre las facturas leidas y no
-leias, verificamos</p>
-<pre class="r"><code>lista_f_almacenados &lt;- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
-diferencia &lt;- setdiff(lista_nombres_ficheros, lista_f_almacenados)
-#diferencia</code></pre>
-<p>De estos nombres, identificamos que se trata de ficheros repetidos.
-Ya fueron leidos anteriormente y por tanto, no se vuelven a leer ni
-almacenar.</p>
-</div>
-<div id="verificamos-los-valores-na-ya-que-no-deberian-haber" class="section level2" number="12.2">
-<h2><span class="header-section-number">12.2</span> Verificamos los
-valores NA, ya que no deberian haber</h2>
-<pre class="r"><code>df_con_na &lt;- Compra[apply(Compra, 1, function(x) any(is.na(x))), ]
-df_con_na</code></pre>
-<pre><code>## [1] Fecha          IdTienda       IdFactura      Producto       Cantidad      
-## [6] PrecioUnitario Importe        TipoProducto   Parking       
-## &lt;0 rows&gt; (o 0- extensión row.names)</code></pre>
-</div>
+<div id="importación-de-los-datos." class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Importación de los
+datos.</h1>
+<table style="width:100%;">
+<caption>Productos Leídos</caption>
+<colgroup>
+<col width="10%" />
+<col width="8%" />
+<col width="9%" />
+<col width="20%" />
+<col width="8%" />
+<col width="14%" />
+<col width="7%" />
+<col width="12%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Fecha</th>
+<th align="left">IdTienda</th>
+<th align="left">IdFactura</th>
+<th align="left">Producto</th>
+<th align="left">Cantidad</th>
+<th align="left">PrecioUnitario</th>
+<th align="left">Importe</th>
+<th align="left">TipoProducto</th>
+<th align="left">Parking</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">DONACIÓN</td>
+<td align="left">5</td>
+<td align="left">1,00</td>
+<td align="left">5,00</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">BARREÑO</td>
+<td align="left">1</td>
+<td align="left">2,20</td>
+<td align="left">2,20</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">PALO ANTIDESLIZANTE</td>
+<td align="left">3</td>
+<td align="left">1,90</td>
+<td align="left">5,70</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">MULTIUSOS</td>
+<td align="left">1</td>
+<td align="left">2,55</td>
+<td align="left">2,55</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">AGUA MINERAL</td>
+<td align="left">2</td>
+<td align="left">0,73</td>
+<td align="left">1,46</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">B.BASURA EXT.C.FÁCIL</td>
+<td align="left">2</td>
+<td align="left">1,60</td>
+<td align="left">3,20</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">ESCURRE FÁCIL</td>
+<td align="left">1</td>
+<td align="left">2,85</td>
+<td align="left">2,85</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">CUBO FREGAR C/RUEDAS</td>
+<td align="left">1</td>
+<td align="left">3,85</td>
+<td align="left">3,85</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">FRIEGASUELOS PINO</td>
+<td align="left">1</td>
+<td align="left">0,95</td>
+<td align="left">0,95</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">FIBRAS CRUZADAS</td>
+<td align="left">2</td>
+<td align="left">2,10</td>
+<td align="left">4,20</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">LOTE BAYETAS SUAVES</td>
+<td align="left">1</td>
+<td align="left">1,20</td>
+<td align="left">1,20</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">FREGONA HILO MIR.</td>
+<td align="left">1</td>
+<td align="left">2,80</td>
+<td align="left">2,80</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="odd">
+<td align="left">25/11/2023</td>
+<td align="left">2916</td>
+<td align="left">520925</td>
+<td align="left">LOTE 3 BAYETAS MICRO</td>
+<td align="left">1</td>
+<td align="left">1,80</td>
+<td align="left">1,80</td>
+<td align="left">Unitario</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">01/12/2023</td>
+<td align="left">2233</td>
+<td align="left">451305</td>
+<td align="left">1/2 POLLO PARTIDO</td>
+<td align="left">1</td>
+<td align="left">4,34</td>
+<td align="left">4,34</td>
+<td align="left">Unitario</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">01/12/2023</td>
+<td align="left">2233</td>
+<td align="left">451305</td>
+<td align="left">1/2 CONEJO TROCEADO</td>
+<td align="left">1</td>
+<td align="left">5,13</td>
+<td align="left">5,13</td>
+<td align="left">Unitario</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
