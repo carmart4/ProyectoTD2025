@@ -12,9 +12,10 @@ author: |
   </center>
 date: "`r Sys.Date()`"
 output:
-  html_notebook:
+  html_document:
     echo: true
     number_sections: true
+    theme: lumen
     toc: true
   bookdown::pdf_document2:
     toc: true
@@ -25,10 +26,9 @@ output:
   prettydoc::html_pretty:
     theme: cayman
     highlight: github
-  html_document:
+  html_notebook:
     echo: true
     number_sections: true
-    theme: lumen
     toc: true
   pdf_document: default
   bookdown::html_document2:
@@ -126,7 +126,7 @@ instalar_y_cargar <- function(paquetes) {
 
 ```{r include=FALSE}
 # Creamos un vector con los paquetes que vamos a utilizar 
-paquetes <- c("pdftools", "dplyr", "stringr", "dplyr", "ggplot2", "tidyverse")
+paquetes <- c("pdftools", "dplyr", "stringr", "dplyr", "ggplot2", "tidyverse", "knitr")
 
 # Cargamos las librerias
 instalar_y_cargar(paquetes)
@@ -871,7 +871,8 @@ df_con_na
 
 ```
 
-```{r}
-head(Compra, 15)
+#Importación de los datos.
+```{r TablaProductos, echo = FALSE, results ='asis'}
+kable(head(Compra, 15), caption = "Productos Leídos")
 
 ```
