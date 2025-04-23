@@ -109,38 +109,23 @@ Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y p
 18)¿Qué combinaciones de productos se repiten con más frecuencia en una misma compra?
 
 ```{r include=FALSE}
-# Importacion de librerias 
-
 # Limpiamos el entorno
 rm(list = ls())
-
 ```
 
+```{r include=FALSE, message=FALSE, warning=FALSE}
+# Instalacion de librerias con pacman
 
+# Asegurarse de que el paquete "pacman" está instalado
+if (!require("pacman")) install.packages("pacman")
 
-```{r include=FALSE}
-# Implementamos una funcion que nos permite cargar las librerias que no están disponibles hasta el momento
-instalar_y_cargar <- function(paquetes) {
-  
-  nuevos <- setdiff(paquetes, rownames(installed.packages()))
-  
-  if (length(nuevos)) { install.packages(nuevos) }
+pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
 
-  invisible(lapply(paquetes, library, character.only = TRUE))
-}
+# Con tidyverse: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+# readxl, libreria que requiere una carga aparte explícita
+# lubridate, se utiliza con frecuencia con paquetes de tidyverse, pero requiere una carga aparte
+# visdat, exploracion visual de los datos 
 ```
-
-
-
-```{r include=FALSE}
-# Creamos un vector con los paquetes que vamos a utilizar 
-paquetes <- c("pdftools", "dplyr", "stringr", "dplyr", "ggplot2", "tidyverse", "knitr")
-
-# Cargamos las librerias
-instalar_y_cargar(paquetes)
-```
-
-
 
 ```{r include=FALSE}
 
