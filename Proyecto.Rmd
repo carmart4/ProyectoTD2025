@@ -12,12 +12,18 @@ author: |
   </center>
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   bookdown::pdf_document2:
     toc: true
     toc_depth: 3
     number_sections: true
     figure_caption: "Figura" # Referencias en castellano
+    table_caption: "Tabla"
+  bookdown::html_document2:
+    echo: true
+    number_sections: true
+    theme: spacelab
+    toc: true
+    figure_caption: "Figura"
     table_caption: "Tabla"
   prettydoc::html_pretty:
     theme: cayman
@@ -26,18 +32,12 @@ output:
     echo: true
     number_sections: true
     toc: true
+  pdf_document: default
   html_document:
     echo: true
     number_sections: true
     theme: lumen
     toc: true
-  bookdown::html_document2:
-    echo: true
-    number_sections: true
-    theme: spacelab
-    toc: true
-    figure_caption: "Figura"
-    table_caption: "Tabla"
 always_allow_html: true
 params:
   lang: ES
@@ -61,6 +61,8 @@ language:
 ---   
 
 # Introducción
+
+En este proyecto se plantea realizar el análisis de tickets del supermercado Mercadona, los cuales fueron recolectados por los estudiantes del grado de Ciencia de datos y otros de cursos anteriores.  
 
 ## Contexto
 
@@ -108,6 +110,12 @@ Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y p
 
 18)¿Qué combinaciones de productos se repiten con más frecuencia en una misma compra?
 
+# Material y métodos 
+
+## Carga de librerias 
+
+Para la carga de librerías, haremos uso del paquete pacman de R, que es eficiente para la carga e instalación de las mismas. En este proyecto, utilizaremos las librerias 'pdftools', 'tidyverse', 'readxl', 'lubridate', 'visdat' y 'knit'.
+
 ```{r include=FALSE}
 # Limpiamos el entorno
 rm(list = ls())
@@ -117,8 +125,9 @@ rm(list = ls())
 # Instalacion de librerias con pacman
 
 # Asegurarse de que el paquete "pacman" está instalado
-if (!require("pacman")) install.packages("pacman")
+if (!require('pacman')) install.packages('pacman')
 
+# Librerias a cargar
 pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
 
 # Con tidyverse: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
@@ -126,6 +135,12 @@ pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
 # lubridate, se utiliza con frecuencia con paquetes de tidyverse, pero requiere una carga aparte
 # visdat, exploracion visual de los datos 
 ```
+
+## Carga de datos 
+
+Todos nuestros datos están almacenados la carpeta $.data$, y fueron obtenidos posteriormente desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato $.pdf$.
+
+Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Como vamos a almacenar la información? ¿Qué informacion queremos almacenar? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros pdf al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente. 
 
 ```{r include=FALSE}
 
@@ -168,7 +183,7 @@ Compra <- data.frame( Fecha = character(),
 
 ```
 
-
+Nota: A lo largo de la extracción de los datos, se implementaron funciones para ser recursivos, además de facilitar la lectura del código y hacer un barrido completo sobre los ficheros.  
 
 ```{r include=FALSE}
 
@@ -207,7 +222,7 @@ EsMercadona <- function(NombrePDF){
 }
 ```
 
-
+Dentro de cada fichero, encontramos dos partes fundamentales. La primera, es el encabezado. Contiene información sobre la compra en general. Por ejemplo, reune datos como la ubicación de la tienda, fecha y hora de compra, y número de ticket. En la segunda parte, nos encontramos con el bloque de los productos. En ella se describe el producto comprado, la cantidad y el importe pagado. 
 
 ```{r include=FALSE}
 
@@ -274,7 +289,7 @@ ExtraeInformacion <- function(Lineas) {
 }
 ```
 
-
+Para la lectura de los productos, identificamos dos filtros esenciales. El primero, es si el ticket incluía parking o no. Este 'producto' estaba listado al final, lo que nos permitía de alguna forma reducir el listado de productos e identificar si había o no parking. 
 
 ```{r include=FALSE}
 
@@ -301,7 +316,13 @@ DetectaParking <- function(ListaProductos){
 }
 ```
 
+El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 3 categorías:
 
+- Venta por unidad.
+- Venta al peso, pescado.
+- Venta al peso, frutas y verduras.
+
+Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad. 
 
 ```{r include=FALSE}
 
@@ -354,7 +375,14 @@ DetectaPescado <- function(ListaProductos){
 
 ```
 
+Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket. 
 
+- Patron producto unitario: Cantidad(1), descripción, importe 
+- Patron producto unitario: Cantidad(+1), descripción, precio unitario, importe
+- Patron pescado: descripción, 
+                      peso, precio unitario, importe
+- Patron frutas y verduras: Cantidad(1), descripción,
+                                peso, precio unitario, importe
 
 ```{r include=FALSE}
 
@@ -388,7 +416,6 @@ patron_peso <- "^([0-9]+)\\s(.+)$"
 patron_precio_peso <- "^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$"
 
 ```
-
 
 
 ```{r include=FALSE}
@@ -553,7 +580,6 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
 ```
 
 
-
 ```{r include=FALSE}
 
 # Funcion que registra datos de los productos cuando no se ha comprado pescado
@@ -676,7 +702,6 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
 }
 
 ```
-
 
 
 ```{r include=FALSE}
@@ -815,7 +840,6 @@ RegistroFicheros <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, 
 ```
 
 
-
 ```{r include=FALSE}
 
 # Verificacion de las funciones anteriores para todos los ficheros
@@ -826,7 +850,6 @@ RegistroFicheros <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, 
 lista_nombres_ficheros <- list.files(path = 'data/')
 length(lista_nombres_ficheros)
 ```
-
 
 
 ```{r include=FALSE}
@@ -849,7 +872,9 @@ for (f in lista_nombres_ficheros) {
 }
 ```
 
+## Ficheros no leidos 
 
+Solo aquellos ficheros que estuvieran con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenidos, hemos almacenado el nombre del fichero en un dataframe diferente.
 
 ```{r include=FALSE}
 
@@ -861,7 +886,7 @@ diferencia
 
 ```
 
-
+Adicional, para verificar la lectura de los datos, se filtró el dataframe que contiene toda la informacion de los productos comprados por los valores NA; si la carga se hizo correctamente, el valor de NA dentro del dataframe debería ser 0.
 
 ```{r include=FALSE}
 
@@ -869,23 +894,13 @@ diferencia
  #y por tanto, no se vuelven a leer ni almacenar. 
 
 ## Verificamos los valores NA, ya que no deberian haber
-
-df_con_na <- Compra[apply(Compra, 1, function(x) any(is.na(x))), ]
-df_con_na
+sum(is.na(Compra))
 
 ```
 
-# Importación de los datos
+## Presentación parcial de los datos 
 
-## Tabla que contiene información sobre todos los productos leídos
-
-```{r TablaProductos, echo = FALSE, results ='asis'}
-
-kable(head(Compra, 15), caption = "Tabla de productos leídos")
-
-```
-
-## Tabla que contiene informacion de las tiendas registradas 
+Esta es una representación sobre cómo se almacenaron los datos para empezar a trabajar sobre ellos. En la Tabla \@ref(tab:TablaTiendas) podemos ver todas las tiendas en las que se han hecho las compras. En total, se han registrado 35 tiendas. 
 
 ```{r TablaTiendas, echo = FALSE, results ='asis'}
 
@@ -893,4 +908,14 @@ kable(head(Tienda, 10), caption = "Tabla de tiendas registradas")
 
 ```
 
+En la siguiente Tabla \@ref(tab:TablaProductos) se muestran los productos que fueron leídos, identificando por ejemplo el ticket de compra, la fecha, el tipo de producto, entre otros. 
 
+```{r TablaProductos, echo = FALSE, results ='asis'}
+
+kable(head(Compra, 15), caption = "Tabla de productos leídos")
+
+```
+
+# Resultados 
+
+# Conclusiones 
