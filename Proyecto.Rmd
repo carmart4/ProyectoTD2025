@@ -67,29 +67,24 @@ language:
 # Limpiamos el entorno
 rm(list = ls())
 
-# Creamos un vector con los paquetes que vamos a utilizar 
-paquetes <- c("pdftools", "dplyr", "stringr", "dplyr", "ggplot2", "tidyverse")
-
 ```
 
 Implementamos una funcion que nos permite cargar las librerias que no están disponibles hasta el momento
 
 ## Funcion para instalar y cargar librerias nuevas
 
-```{r}
-instalar_y_cargar <- function(paquetes) {
-  
-  nuevos <- setdiff(paquetes, rownames(installed.packages()))
-  
-  if (length(nuevos)) { install.packages(nuevos) }
+```{r message=FALSE, warning=FALSE}
+# Instalacion de librerias con pacman
 
-  invisible(lapply(paquetes, library, character.only = TRUE))
-}
-```
+# Asegurarse de que el paquete "pacman" está instalado
+if (!require("pacman")) install.packages("pacman")
 
-```{r}
-# Cargamos las librerias
-instalar_y_cargar(paquetes)
+pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
+
+# Con tidyverse: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+# readxl, libreria que requiere una carga aparte explícita
+# lubridate, se utiliza con frecuencia con paquetes de tidyverse, pero requiere una carga aparte
+# visdat, exploracion visual de los datos 
 ```
 
 # Como vamos a almacenar la informacion? Que informacion queremos almacenar? 
@@ -121,6 +116,7 @@ Tienda <- data.frame( IdTienda = character(),
 Compra <- data.frame( Fecha = character(),
                       IdTienda = character(),
                       IdFactura = character(),
+                      Hora = character(),
                       Producto = character(),
                       Cantidad = character(),
                       PrecioUnitario = character(),
@@ -351,6 +347,7 @@ NOTA: Esta funcion solo sirve si se ha comprado pescado. Por eso se creo la func
 RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProductosUnitarios, ListaProductosPeso, ProductosRegistrados){
   
   fecha <- InformacionCompra[[1]][[5]]
+  hora <- InformacionCompra[[1]][[6]]
   idtienda <- InformacionCompra[[1]][[7]]
   idfactura <- InformacionCompra[[1]][[9]]
   
@@ -375,6 +372,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
                     Fecha = fecha, 
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
+                    Hora = hora,
                     Producto = nombreproducto, 
                     Cantidad = '1', 
                     PrecioUnitario = precio, 
@@ -400,6 +398,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
                     Fecha = fecha, 
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
+                    Hora = hora, 
                     Producto = nombreproducto, 
                     Cantidad = cantidad, 
                     PrecioUnitario = precio, 
@@ -440,6 +439,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
                     Fecha = fecha, 
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
+                    Hora = hora,
                     Producto = nombreproducto, 
                     Cantidad = cantidad, 
                     PrecioUnitario = precio, 
@@ -473,6 +473,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
                     Fecha = fecha, 
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
+                    Hora = hora,
                     Producto = nombreproducto, 
                     Cantidad = cantidad, 
                     PrecioUnitario = precio, 
@@ -498,6 +499,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
 RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProductos, ProductosRegistrados){
   
   fecha <- InformacionCompra[[1]][[5]]
+  hora <- InformacionCompra[[1]][[6]]
   idtienda <- InformacionCompra[[1]][[7]]
   idfactura <- InformacionCompra[[1]][[9]]
   
@@ -528,6 +530,7 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
                       Fecha = fecha, 
                       IdTienda = idtienda, 
                       IdFactura = idfactura, 
+                      Hora = hora,
                       Producto = nombreproducto, 
                       Cantidad = cantidad, 
                       PrecioUnitario = precio, 
@@ -553,6 +556,7 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
                       Fecha = fecha, 
                       IdTienda = idtienda, 
                       IdFactura = idfactura, 
+                      Hora = hora, 
                       Producto = nombreproducto, 
                       Cantidad = cantidad, 
                       PrecioUnitario = precio, 
@@ -590,6 +594,7 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
                     Fecha = fecha, 
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
+                    Hora = hora,
                     Producto = nombreproducto, 
                     Cantidad = cantidad, 
                     PrecioUnitario = precio, 
