@@ -967,6 +967,14 @@ Compra = Compra %>% mutate(PrecioUnitario = str_replace_all(PrecioUnitario, ",",
 # Todo correcto
 glimpse(Compra)
 
+# Eliminar Datos Duplicados
+
+Compra <- unique(Compra)
+Tienda <- unique(Tienda)
+FicheroLeido <- unique(FicheroLeido)
+NoLeido <- unique(NoLeido)
+
+
 ```
 
 # Resultados
