@@ -929,6 +929,39 @@ vis_miss(Tienda)
 
 ## Problemas con tipos
 
+Vamos a hacer glimpse() de los dataframe para comprobar que cada columna tenga su tipo adecuado
+
+En el data frame de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros, (suma, resta, promedio, desviación estandar...) con estos datos, no lo veo necesario.
+```{r}
+glimpse(Tienda)
+```
+
+Ahora bien, con el df compra no podemos hacer lo mismo, Fecha y Hora, tendrian que estar en sus respectivos campos, Cantidad, precio unitario e importe deberian ser numerales, y podemos ver un error, tendremos que sustituir las comas por puntos para poder transformar correctamente la columna.
+```{r}
+glimpse(Compra)
+```
+
+Empecemos por Fecha y Hora
+```{r}
+Compra = Compra %>% mutate(Fecha = as.Date(Fecha, "%d/%m/%Y"),
+                  Hora = hm(Hora))
+# Vemos que ahora presentan los tipos adecuados
+class(Compra$Fecha)
+class(Compra$Hora)
+```
+
+Ahora empecemos con Cantidad, precio unitario e importe, recordemos que tenemos que sustituir comas por puntos y transformar a numerales.
+```{r}
+Compra = Compra %>% mutate(PrecioUnitario = str_replace_all(PrecioUnitario, ",", "."),
+                  Importe = str_replace_all(Importe, ",", "."),
+                  Cantidad = str_replace_all(Cantidad, ",", ".")) %>%
+  mutate(across(c(Cantidad, PrecioUnitario, Importe), as.numeric))
+
+# Todo correcto
+glimpse(Compra)
+
+```
+
 # Resultados
 
 # Conclusiones
