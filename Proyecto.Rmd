@@ -58,11 +58,11 @@ language:
     proof: 'Demostración. '
     remark: 'Nota: '
     solution: 'Solución. '
----   
+---
 
 # Introducción
 
-En este proyecto se plantea realizar el análisis de tickets del supermercado Mercadona, los cuales fueron recolectados por los estudiantes del grado de Ciencia de datos y otros de cursos anteriores.  
+En este proyecto se plantea realizar el análisis de tickets del supermercado Mercadona, los cuales fueron recolectados por los estudiantes del grado de Ciencia de datos y otros de cursos anteriores.
 
 ## Contexto
 
@@ -110,9 +110,9 @@ Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y p
 
 18)¿Qué combinaciones de productos se repiten con más frecuencia en una misma compra?
 
-# Material y métodos 
+# Material y métodos
 
-## Carga de librerias 
+## Carga de librerias
 
 Para la carga de librerías, haremos uso del paquete pacman de R, que es eficiente para la carga e instalación de las mismas. En este proyecto, utilizaremos las librerias 'pdftools', 'tidyverse', 'readxl', 'lubridate', 'visdat' y 'knit'.
 
@@ -136,11 +136,11 @@ pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
 # visdat, exploracion visual de los datos 
 ```
 
-## Carga de datos 
+## Carga de datos
 
 Todos nuestros datos están almacenados la carpeta $.data$, y fueron obtenidos posteriormente desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato $.pdf$.
 
-Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Como vamos a almacenar la información? ¿Qué informacion queremos almacenar? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros pdf al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente. 
+Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Como vamos a almacenar la información? ¿Qué informacion queremos almacenar? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros pdf al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
 
 ```{r include=FALSE}
 
@@ -183,7 +183,7 @@ Compra <- data.frame( Fecha = character(),
 
 ```
 
-Nota: A lo largo de la extracción de los datos, se implementaron funciones para ser recursivos, además de facilitar la lectura del código y hacer un barrido completo sobre los ficheros.  
+Nota: A lo largo de la extracción de los datos, se implementaron funciones para ser recursivos, además de facilitar la lectura del código y hacer un barrido completo sobre los ficheros.
 
 ```{r include=FALSE}
 
@@ -222,7 +222,7 @@ EsMercadona <- function(NombrePDF){
 }
 ```
 
-Dentro de cada fichero, encontramos dos partes fundamentales. La primera, es el encabezado. Contiene información sobre la compra en general. Por ejemplo, reune datos como la ubicación de la tienda, fecha y hora de compra, y número de ticket. En la segunda parte, nos encontramos con el bloque de los productos. En ella se describe el producto comprado, la cantidad y el importe pagado. 
+Dentro de cada fichero, encontramos dos partes fundamentales. La primera, es el encabezado. Contiene información sobre la compra en general. Por ejemplo, reune datos como la ubicación de la tienda, fecha y hora de compra, y número de ticket. En la segunda parte, nos encontramos con el bloque de los productos. En ella se describe el producto comprado, la cantidad y el importe pagado.
 
 ```{r include=FALSE}
 
@@ -289,7 +289,7 @@ ExtraeInformacion <- function(Lineas) {
 }
 ```
 
-Para la lectura de los productos, identificamos dos filtros esenciales. El primero, es si el ticket incluía parking o no. Este 'producto' estaba listado al final, lo que nos permitía de alguna forma reducir el listado de productos e identificar si había o no parking. 
+Para la lectura de los productos, identificamos dos filtros esenciales. El primero, es si el ticket incluía parking o no. Este 'producto' estaba listado al final, lo que nos permitía de alguna forma reducir el listado de productos e identificar si había o no parking.
 
 ```{r include=FALSE}
 
@@ -318,11 +318,11 @@ DetectaParking <- function(ListaProductos){
 
 El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 3 categorías:
 
-- Venta por unidad.
-- Venta al peso, pescado.
-- Venta al peso, frutas y verduras.
+-   Venta por unidad.
+-   Venta al peso, pescado.
+-   Venta al peso, frutas y verduras.
 
-Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad. 
+Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad.
 
 ```{r include=FALSE}
 
@@ -375,14 +375,12 @@ DetectaPescado <- function(ListaProductos){
 
 ```
 
-Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket. 
+Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket.
 
-- Patron producto unitario: Cantidad(1), descripción, importe 
-- Patron producto unitario: Cantidad(+1), descripción, precio unitario, importe
-- Patron pescado: descripción, 
-                      peso, precio unitario, importe
-- Patron frutas y verduras: Cantidad(1), descripción,
-                                peso, precio unitario, importe
+-   Patron producto unitario: Cantidad(1), descripción, importe
+-   Patron producto unitario: Cantidad(+1), descripción, precio unitario, importe
+-   Patron pescado: descripción, peso, precio unitario, importe
+-   Patron frutas y verduras: Cantidad(1), descripción, peso, precio unitario, importe
 
 ```{r include=FALSE}
 
@@ -416,7 +414,6 @@ patron_peso <- "^([0-9]+)\\s(.+)$"
 patron_precio_peso <- "^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$"
 
 ```
-
 
 ```{r include=FALSE}
 
@@ -579,7 +576,6 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
 }
 ```
 
-
 ```{r include=FALSE}
 
 # Funcion que registra datos de los productos cuando no se ha comprado pescado
@@ -702,7 +698,6 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
 }
 
 ```
-
 
 ```{r include=FALSE}
 
@@ -839,7 +834,6 @@ RegistroFicheros <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, 
 
 ```
 
-
 ```{r include=FALSE}
 
 # Verificacion de las funciones anteriores para todos los ficheros
@@ -850,7 +844,6 @@ RegistroFicheros <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, 
 lista_nombres_ficheros <- list.files(path = 'data/')
 length(lista_nombres_ficheros)
 ```
-
 
 ```{r include=FALSE}
 
@@ -872,7 +865,7 @@ for (f in lista_nombres_ficheros) {
 }
 ```
 
-## Ficheros no leidos 
+## Ficheros no leidos
 
 Solo aquellos ficheros que estuvieran con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenidos, hemos almacenado el nombre del fichero en un dataframe diferente.
 
@@ -898,9 +891,9 @@ sum(is.na(Compra))
 
 ```
 
-## Presentación parcial de los datos 
+## Presentación parcial de los datos
 
-Esta es una representación sobre cómo se almacenaron los datos para empezar a trabajar sobre ellos. En la Tabla \@ref(tab:TablaTiendas) podemos ver todas las tiendas en las que se han hecho las compras. En total, se han registrado 35 tiendas. 
+Esta es una representación sobre cómo se almacenaron los datos para empezar a trabajar sobre ellos. En la Tabla \@ref(tab:TablaTiendas) podemos ver todas las tiendas en las que se han hecho las compras. En total, se han registrado 35 tiendas.
 
 ```{r TablaTiendas, echo = FALSE, results ='asis'}
 
@@ -908,7 +901,7 @@ kable(head(Tienda, 10), caption = "Tabla de tiendas registradas")
 
 ```
 
-En la siguiente Tabla \@ref(tab:TablaProductos) se muestran los productos que fueron leídos, identificando por ejemplo el ticket de compra, la fecha, el tipo de producto, entre otros. 
+En la siguiente Tabla \@ref(tab:TablaProductos) se muestran los productos que fueron leídos, identificando por ejemplo el ticket de compra, la fecha, el tipo de producto, entre otros.
 
 ```{r TablaProductos, echo = FALSE, results ='asis'}
 
@@ -916,6 +909,26 @@ kable(head(Compra, 15), caption = "Tabla de productos leídos")
 
 ```
 
-# Resultados 
+# Limpieza posterior a la lectura
 
-# Conclusiones 
+## Valores vacios
+
+No debería haber muchos problemas con valores faltantes como ya hemos comprobado antes, pero vamos a hacer una segunda comprobación de ambos dataframes: Compra y Tienda
+
+Compra presenta todas las instancias completas
+
+```{r}
+vis_miss(Compra)
+```
+
+Al igual que tienda
+
+```{r}
+vis_miss(Tienda)
+```
+
+## Problemas con tipos
+
+# Resultados
+
+# Conclusiones
