@@ -923,12 +923,14 @@ No debería haber muchos problemas con valores faltantes como ya hemos comprobad
 Compra presenta todas las instancias completas
 
 ```{r}
+colSums(is.na(Compra))
 vis_miss(Compra)
 ```
 
 Al igual que tienda
 
 ```{r}
+colSums(is.na(Tienda))
 vis_miss(Tienda)
 ```
 
