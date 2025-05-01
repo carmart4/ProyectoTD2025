@@ -2,22 +2,17 @@
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
 author: |
   <center>
-  Ferrer Font, Neus<br>
-  Navarro García, Marta<br>
-  Rodríguez Simón, Alba<br>
-  Aissa Djellouli, Mohammed<br>
-  Balbastre Aparisi, Héctor<br>
-  Ruiz Ripoll, Joan<br>
-  Martinez Torres, Carlos Santiago
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  
   </center>
 date: "`r Sys.Date()`"
 output:
-  bookdown::pdf_document2:
-    toc: true
-    toc_depth: 3
-    number_sections: true
-    figure_caption: "Figura" # Referencias en castellano
-    table_caption: "Tabla"
+  pdf_document: default
   bookdown::html_document2:
     echo: true
     number_sections: true
@@ -32,12 +27,17 @@ output:
     echo: true
     number_sections: true
     toc: true
-  pdf_document: default
   html_document:
     echo: true
     number_sections: true
     theme: lumen
     toc: true
+  bookdown::pdf_document2:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    figure_caption: "Figura" # Referencias en castellano
+    table_caption: "Tabla"
 always_allow_html: true
 params:
   lang: ES
@@ -59,6 +59,11 @@ language:
     remark: 'Nota: '
     solution: 'Solución. '
 ---
+
+$\text{Neus Ferrer Font, Marta Navarro García, Alba Rodríguez Simón, Mohammed Aissa Djellouli}$
+
+$\text{Héctor Balbastre Aparisi, Joan Ruiz Ripoll, Carlos Santiago Martinez Torres}$
+
 
 # Introducción
 
