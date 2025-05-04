@@ -1,18 +1,8 @@
 ---
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
-author: |
-  <center>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  
-  </center>
+#author:
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   bookdown::html_document2:
     echo: true
     number_sections: true
@@ -20,20 +10,8 @@ output:
     toc: true
     figure_caption: "Figura"
     table_caption: "Tabla"
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
-  html_notebook:
-    echo: true
-    number_sections: true
-    toc: true
-  html_document:
-    echo: true
-    number_sections: true
-    theme: lumen
-    toc: true
   bookdown::pdf_document2:
-    toc: true
+    toc: false
     toc_depth: 3
     number_sections: true
     figure_caption: "Figura" # Referencias en castellano
@@ -60,9 +38,8 @@ language:
     solution: 'Solución. '
 ---
 
-$\text{Neus Ferrer Font, Marta Navarro García, Alba Rodríguez Simón, Mohammed Aissa Djellouli}$
-
-$\text{Héctor Balbastre Aparisi, Joan Ruiz Ripoll, Carlos Santiago Martinez Torres}$
+$$\text{Neus Ferrer Font, Marta Navarro García, Alba Rodríguez Simón, Mohammed Aissa Djellouli}$$
+$$\text{Héctor Balbastre Aparisi, Joan Ruiz Ripoll, Carlos Santiago Martinez Torres}$$
 
 
 # Introducción
@@ -119,7 +96,7 @@ Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y p
 
 ## Carga de librerias
 
-Para la carga de librerías, haremos uso del paquete pacman de R, que es eficiente para la carga e instalación de las mismas. En este proyecto, utilizaremos las librerias 'pdftools', 'tidyverse', 'readxl', 'lubridate', 'visdat' y 'knit'.
+Para la carga de librerías, haremos uso del paquete pacman de R, que es eficiente para la carga e instalación de las mismas. En este proyecto, utilizaremos las librerias pdftools, tidyverse, readxl, lubridate, visdat y knit.
 
 ```{r include=FALSE}
 # Limpiamos el entorno
@@ -133,7 +110,7 @@ rm(list = ls())
 if (!require('pacman')) install.packages('pacman')
 
 # Librerias a cargar
-pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
+pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, kableExtra)
 
 # Con tidyverse: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 # readxl, libreria que requiere una carga aparte explícita
@@ -143,9 +120,9 @@ pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
 
 ## Carga de datos
 
-Todos nuestros datos están almacenados la carpeta $.data$, y fueron obtenidos posteriormente desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato $.pdf$.
+Todos nuestros datos están almacenados la carpeta _.data_, y fueron obtenidos desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato _.pdf_.
 
-Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Como vamos a almacenar la información? ¿Qué informacion queremos almacenar? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros pdf al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
+Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Cómo vamos a almacenar la información? ¿Qué información queremos almacenar? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros _pdf_ al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
 
 ```{r include=FALSE}
 
@@ -188,7 +165,7 @@ Compra <- data.frame( Fecha = character(),
 
 ```
 
-Nota: A lo largo de la extracción de los datos, se implementaron funciones para ser recursivos, además de facilitar la lectura del código y hacer un barrido completo sobre los ficheros.
+*Nota:* A lo largo de la extracción de los datos, se implementaron funciones para ser recursivos, además de facilitar la lectura del código y hacer una lectura completa (barrido) sobre los ficheros.
 
 ```{r include=FALSE}
 
@@ -321,7 +298,7 @@ DetectaParking <- function(ListaProductos){
 }
 ```
 
-El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 3 categorías:
+El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de gran utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 3 categorías:
 
 -   Venta por unidad.
 -   Venta al peso, pescado.
@@ -872,7 +849,7 @@ for (f in lista_nombres_ficheros) {
 
 ## Ficheros no leidos
 
-Solo aquellos ficheros que estuvieran con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenidos, hemos almacenado el nombre del fichero en un dataframe diferente.
+Solo aquellos ficheros que estuvieran con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenido, hemos almacenado el nombre del fichero en un dataframe diferente _NoLeido_.
 
 ```{r include=FALSE}
 
@@ -883,8 +860,6 @@ diferencia <- setdiff(lista_nombres_ficheros, lista_f_almacenados)
 diferencia
 
 ```
-
-Adicional, para verificar la lectura de los datos, se filtró el dataframe que contiene toda la informacion de los productos comprados por los valores NA; si la carga se hizo correctamente, el valor de NA dentro del dataframe debería ser 0.
 
 ```{r include=FALSE}
 
@@ -900,9 +875,10 @@ sum(is.na(Compra))
 
 Esta es una representación sobre cómo se almacenaron los datos para empezar a trabajar sobre ellos. En la Tabla \@ref(tab:TablaTiendas) podemos ver todas las tiendas en las que se han hecho las compras. En total, se han registrado 35 tiendas.
 
-```{r TablaTiendas, echo = FALSE, results ='asis'}
+```{r TablaTiendas, echo=FALSE, results='asis'}
 
-kable(head(Tienda, 10), caption = "Tabla de tiendas registradas")
+kable(head(Tienda, 10), caption = 'Tabla de Tiendas') #%>%
+  #kable_styling(latex_options = "hold_position")
 
 ```
 
@@ -910,71 +886,83 @@ En la siguiente Tabla \@ref(tab:TablaProductos) se muestran los productos que fu
 
 ```{r TablaProductos, echo = FALSE, results ='asis'}
 
-kable(head(Compra, 15), caption = "Tabla de productos leídos")
+kable(head(Compra, 10), caption = 'Tabla de Compras') #%>%
+  #kable_styling(latex_options = "hold_position")
 
 ```
 
-# Limpieza posterior a la lectura
+# Limpieza de datos
+
+Para garantizar la fiabilidad de los datos y realizar su posterior análisis, es importante realizar el proceso de limpieza de datos. Podremos ver los valores NA, máximos, mínimos, y evaluar las diferentes características.
 
 ## Valores vacios
 
-No debería haber muchos problemas con valores faltantes como ya hemos comprobado antes, pero vamos a hacer una segunda comprobación de ambos dataframes: Compra y Tienda
+En principio, dada la naturaleza del ejercicio, de extracción y carga de los datos, no deberían haber valores nulos. Sin embargo, es necesario verificar, especialmente con los dataframes que queremos analizar: Compra y Tienda.
 
-Compra presenta todas las instancias completas
-
-```{r}
+```{r include=FALSE}
 colSums(is.na(Compra))
+```
+
+
+```{r include=FALSE}
 vis_miss(Compra)
 ```
 
-Al igual que tienda
 
-```{r}
+```{r include=FALSE}
 colSums(is.na(Tienda))
+```
+
+
+```{r include=FALSE}
 vis_miss(Tienda)
 ```
 
-## Problemas con tipos
+## Problemas con tipos de datos
 
-Vamos a hacer glimpse() de los dataframe para comprobar que cada columna tenga su tipo adecuado
+Vamos a hacer usar glimpse de los dataframe para comprobar que cada columna tenga su tipo adecuado.
 
-En el data frame de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros, (suma, resta, promedio, desviación estandar...) con estos datos, no lo veo necesario.
-```{r}
+En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
+
+```{r include=FALSE}
 glimpse(Tienda)
 ```
 
-Ahora bien, con el df compra no podemos hacer lo mismo, Fecha y Hora, tendrian que estar en sus respectivos campos, Cantidad, precio unitario e importe deberian ser numerales, y podemos ver un error, tendremos que sustituir las comas por puntos para poder transformar correctamente la columna.
-```{r}
+Ahora bien, con el dataframe Compra no podemos hacer lo mismo. Las variables de Fecha y Hora deberán ser tratadas como 'tiempo'. Cantidad, precio unitario e importe deberian ser de tipo numérico; es importante sustituir las comas por puntos para identifical los decimales y transformar correctamente el dato. Por último, el Tipo de producto y la variable parking, que serán de tipo categórico.
+
+```{r include=FALSE}
 glimpse(Compra)
 ```
 
-Empecemos por Fecha y Hora
-```{r}
-Compra = Compra %>% mutate(Fecha = as.Date(Fecha, "%d/%m/%Y"),
-                  Hora = hm(Hora))
-# Vemos que ahora presentan los tipos adecuados
-class(Compra$Fecha)
-class(Compra$Hora)
+
+```{r include=FALSE}
+# Fecha y hora 
+Compra <- Compra %>% 
+              mutate(Fecha = as.Date(Fecha, "%d/%m/%Y"),
+                     Hora = hm(Hora))
 ```
 
-Ahora empecemos con Cantidad, precio unitario e importe, recordemos que tenemos que sustituir comas por puntos y transformar a numerales.
-```{r}
-Compra = Compra %>% mutate(PrecioUnitario = str_replace_all(PrecioUnitario, ",", "."),
-                  Importe = str_replace_all(Importe, ",", "."),
-                  Cantidad = str_replace_all(Cantidad, ",", ".")) %>%
-  mutate(across(c(Cantidad, PrecioUnitario, Importe), as.numeric))
 
-# Todo correcto
+```{r include=FALSE}
+Compra <- Compra %>% 
+              mutate(PrecioUnitario = str_replace_all(PrecioUnitario, ",", "."),
+                     Importe = str_replace_all(Importe, ",", "."),
+                     Cantidad = str_replace_all(Cantidad, ",", ".")) %>%
+              mutate(across(c(Cantidad, PrecioUnitario, Importe), as.numeric)) %>%
+              mutate(across(c(TipoProducto, Parking), as.factor))
+```
+
+
+```{r include=FALSE}
 glimpse(Compra)
+```
 
+Por ultimo, hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos. 
+
+```{r include=FALSE}
 # Eliminar Datos Duplicados
-
 Compra <- unique(Compra)
 Tienda <- unique(Tienda)
-FicheroLeido <- unique(FicheroLeido)
-NoLeido <- unique(NoLeido)
-
-
 ```
 
 # Resultados
