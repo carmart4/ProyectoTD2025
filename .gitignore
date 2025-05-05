@@ -4,4 +4,7 @@
 .Ruserdata
 *.Rproj
 *.nb.html
-*_files
+ProyectoTD2025_files/
+*_files/
+*/_files/
+*_cache/
