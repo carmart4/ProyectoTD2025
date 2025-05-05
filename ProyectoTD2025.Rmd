@@ -2,18 +2,20 @@
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
 date: "`r Sys.Date()`"
 output:
-  bookdown::pdf_document2:
-    toc: false
-    toc_depth: 3
-    number_sections: true
-    figure_caption: "Figura"
-    table_caption: "Tabla"
-    df_print: kable
   bookdown::html_document2:
     echo: true
     number_sections: true
     theme: spacelab
     toc: true
+    figure_caption: "Figura"
+    table_caption: "Tabla"
+    df_print: kable
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    keep_tex: true
+    toc: false
+    toc_depth: 3
+    number_sections: true
     figure_caption: "Figura"
     table_caption: "Tabla"
     df_print: kable
@@ -37,6 +39,8 @@ language:
     proof: 'Demostración. '
     remark: 'Nota: '
     solution: 'Solución. '
+header-includes:
+  - \usepackage{float}
 ---
 
 $$\text{Neus Ferrer Font, Marta Navarro García, Alba Rodríguez Simón, Mohammed Aissa Djellouli}$$
@@ -110,7 +114,7 @@ rm(list = ls())
 if (!require('pacman')) install.packages('pacman')
 
 # Librerias a cargar
-pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, rticles, tinytex, kableExtra)
+pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, rticles, tinytex, kableExtra, patchwork, cowplot, wordcloud)
 
 ## remotes::install_github("rstudio/rticles")
 
@@ -120,6 +124,9 @@ pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, rticles, t
 # visdat, exploracion visual de los datos 
 # rticles, para los diferentes formatos de salida que ofrece R
 # tinytex, para LaTex
+# patchwork, para la union de graficos
+# cowplot, alineacion de gráficos
+# wordcloud, generacion de nube de palabras 
 ```
 
 ## Carga de datos
@@ -914,9 +921,7 @@ vis_miss(Tienda)
 
 ## Problemas con tipos de datos
 
-Vamos a hacer usar glimpse de los dataframe para comprobar que cada columna tenga su tipo adecuado.
-
-En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
+Vamos a hacer usar _glimpse_ de los dataframes para comprobar que cada columna tenga su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
 
 ```{r include=FALSE}
 glimpse(Tienda)
@@ -957,5 +962,132 @@ Tienda <- unique(Tienda)
 ```
 
 # Resultados
+
+## Análisis de varibales
+
+Por la naturaleza de los datos y la manera en que se desarollará el trabajo, abordaremos el análisis de las variables categóricas como _TipoProducto_ y _Parking_, y de tipo fecha posteriormente, dentro de nuestro dataframe de Compras. 
+
+```{r echo=FALSE}
+glimpse(Compra)
+```
+
+Sin embargo, para familiarizarnos con los datos, analizaremos los precios medios de los productos, dado que han variado a lo largo del tiempo, y las palabras que más se repiten en la descripción de los productos (Figura \@ref(fig:FiguraPalabras)).  En nuestro estudio encontramos dos variables numéricas que se encuentran en el dataframe de los productos comprados. Realizando el análisis sobre la variable _PrecioUnitario_, vemos su distribución en el gráfico \@ref(fig:FiguraPrecios), donde la mayoría de los precios promedio de Mercadona no superan los 10 EUR. Sin embargo, considerando la detección por la regla de boxplot, ya que no se sigue una distribución normal, aquellos valores por debajo de 1.4 y por arriba de 3.12 son consideros como outliers.
+
+```{r include=FALSE}
+# Estadísticos básicos
+madm <- function(v) {
+  mediana <- median(v, na.rm=TRUE) # Cada vez que 'opera el vector', considera los na.  
+  valor <- 1.4826 * median(abs(v - mediana), na.rm=TRUE)
+  return(valor)
+}
+```
+
+```{r TablaEstadisticos, include=FALSE, results ='asis'}
+# Este será un acercamiento a los datos
+
+# Dado que un producto cambiará su precio con el tiempo, vamos a utilizar la media 
+
+est_bsc <- Compra %>%
+              # Agrupamos por producto, 
+              group_by(Producto) %>%
+              #count(Producto, PrecioUnitario) %>%
+              # Obtenemos la media para cada producto 
+              summarise(across(.col = PrecioUnitario,
+                               .fns = mean)) %>%
+              mutate(across(.col = PrecioUnitario,
+                               .fns = ~ round(., 2))) %>%
+              # Obtenemos los estadisticos básicos
+              summarise(across(.col = PrecioUnitario,
+                                             .fns = list (maximo = max, minimo = min, mean = mean, median = median, madm = madm, IQR = IQR),
+                                             .names = '{.fn}')) %>%
+              mutate(across(.cols = everything(.), # Redondeamos a 2 cifras
+                            .fns = ~ round(., 2)))
+
+kable(est_bsc, caption = 'Estadísticos básicos del precio unitario', booktabs = TRUE) %>%
+  kable_styling(latex_options = c( "scale_down", "hold_position"), position = "center")
+
+```
+
+```{r include=FALSE}
+# Definimos los limites, sabiendo que el mínimo es 0.15 y el máximo es 31.33
+x_limits <- c(0, 35)
+
+g1 <- Compra %>%
+  ggplot(aes(x=PrecioUnitario)) + 
+  geom_histogram(breaks=seq(0, 35, by=0.5)) +
+  coord_cartesian(xlim = x_limits) +
+  theme(axis.title = element_blank())
+
+g2 <- Compra %>%
+  ggplot(aes(y=PrecioUnitario)) + 
+  geom_boxplot() +
+  coord_flip(ylim = x_limits) +
+  labs(y = 'Precio', x=NULL) +
+  theme(axis.title.y = element_blank())
+```
+
+```{r include=FALSE}
+# Funcion Regla boxplot para identificar outliers
+reglaboxplot <- function(v){
+  xi <- quantile(v, probs =  0.25, na.rm=TRUE)
+  xs <- quantile(v, probs =  0.75, na.rm=TRUE)
+  iqr <- xs - xi
+  return((v < (xi - (1.5 * iqr))) | (v > (xs + (1.5 * iqr))))
+}
+
+# Precio del quantile inferior 
+Compra %>%
+  group_by(Producto) %>%
+  # Obtenemos la media para cada producto 
+  summarise(across(.col = PrecioUnitario,
+                   .fns = mean)) %>%
+  # Calculamos el cuartil superior
+  summarise(across(.col = PrecioUnitario,
+                   .fns = ~ quantile(., probs =  0.25)))
+
+# Precio del quantile superior 
+Compra %>%
+  group_by(Producto) %>%
+  # Obtenemos la media para cada producto 
+  summarise(across(.col = PrecioUnitario,
+                   .fns = mean)) %>%
+  # Calculamos el cuartil superior
+  summarise(across(.col = PrecioUnitario,
+                   .fns = ~ quantile(., probs =  0.75)))
+
+# Productos detectados colo outliers 
+Compra %>%
+  # Agrupamos por producto, 
+  group_by(Producto) %>%
+  # Obtenemos la media para cada producto 
+  summarise(across(.col = PrecioUnitario,
+                   .fns = mean)) %>%
+  mutate(across(.col = PrecioUnitario,
+                   .fns = ~ round(., 2))) %>%
+  mutate(across(.col = PrecioUnitario,
+                   .fns = ~ reglaboxplot(.)))
+
+Compra[which(reglaboxplot(Compra$PrecioUnitario)), ] %>%
+  arrange(PrecioUnitario)
+
+```
+
+```{r FiguraPrecios, fig.cap='Distribución de los precios', fig.align='center', fig.width=5, fig.height=2, fig.pos='H', echo=FALSE}
+g <- plot_grid(g1, g2, ncol = 1, align = 'v', axis = "lr")
+g
+```
+
+```{r FiguraPalabras, fig.cap='Nube de palabras de productos', fig.width=5, fig.height=5, message=FALSE, warning=FALSE, echo=FALSE, fig.align='center'}
+rep_prod <- Compra %>%
+  count(Producto)
+
+wordcloud(words = rep_prod$Producto,
+          freq = rep_prod$n,
+          random.order = FALSE,
+          colors=brewer.pal(6,"Dark2"),
+          scale = c(4, 0.5)) # Reducir el tamaño de la fuente
+```
+
+## Continuación análisis... 
 
 # Conclusiones
