@@ -1,6 +1,5 @@
 ---
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
-#author:
 date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
@@ -10,12 +9,14 @@ output:
     toc: true
     figure_caption: "Figura"
     table_caption: "Tabla"
+    df_print: kable
   bookdown::pdf_document2:
     toc: false
     toc_depth: 3
     number_sections: true
-    figure_caption: "Figura" # Referencias en castellano
+    figure_caption: "Figura"
     table_caption: "Tabla"
+    df_print: kable
 always_allow_html: true
 params:
   lang: ES
@@ -40,7 +41,6 @@ language:
 
 $$\text{Neus Ferrer Font, Marta Navarro García, Alba Rodríguez Simón, Mohammed Aissa Djellouli}$$
 $$\text{Héctor Balbastre Aparisi, Joan Ruiz Ripoll, Carlos Santiago Martinez Torres}$$
-
 
 # Introducción
 
@@ -110,19 +110,23 @@ rm(list = ls())
 if (!require('pacman')) install.packages('pacman')
 
 # Librerias a cargar
-pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, kableExtra)
+pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, rticles, tinytex, kableExtra)
+
+## remotes::install_github("rstudio/rticles")
 
 # Con tidyverse: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 # readxl, libreria que requiere una carga aparte explícita
 # lubridate, se utiliza con frecuencia con paquetes de tidyverse, pero requiere una carga aparte
 # visdat, exploracion visual de los datos 
+# rticles, para los diferentes formatos de salida que ofrece R
+# tinytex, para LaTex
 ```
 
 ## Carga de datos
 
 Todos nuestros datos están almacenados la carpeta _.data_, y fueron obtenidos desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato _.pdf_.
 
-Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Cómo vamos a almacenar la información? ¿Qué información queremos almacenar? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros _pdf_ al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
+Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Qué información queremos almacenar? ¿Cómo vamos a almacenar la información? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros _pdf_ al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
 
 ```{r include=FALSE}
 
@@ -165,7 +169,7 @@ Compra <- data.frame( Fecha = character(),
 
 ```
 
-*Nota:* A lo largo de la extracción de los datos, se implementaron funciones para ser recursivos, además de facilitar la lectura del código y hacer una lectura completa (barrido) sobre los ficheros.
+*Nota:* A lo largo de la extracción de los datos, se implementaron funciones para ser recursivos, además de facilitar la lectura del código y hacer una carga completa (barrido) de los datos contenidos en los ficheros.
 
 ```{r include=FALSE}
 
@@ -304,7 +308,7 @@ El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue d
 -   Venta al peso, pescado.
 -   Venta al peso, frutas y verduras.
 
-Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad.
+Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad. Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket.
 
 ```{r include=FALSE}
 
@@ -356,13 +360,6 @@ DetectaPescado <- function(ListaProductos){
 }
 
 ```
-
-Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket.
-
--   Patron producto unitario: Cantidad(1), descripción, importe
--   Patron producto unitario: Cantidad(+1), descripción, precio unitario, importe
--   Patron pescado: descripción, peso, precio unitario, importe
--   Patron frutas y verduras: Cantidad(1), descripción, peso, precio unitario, importe
 
 ```{r include=FALSE}
 
@@ -877,8 +874,8 @@ Esta es una representación sobre cómo se almacenaron los datos para empezar a 
 
 ```{r TablaTiendas, echo=FALSE, results='asis'}
 
-kable(head(Tienda, 10), caption = 'Tabla de Tiendas') #%>%
-  #kable_styling(latex_options = "hold_position")
+kable(head(Tienda, 10), caption = 'Tabla de tiendas leidas', booktabs = TRUE) %>%
+  kable_styling(latex_options = c('striped', "scale_down", "hold_position"), full_width = FALSE, position = "center")
 
 ```
 
@@ -886,8 +883,8 @@ En la siguiente Tabla \@ref(tab:TablaProductos) se muestran los productos que fu
 
 ```{r TablaProductos, echo = FALSE, results ='asis'}
 
-kable(head(Compra, 10), caption = 'Tabla de Compras') #%>%
-  #kable_styling(latex_options = "hold_position")
+kable(head(Compra, 10), caption = 'Tabla de productos leidos', booktabs = TRUE) %>%
+  kable_styling(latex_options = c('striped', "scale_down", "hold_position"), full_width = FALSE, position = "center")
 
 ```
 
@@ -903,16 +900,13 @@ En principio, dada la naturaleza del ejercicio, de extracción y carga de los da
 colSums(is.na(Compra))
 ```
 
-
 ```{r include=FALSE}
 vis_miss(Compra)
 ```
 
-
 ```{r include=FALSE}
 colSums(is.na(Tienda))
 ```
-
 
 ```{r include=FALSE}
 vis_miss(Tienda)
@@ -928,12 +922,11 @@ En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el t
 glimpse(Tienda)
 ```
 
-Ahora bien, con el dataframe Compra no podemos hacer lo mismo. Las variables de Fecha y Hora deberán ser tratadas como 'tiempo'. Cantidad, precio unitario e importe deberian ser de tipo numérico; es importante sustituir las comas por puntos para identifical los decimales y transformar correctamente el dato. Por último, el Tipo de producto y la variable parking, que serán de tipo categórico.
+Ahora bien, con el dataframe Compra no podemos hacer lo mismo. Las variables de Fecha y Hora deberán ser tratadas como 'tiempo'. Cantidad, precio unitario e importe deberian ser de tipo numérico; es importante sustituir las comas por puntos para identifical los decimales y transformar correctamente el dato. Por último, el tipo de producto y la variable parking, que serán de tipo categórico.
 
 ```{r include=FALSE}
 glimpse(Compra)
 ```
-
 
 ```{r include=FALSE}
 # Fecha y hora 
@@ -941,7 +934,6 @@ Compra <- Compra %>%
               mutate(Fecha = as.Date(Fecha, "%d/%m/%Y"),
                      Hora = hm(Hora))
 ```
-
 
 ```{r include=FALSE}
 Compra <- Compra %>% 
@@ -952,12 +944,11 @@ Compra <- Compra %>%
               mutate(across(c(TipoProducto, Parking), as.factor))
 ```
 
-
 ```{r include=FALSE}
 glimpse(Compra)
 ```
 
-Por ultimo, hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos. 
+Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos. 
 
 ```{r include=FALSE}
 # Eliminar Datos Duplicados
