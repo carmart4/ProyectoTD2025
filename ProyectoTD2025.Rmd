@@ -2,18 +2,18 @@
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
 date: "`r Sys.Date()`"
 output:
+  bookdown::pdf_document2:
+    toc: false
+    toc_depth: 3
+    number_sections: true
+    figure_caption: "Figura"
+    table_caption: "Tabla"
+    df_print: kable
   bookdown::html_document2:
     echo: true
     number_sections: true
     theme: spacelab
     toc: true
-    figure_caption: "Figura"
-    table_caption: "Tabla"
-    df_print: kable
-  bookdown::pdf_document2:
-    toc: false
-    toc_depth: 3
-    number_sections: true
     figure_caption: "Figura"
     table_caption: "Tabla"
     df_print: kable
