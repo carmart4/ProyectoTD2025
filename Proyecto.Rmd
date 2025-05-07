@@ -106,8 +106,7 @@ NoLeido <- data.frame( NombreFichero = character(),
 
 Tienda <- data.frame( IdTienda = character(),
                       Direccion = character(),
-                      CodigoPostal = character(),
-                      Municipio = character(),
+                      Ubicacion = character(),
                       Telefono = character(),
                       stringsAsFactors = FALSE )
 
@@ -116,13 +115,13 @@ Tienda <- data.frame( IdTienda = character(),
 Compra <- data.frame( Fecha = character(),
                       IdTienda = character(),
                       IdFactura = character(),
-                      Hora = character(),
                       Producto = character(),
                       Cantidad = character(),
                       PrecioUnitario = character(),
                       Importe = character(),
                       TipoProducto = character(),
                       Parking = logical(), 
+                      Tarjeta = logical(),
                       stringsAsFactors = FALSE ) 
 
 ```
@@ -181,6 +180,7 @@ ExtraeInformacion <- function(Lineas) {
     direccion <- encabezado[2]
 
     # Ubicacion (CP y municipio)
+    u <- encabezado[3]
     ubicacion <- strsplit(encabezado[3], split = ' ')[[1]] 
     
     CP <- ubicacion[1]
@@ -189,6 +189,7 @@ ExtraeInformacion <- function(Lineas) {
     telefono <- strsplit(encabezado[4], split = ': ')[[1]][2]
     
     # Tiempo (fecha y hora)
+    t <- encabezado[5]
     tiempo <- strsplit(encabezado[5], split = ' ')[[1]][1:2]
     
     fecha <- tiempo[1] # String de la fecha en formato dd/mm/aaaa
@@ -203,7 +204,7 @@ ExtraeInformacion <- function(Lineas) {
     id_factura <- factura[3]
     
     # Esta es la informacion del encabezado. Fija para cada factura 
-    InformacionCompra <- list(direccion, CP, municipio, telefono, fecha, hora, id_tienda, n_caja, id_factura)
+    InformacionCompra <- list(direccion, CP, municipio, telefono, fecha, hora, id_tienda, n_caja, id_factura, u, t)
     
     # Obtenemos el rango de filas que contienen los productos
     
@@ -351,6 +352,9 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
   idtienda <- InformacionCompra[[1]][[7]]
   idfactura <- InformacionCompra[[1]][[9]]
   
+  ubi <- InformacionCompra[[1]][[10]]
+  tiempo <- InformacionCompra[[1]][[11]]
+  
   # Tratamiento para los productos unitarios
   
   i <- 1
@@ -370,6 +374,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
       
       valores <- data.frame(
                     Fecha = fecha, 
+                    Tiempo = tiempo,
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
                     Hora = hora,
@@ -396,6 +401,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
       
       valores <- data.frame(
                     Fecha = fecha, 
+                    Tiempo = tiempo,
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
                     Hora = hora, 
@@ -437,6 +443,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
       
       valores <- data.frame(
                     Fecha = fecha, 
+                    Tiempo = tiempo,
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
                     Hora = hora,
@@ -471,6 +478,7 @@ RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProduct
       
       valores <- data.frame(
                     Fecha = fecha, 
+                    Tiempo = tiempo,
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
                     Hora = hora,
@@ -503,6 +511,9 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
   idtienda <- InformacionCompra[[1]][[7]]
   idfactura <- InformacionCompra[[1]][[9]]
   
+  ubi <- InformacionCompra[[1]][[10]]
+  tiempo <- InformacionCompra[[1]][[11]]
+  
   # Tratamiento para los productos unitarios
 
   i <- 1
@@ -528,6 +539,7 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
         
         valores <- data.frame(
                       Fecha = fecha, 
+                      Tiempo = tiempo,
                       IdTienda = idtienda, 
                       IdFactura = idfactura, 
                       Hora = hora,
@@ -554,6 +566,7 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
         
         valores <- data.frame(
                       Fecha = fecha, 
+                      Tiempo = tiempo,
                       IdTienda = idtienda, 
                       IdFactura = idfactura, 
                       Hora = hora, 
@@ -592,6 +605,7 @@ RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProduct
       
       valores <- data.frame(
                     Fecha = fecha, 
+                    Tiempo = tiempo,
                     IdTienda = idtienda, 
                     IdFactura = idfactura, 
                     Hora = hora,
@@ -674,6 +688,10 @@ RegistroFicheros <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, 
     id_tienda <- Informacion[[1]][[7]]
     id_factura <- Informacion[[1]][[9]]
     
+    ubi <- Informacion[[1]][[10]]
+    tiempo <- Informacion[[1]][[11]]
+    
+    
     # Añadimos los ficheros que fueron leidos correctamente y además, añadimos la factura a la que 
     # corresponde para verificar posteriormente
     
@@ -694,6 +712,7 @@ RegistroFicheros <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, 
                               CodigoPostal = codpos,
                               Municipio = municipio,
                               Telefono = tel,
+                              Ubicacion = ubi,
                              stringsAsFactors = FALSE )
       
       DF_Tiendas <- rbind(DF_Tiendas, valores)

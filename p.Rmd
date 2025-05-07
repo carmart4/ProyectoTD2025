@@ -1,0 +1,121 @@
+---
+title: "prueba"
+author: "Carlos Santiago Martinez Torres"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Importacion de librerias 
+
+```{r}
+# Limpiamos el entorno
+rm(list = ls())
+
+```
+
+Implementamos una funcion que nos permite cargar las librerias que no están disponibles hasta el momento
+
+## Funcion para instalar y cargar librerias nuevas
+
+```{r message=FALSE, warning=FALSE}
+# Instalacion de librerias con pacman
+
+# Asegurarse de que el paquete "pacman" está instalado
+if (!require("pacman")) install.packages("pacman")
+
+pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr)
+
+# Con tidyverse: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
+# readxl, libreria que requiere una carga aparte explícita
+# lubridate, se utiliza con frecuencia con paquetes de tidyverse, pero requiere una carga aparte
+# visdat, exploracion visual de los datos 
+```
+
+# Como vamos a almacenar la informacion? Que informacion queremos almacenar? 
+
+```{r}
+# Dataframe que contendrá el nombre del fichero leido y la factura a la que pertenece. 
+
+FicheroLeido <- data.frame( FacturaFichero = character(),
+                        NombreFichero = character(),
+                        stringsAsFactors = FALSE)
+
+# En caso de no ser leido, porque no pertenece a Mercadona, guardaremos cual fichero ha sido 
+# y lo almacenaremos en otro df, para identificarlo posteriormente.
+
+NoLeido <- data.frame( NombreFichero = character(),
+                        stringsAsFactors = FALSE)
+
+# Dataframe que contendrá la información de las diferentes tiendas de las facturas.  
+
+Tienda <- data.frame( IdTienda = character(),
+                      Direccion = character(),
+                      Ubicacion = character(),
+                      Telefono = character(),
+                      stringsAsFactors = FALSE )
+
+# Dataframe que contendra la informacion de las compras realizadas. 
+
+Compra <- data.frame( Fecha = character(),
+                      IdTienda = character(),
+                      IdFactura = character(),
+                      Producto = character(),
+                      Cantidad = character(),
+                      PrecioUnitario = character(),
+                      Importe = character(),
+                      TipoProducto = character(),
+                      Parking = logical(), 
+                      Tarjeta = logical(),
+                      stringsAsFactors = FALSE ) 
+
+```
+
+# Funcion EsMercadona, que comprueba si la factura es de Mercadona o no
+
+```{r}
+EsMercadona <- function(NombrePDF){
+  
+  # Recibe el nombre el fichero en formato pdf
+  
+  carpeta <- 'data/'
+  fichero <- paste0(carpeta, NombrePDF)
+  
+  texto <- pdf_text(fichero) # Extrae el texto del pdf.
+  
+  #texto <- iconv(texto, from = "latin1", to = "UTF-8") # Corregimos el error para valores extraños.
+
+  lineas <- strsplit(texto, "\n")[[1]] # Divide el texto en diferentes lineas, por cada salto de linea.
+  lineas <- trimws(lineas) # Elimina espacios en blanco al inicio y final de cada linea.
+  
+  # Para verificar que es de Mercadona y que se ha leido correctamente la factura, vamos a evaluar la primera linea.
+  
+  Mercadona <- grepl('MERCADONA', lineas[1])  # Valor bool para saber si es de Mercadona. 
+  CIF <- grepl('A-46103834', lineas[1]) # Valor bool para saber si reconoce el CIF de Mercadona.
+  tarjeta <- any(grepl(pattern = 'TARJETA BANCARIA', x = lineas))
+  
+  if ((!Mercadona) | (!CIF)){
+    Mercadona <- FALSE # Esto es preventivo, para el caso del ticket3.pdf
+    lineas <- list()
+    tarjeta <- FALSE
+  } 
+  
+  # Mercadona = Valor bool
+  # lineas = lista de las lineas leidas; sera vacia en caso de no ser de Mercadona
+  
+  Informacion <- list(Mercadona, lineas, tarjeta)
+  
+  return(Informacion)
+}
+```
+
+```{r}
+lista_nombres_ficheros <- list.files(path = 'data/')
+```
+
+```{r}
+f <- '20231205 Mercadona 58,00.pdf'
+info <- EsMercadona(f)[[3]]
+info
+```
+
+
