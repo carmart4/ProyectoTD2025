@@ -960,7 +960,7 @@ g_precioproductos = ggplot(data = Producto, aes(x = ImporteProducto)) +
                                      alpha = 0.2) +
                       geom_density(col='darkgreen') +
                       labs(title = 'Histograma de importes por productos',
-                           x = 'Importe producto') + 
+                           x = 'Importe por producto') + 
                       theme(plot.title = element_text(size = 10))
 
 g_preciototales = ggplot(data = Compra, aes(x = ImporteTotal)) +
@@ -971,7 +971,7 @@ g_preciototales = ggplot(data = Compra, aes(x = ImporteTotal)) +
                                                        alpha = 0.2) +
                                         geom_density(col='darkgreen') +
                                         labs(title = 'Histograma de importes totales',
-                                             x = 'Importe total') + 
+                                             x = 'Importe total por factura') + 
                                         theme(plot.title = element_text(size = 10))
 
 g_anual = Compra %>%
@@ -987,7 +987,7 @@ g_anual = Compra %>%
             scale_x_continuous(breaks = seq(1, 12, by = 1))
 
 # Usando patchwork
-(g_precioproductos + g_parking) / (g_tipoproducto + g_preciototales) / g_anual
+(g_precioproductos + g_parking) / (g_preciototales + g_tipoproducto) / g_anual
 
 ```
 
