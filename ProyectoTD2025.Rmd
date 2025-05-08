@@ -2,16 +2,16 @@
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
 date: "`r Sys.Date()`"
 output:
-  bookdown::html_document2:
-    echo: true
-    number_sections: true
-    toc: true
-    figure_caption: "Figura"
-    table_caption: "Tabla"
   bookdown::pdf_document2:
     toc: false
     toc_depth: 3
     number_sections: true
+    figure_caption: "Figura"
+    table_caption: "Tabla"
+  bookdown::html_document2:
+    echo: true
+    number_sections: true
+    toc: true
     figure_caption: "Figura"
     table_caption: "Tabla"
 always_allow_html: true
@@ -36,8 +36,7 @@ language:
     solution: 'Solución. '
 ---
 
-$$\text{Neus Ferrer Font, Marta Navarro García, Alba Rodríguez Simón, Mohammed Aissa Djellouli}$$
-$$\text{Héctor Balbastre Aparisi, Joan Ruiz Ripoll, Carlos Santiago Martinez Torres}$$
+$$\text{Neus Ferrer Font, Marta Navarro García, Alba Rodríguez Simón, Mohammed Aissa Djellouli}$$ $$\text{Héctor Balbastre Aparisi, Joan Ruiz Ripoll, Carlos Santiago Martinez Torres}$$
 
 # Introducción
 
@@ -53,47 +52,22 @@ Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y p
 
 ## Preguntas planteadas
 
-1)¿Qué frutas tienen mayor venta en primavera?
-
-2)¿Qué eventos locales o festivos generan picos de venta significativos? (Ej. Navidad)
-
-3)¿Existen diferencias significativas en las preferencias de compra según zonas (urbana vs rural)?
-
-4)¿Qué categorías tienen mayor tendencia a generar compras adicionales (por ejemplo, comprar galletas con café)?
-
-5)¿Qué productos muestran mayor consistencia de compra independientemente de cambios en su precio?
-
-6)¿Cuántos productos compra en promedio una persona por ticket?
-
-7)¿Cuál es el gasto promedio por compra y Cómo varía según el día/hora?
-
-8)¿Qué categorías de productos (fruta, verdura… )suelen comprarse juntas con mayor frecuencia?
-
-9)¿Hay diferencias de consumo en días laborales vs. fines de semana?
-
-10)¿Cuál es el mejor horario para comprar? (Menos concurrencia)
-
-11)¿Cuál es el mejor día para comprar? (Menos concurrencia)
-
-12)¿Qué mes es mejor para comprar x fruta? (El mes con mayor compra de frutas y verduras)
-
-13)¿Cuál ha sido el producto, unitario, más comprado y cuál ha sido el cambio de su precio a lo largo del tiempo?
-
-14)¿Cuáles son los productos con mayor facturación total? (Top 5 de los más facturados)
-
-15)¿Cómo varían las ventas a lo largo del mes? ¿Hay más compras a fin de mes?
-
-16)¿Cuál es la tasa de personas que al comprar, tienen parking? (Compras con parking/Total de compras)
-
-17)¿Qué productos aparecen con mayor frecuencia en los tickets de alto valor (€)?
-
-18)¿Qué combinaciones de productos se repiten con más frecuencia en una misma compra?
+1. ¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura?
+2. ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
+3. ¿Cuál es el número promedio de productos por ticket y el gasto promedio por compra, según el día y la hora?
+4. ¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
+5. ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
+6. Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+7. Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+8. Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
+9. ¿Cuál es la procedencia de los tickets? ¿Qué ciudad/ pueblo tiene un mayor número de tickets?
+10. Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?
 
 # Material y métodos
 
-## Carga de librerias
+## Carga de librerías
 
-Para la carga de librerías, haremos uso del paquete pacman de R, que es eficiente para la carga e instalación de las mismas. En este proyecto, utilizaremos las librerias pdftools, tidyverse, readxl, lubridate, visdat y knit.
+Para la carga de librerías, haremos uso del paquete pacman de R, que es eficiente para la carga e instalación de las mismas. En este proyecto, utilizaremos las librerias pdftools, tidyverse, readxl, lubridate, visdat, entre otras.
 
 ```{r entorno, include=FALSE}
 # Limpiamos el entorno
@@ -120,9 +94,9 @@ pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, tinytex, p
 
 ## Carga de datos
 
-Todos nuestros datos están almacenados la carpeta _.data_, y fueron obtenidos desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato _.pdf_.
+Todos nuestros datos están almacenados la carpeta _data_, y fueron obtenidos desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato _pdf_.
 
-Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Qué información queremos almacenar? ¿Cómo vamos a almacenar la información? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros _pdf_ al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
+Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Qué información queremos almacenar? ¿Cómo vamos a almacenar la información para responder a las preguntas planteadas? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros _pdf_ al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
 
 ```{r DataFrames, include=FALSE}
 # ¿Como vamos a almacenar la información? ¿Qué informacion queremos almacenar?
@@ -312,11 +286,7 @@ DetectaParking <- function(ListaProductos){
 }
 ```
 
-El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de gran utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 3 categorías:
-
--   Venta por unidad.
--   Venta al peso, pescado.
--   Venta al peso, frutas y verduras.
+El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de gran utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 2 categorías: _Venta por unidad_ y _veta al peso_ para pescado y, frutas y verduras.
 
 Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad. Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket.
 
@@ -803,8 +773,8 @@ RegistroFichero <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, D
 ```{r include=FALSE}
 # Verificacion de las funciones anteriores para todos los ficheros
 
-## Carga de todos los ficheros
-#lista_ficheros <- list.files(path = 'data/', pattern = "\\.pdf$")
+# Carga de todos los ficheros
+# lista_ficheros <- list.files(path = 'data/', pattern = "\\.pdf$")
 lista_nombres_ficheros <- list.files(path = 'data/')
 length(lista_nombres_ficheros)
 ```
@@ -862,8 +832,14 @@ kable(head(Tienda, 10), caption = 'Tabla de tiendas leidas', booktabs = TRUE)
 
 En la Tabla \@ref(tab:TablaProductos) se muestran los productos que fueron leídos, identificando por ejemplo el ticket de compra, el tipo de producto, cantidad, entre otros.
 
+```{r include=FALSE}
+# Renombramos el nombre de la columna Producto, para no confundir con la tabla 
+colnames(Producto)[2] <- 'DescripcionProducto'
+```
+
+
 ```{r TablaProductos, echo = FALSE, results ='asis'}
-kable(head(Compra, 10), caption = 'Tabla de productos leidos', booktabs = TRUE) 
+kable(head(Producto, 10), caption = 'Tabla de productos leidos', booktabs = TRUE) 
 ```
 
 # Limpieza de datos
@@ -872,14 +848,14 @@ Para garantizar la fiabilidad de los datos y realizar su posterior análisis, es
 
 ## Valores vacios
 
-En principio, dada la naturaleza del ejercicio, de extracción y carga de los datos, no deberían haber valores nulos. Sin embargo, es necesario verificar, especialmente con los dataframes que queremos analizar: Compra y Tienda.
+En principio, dada la naturaleza del ejercicio, de extracción y carga de los datos, no deberían haber valores nulos. Sin embargo, es necesario verificar, especialmente con los dataframes que queremos analizar: Producto y Tienda.
 
 ```{r include=FALSE}
-colSums(is.na(Compra))
+colSums(is.na(Producto))
 ```
 
 ```{r include=FALSE}
-vis_miss(Compra)
+vis_miss(Producto)
 ```
 
 ```{r include=FALSE}
@@ -892,57 +868,85 @@ vis_miss(Tienda)
 
 ## Problemas con tipos de datos
 
-Vamos a hacer usar _glimpse_ de los dataframes para comprobar que cada columna tenga su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
+Con _glimpse_ podemos ver algunos datos del dataframe, además de comprobar que cada columna tenga su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
 
 ```{r include=FALSE}
 glimpse(Tienda)
 ```
 
-Ahora bien, con el dataframe Compra no podemos hacer lo mismo. Las variables de Fecha y Hora deberán ser tratadas como 'tiempo'. Cantidad, precio unitario e importe deberian ser de tipo numérico; es importante sustituir las comas por puntos para identifical los decimales y transformar correctamente el dato. Por último, el tipo de producto y la variable parking, que serán de tipo categórico.
+Con los dataframes Compra y Producto, no podemos hacer lo mismo. Las variables como _Fecha_, _ImporteTotal_, _Cantidad_ y _PrecioUnitario_, deben tener el dato correspondiente para realizar las operaciones necesarias. Por ejemplo, dentro de las variables numéricas, es importante sustituir las comas por puntos para identificar los decimales y transformar correctamente el dato. Por último, el _TipoProducto_, _Parking_ y la variable _Tarjeta_, que serán de tipo categórico.
 
 ```{r include=FALSE}
-# glimpse(Compra)
+# Actualizacion para la tabla Compra. Variables a transformar:
+# Fecha
+# Parking
+# Tarjeta
+# Importe
+glimpse(Compra)
+
+Compra <- Compra %>%
+            mutate(Fecha = dmy_hm(Fecha),
+                   Parking = as.factor(Parking),
+                   Tarjeta = as.factor(Tarjeta),
+                   ImporteTotal = str_replace_all(string = ImporteTotal, pattern = ",", replacement = ".")) %>%
+            mutate(ImporteTotal = as.numeric(ImporteTotal))
+
+summary(Compra)
 ```
 
 ```{r include=FALSE}
-# Fecha y hora 
-# Compra <- Compra %>% 
-#               mutate(Fecha = as.Date(Fecha, "%d/%m/%Y"),
-#                      Hora = hm(Hora))
+# Actualización para la tabla Producto. Variables a transformar:
+# Cantidad - Reemplazar coma
+# PrecioUnitario - Reemplazar coma
+# ImporteProducto - Reemplazar coma
+# TipoProducto
+glimpse(Producto)
+
+Producto <- Producto %>%
+              mutate(Cantidad = str_replace_all(string = Cantidad, pattern = ",", replacement = "."),
+                     PrecioUnitario = str_replace_all(string = PrecioUnitario, pattern = ",", replacement = "."),
+                     ImporteProducto = str_replace_all(string = ImporteProducto, pattern = ",", replacement = ".")) %>%
+              mutate(Cantidad = as.numeric(Cantidad),
+                     PrecioUnitario = as.numeric(PrecioUnitario),
+                     ImporteProducto = as.numeric(ImporteProducto),
+                     TipoProducto = as.factor(TipoProducto))
+
+summary(Producto)
 ```
 
-```{r include=FALSE}
-# Compra <- Compra %>% 
-#               mutate(PrecioUnitario = str_replace_all(PrecioUnitario, ",", "."),
-#                      Importe = str_replace_all(Importe, ",", "."),
-#                      Cantidad = str_replace_all(Cantidad, ",", ".")) %>%
-#               mutate(across(c(Cantidad, PrecioUnitario, Importe), as.numeric)) %>%
-#               mutate(across(c(TipoProducto, Parking), as.factor))
-```
+Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos.
 
 ```{r include=FALSE}
-# glimpse(Compra)
-```
+# IMPORTANTE: Identificar los valores duplicados, que se eliminan tras la sentencia posterior.  
+Producto %>%
+  group_by(IdFactura) %>%
+  count(DescripcionProducto) %>%
+  filter(n > 1) %>%
+  inner_join(FicheroLeido, by = 'IdFactura')
 
-Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos. 
+Producto %>%
+  filter(IdFactura == '052628') %>%
+  duplicated()
 
-```{r include=FALSE}
-# # Eliminar Datos Duplicados
-# Compra <- unique(Compra)
-# Tienda <- unique(Tienda)
+# Eliminar datos duplicados
+Compra <- unique(Compra)
+Producto <- unique(Producto)
+Tienda <- unique(Tienda)
 ```
 
 # Resultados
 
 ## Análisis de varibales
 
-Por la naturaleza de los datos y la manera en que se desarollará el trabajo, abordaremos el análisis de las variables categóricas como _TipoProducto_ y _Parking_, y de tipo fecha posteriormente, dentro de nuestro dataframe de Compras. 
+Una vez tenemos limpios los datos, procedemos a analizarlos. Debemos tener en cuenta que dada la naturaleza de los datos y del desarrollo del trabajo, el análisis de las variables y las relaciones entre ellas, las veremos en profundidad en los apartados siguientes. Sin embargo, para tener un acercamiento a los datos, podemos ver:
 
 ```{r echo=FALSE}
-# glimpse(Compra)
+summary(Compra)
+
+summary(Producto)
 ```
 
-Sin embargo, para familiarizarnos con los datos, analizaremos los precios medios de los productos, dado que han variado a lo largo del tiempo, y las palabras que más se repiten en la descripción de los productos (Figura \@ref(fig:FiguraPalabras)).  En nuestro estudio encontramos dos variables numéricas que se encuentran en el dataframe de los productos comprados. Realizando el análisis sobre la variable _PrecioUnitario_, vemos su distribución en el gráfico \@ref(fig:FiguraPrecios), donde la mayoría de los precios promedio de Mercadona no superan los 10 EUR. Sin embargo, considerando la detección por la regla de boxplot, ya que no se sigue una distribución normal, aquellos valores por debajo de 1.4 y por arriba de 3.12 son consideros como outliers.
+Sin embargo, para familiarizarnos con los datos, analizaremos los precios medios de los productos, dado que han variado a lo largo del tiempo, y las palabras que más se repiten en la descripción de los productos (Figura \@ref(fig:FiguraPalabras)). En nuestro estudio encontramos dos variables numéricas que se encuentran en el dataframe de los productos comprados. Realizando el análisis sobre la variable *PrecioUnitario*, vemos su distribución en el gráfico \@ref(fig:FiguraPrecios), donde la mayoría de los precios promedio de Mercadona no superan los 10 EUR. Sin embargo, considerando la detección por la regla de boxplot, ya que no se sigue una distribución normal, aquellos valores por debajo de 1.4 y por arriba de 3.12 son consideros como outliers.
 
 ```{r include=FALSE}
 # # Estadísticos básicos
@@ -1059,6 +1063,6 @@ Sin embargo, para familiarizarnos con los datos, analizaremos los precios medios
 #           scale = c(4, 0.5)) # Reducir el tamaño de la fuente
 ```
 
-## Continuación análisis... 
+## Continuación análisis...
 
 # Conclusiones
