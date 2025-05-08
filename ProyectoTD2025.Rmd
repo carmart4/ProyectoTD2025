@@ -1008,3 +1008,59 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 ## Continuación análisis...
 
 # Conclusiones
+
+## Respuesta a las preguntas
+
+9.  ¿Cuál es la procedencia de los tickets? ¿Qué ciudad/ pueblo tiene un mayor número de tickets?
+
+
+Podemos ver a partir del siguiente gráfico de barras, los diferentes municipios de los que proceden los tickets, y por color, la cantidad de tiendas diferentes con su porción de tickets, hay una gran variedad de localidades diferentes, la mayoria de Valencia, pero alguna que otra de Alicante o de las Islas Baleares, incluso de Almeria (Vera, Garrucha)
+
+```{r include=FALSE}
+frec_tnd = Compra %>%
+  left_join(Tienda, by = "IdTienda") %>%
+  select(IdTienda, Municipio)
+
+# Gráfrico de barras con todas las tiendas
+frec_tnd %>%
+  ggplot(aes(x = Municipio, fill = IdTienda)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "none") +
+  labs(title = "Número de tickets por municipio", y = NULL)
+```
+
+En este otro grafo hemos filtrado por las tiendas con más de 50 tickets, vemos que principalmente los tickets vienen, naturalmente, de establecimientos localizados en Valencia, pero también podemos ver grandes torres de Alcoy, Alboraya y Burjassot.
+
+Alboraya y Burjassot se situan colindantes a valencia, pero Alcoy parece ser una fuente de estudiantes de Ciencia de Datos venidos de Alicante.
+
+Podemos ver una gran variedad de tiendas diferentes en Valencia, algunas con muchos tickets mientras que otras no tanto, pero en las demás ciudades parece faltar esa variedad, aunque el total de instancias sea mayor en muchos casos que de algunas tiendas de Valencia juntas. 
+
+```{r include=FALSE}
+# Gráfrico de barras con tiendas con por lo menos 50 tickets
+
+frec_tnd %>%
+  count(Municipio) %>%
+  filter(Municipio %in% (frec_tnd  %>%count(Municipio) %>% filter(n > 50))$Municipio) %>%
+  arrange(n) %>%
+  mutate(Municipio = factor(Municipio, levels = Municipio)) %>%
+  ggplot(aes(x = Municipio, y = n)) +
+  geom_col(fill = "darkblue") +
+  coord_flip() +
+  labs(x = NULL, y = "Número de tickets") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10))
+
+```
+
+10. Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?
+
+Parece que lo obvio sería cerrar los domingos, pero por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día, debe ser una anomalía, que abran los domingos, el siguiente mejor día para cerrar, es el jueves como podemos ver, aun así podemos ver varias cosas interesantes, un pico enorme en los sabados, y uno menos grande los lunes y los viernes, parece que todo el mundo evita hacer las comprar entresemana en la medida de lo posible.
+
+```{r include=FALSE}
+Compra %>%
+  mutate(Dia = format(Fecha, "%A"),
+         Dia = factor(Dia, levels = c("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"))) %>%
+  ggplot(aes(x = Dia)) +
+  geom_bar(fill = "darkgreen") +
+  labs(title = "Frecuencia de tickets por día de la semana", y = NULL, x = NULL)
+```
