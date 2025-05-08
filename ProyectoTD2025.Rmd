@@ -80,7 +80,7 @@ rm(list = ls())
 # Asegurarse de que el paquete 'pacman' está instalado
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, tinytex, patchwork, cowplot, wordcloud)
+pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, tinytex, patchwork, cowplot, wordcloud, gridExtra)
 
 # Con tidyverse: ggplot2, dplyr, tidyr, readr, purrr, tibble, stringr, forcats
 # readxl, libreria que requiere una carga aparte explícita
@@ -90,6 +90,7 @@ pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, tinytex, p
 # patchwork, para la union de graficos
 # cowplot, alineacion de gráficos
 # wordcloud, generacion de nube de palabras
+# gridExtra, para visualizacion 
 ```
 
 ## Carga de datos
@@ -938,12 +939,56 @@ Tienda <- unique(Tienda)
 
 ## Análisis de varibales
 
-Una vez tenemos limpios los datos, procedemos a analizarlos. Debemos tener en cuenta que dada la naturaleza de los datos y del desarrollo del trabajo, el análisis de las variables y las relaciones entre ellas, las veremos en profundidad en los apartados siguientes. Sin embargo, para tener un acercamiento a los datos, podemos ver:
+Una vez tenemos limpios los datos, procedemos a analizarlos. Debemos tener en cuenta que dada la naturaleza de los datos y el desarrollo del trabajo, el análisis de las variables y las relaciones entre ellas, las veremos en profundidad en los apartados siguientes. Sin embargo, para tener un acercamiento a los datos, se puede ver la gráfica -referencia-.
 
 ```{r echo=FALSE}
-summary(Compra)
+g_parking = ggplot(data = Compra, mapping = aes(x = Parking, fill = Parking)) +
+              geom_bar(stat = 'count') +
+              theme(axis.text.x = element_blank(),
+                    axis.ticks.x = element_blank())
 
-summary(Producto)
+g_tipoproducto = ggplot(data = Producto, mapping = aes(x = TipoProducto, fill = TipoProducto)) +
+                    geom_bar(stat = 'count') +
+                    theme(axis.text.x = element_blank(),
+                    axis.ticks.x = element_blank())
+
+g_precioproductos = ggplot(data = Producto, aes(x = ImporteProducto)) +
+                      geom_histogram(aes(y = stat(density)),
+                                     binwidth = 1,
+                                     col = 'dodgerblue',
+                                     fill = 'dodgerblue',
+                                     alpha = 0.2) +
+                      geom_density(col='darkgreen') +
+                      labs(title = 'Histograma de importes por productos',
+                           x = 'Importe producto') + 
+                      theme(plot.title = element_text(size = 10))
+
+g_preciototales = ggplot(data = Compra, aes(x = ImporteTotal)) +
+                                        geom_histogram(aes(y = stat(density)),
+                                                       binwidth = 10,
+                                                       col = 'coral',
+                                                       fill = 'coral',
+                                                       alpha = 0.2) +
+                                        geom_density(col='darkgreen') +
+                                        labs(title = 'Histograma de importes totales',
+                                             x = 'Importe total') + 
+                                        theme(plot.title = element_text(size = 10))
+
+g_anual = Compra %>%
+            group_by(Mes = month(Fecha),
+                     Anio = year(Fecha)) %>%
+            summarise(Total = sum(ImporteTotal)) %>%
+            mutate(Fecha_plot = make_date(Anio, Mes)) %>%
+            ggplot(mapping = aes(x = Mes, y = Total, col = factor(Anio), group = Anio)) +
+            geom_point() +
+            geom_line(aes(group = Anio)) +
+            labs (title = 'Gasto mensual por anio', 
+                  y = 'Total') +
+            scale_x_continuous(breaks = seq(1, 12, by = 1))
+
+# Usando patchwork
+(g_precioproductos + g_parking) / (g_tipoproducto + g_preciototales) / g_anual
+
 ```
 
 Sin embargo, para familiarizarnos con los datos, analizaremos los precios medios de los productos, dado que han variado a lo largo del tiempo, y las palabras que más se repiten en la descripción de los productos (Figura \@ref(fig:FiguraPalabras)). En nuestro estudio encontramos dos variables numéricas que se encuentran en el dataframe de los productos comprados. Realizando el análisis sobre la variable *PrecioUnitario*, vemos su distribución en el gráfico \@ref(fig:FiguraPrecios), donde la mayoría de los precios promedio de Mercadona no superan los 10 EUR. Sin embargo, considerando la detección por la regla de boxplot, ya que no se sigue una distribución normal, aquellos valores por debajo de 1.4 y por arriba de 3.12 son consideros como outliers.
