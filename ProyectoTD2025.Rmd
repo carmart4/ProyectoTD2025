@@ -2,16 +2,16 @@
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
 date: "`r Sys.Date()`"
 output:
-  bookdown::pdf_document2:
-    toc: false
-    toc_depth: 3
-    number_sections: true
-    figure_caption: "Figura"
-    table_caption: "Tabla"
   bookdown::html_document2:
     echo: true
     number_sections: true
     toc: true
+    figure_caption: "Figura"
+    table_caption: "Tabla"
+  bookdown::pdf_document2:
+    toc: false
+    toc_depth: 3
+    number_sections: true
     figure_caption: "Figura"
     table_caption: "Tabla"
 always_allow_html: true
@@ -939,9 +939,9 @@ Tienda <- unique(Tienda)
 
 ## Análisis de varibales
 
-Una vez tenemos limpios los datos, procedemos a analizarlos. Debemos tener en cuenta que dada la naturaleza de los datos y el desarrollo del trabajo, el análisis de las variables y las relaciones entre ellas, las veremos en profundidad en los apartados siguientes. Sin embargo, para tener un acercamiento a los datos, se puede ver la gráfica -referencia-.
+Una vez tenemos limpios los datos, procedemos a analizarlos. Debemos tener en cuenta que dada la naturaleza de los datos y el desarrollo del trabajo, el análisis de las variables y las relaciones entre ellas, las veremos en profundidad en los apartados siguientes. Sin embargo, para tener un acercamiento a los datos, se puede ver la Figura \@ref(fig:FiguraVariables).
 
-```{r echo=FALSE}
+```{r include=FALSE, message=FALSE, warning=FALSE}
 g_parking = ggplot(data = Compra, mapping = aes(x = Parking, fill = Parking)) +
               geom_bar(stat = 'count') +
               theme(axis.text.x = element_blank(),
@@ -961,7 +961,11 @@ g_precioproductos = ggplot(data = Producto, aes(x = ImporteProducto)) +
                       geom_density(col='darkgreen') +
                       labs(title = 'Histograma de importes por productos',
                            x = 'Importe por producto') + 
-                      theme(plot.title = element_text(size = 10))
+                      theme(plot.title = element_text(size = 8),
+                            axis.title = element_text(size = 8)) +
+                      geom_vline(xintercept = mean(Producto$ImporteProducto),
+                                 col = 'red', 
+                                 linetype = 'dashed')
 
 g_preciototales = ggplot(data = Compra, aes(x = ImporteTotal)) +
                                         geom_histogram(aes(y = stat(density)),
@@ -972,7 +976,11 @@ g_preciototales = ggplot(data = Compra, aes(x = ImporteTotal)) +
                                         geom_density(col='darkgreen') +
                                         labs(title = 'Histograma de importes totales',
                                              x = 'Importe total por factura') + 
-                                        theme(plot.title = element_text(size = 10))
+                                        theme(plot.title = element_text(size = 10),
+                                              axis.title = element_text(size = 8)) +
+                                        geom_vline(xintercept = mean(Producto$ImporteProducto),
+                                                   col = 'red',
+                                                   linetype = 'dashed')
 
 g_anual = Compra %>%
             group_by(Mes = month(Fecha),
@@ -985,13 +993,17 @@ g_anual = Compra %>%
             labs (title = 'Gasto mensual por anio', 
                   y = 'Total') +
             scale_x_continuous(breaks = seq(1, 12, by = 1))
-
-# Usando patchwork
-(g_precioproductos + g_parking) / (g_preciototales + g_tipoproducto) / g_anual
-
 ```
 
-Sin embargo, para familiarizarnos con los datos, analizaremos los precios medios de los productos, dado que han variado a lo largo del tiempo, y las palabras que más se repiten en la descripción de los productos (Figura \@ref(fig:FiguraPalabras)). En nuestro estudio encontramos dos variables numéricas que se encuentran en el dataframe de los productos comprados. Realizando el análisis sobre la variable *PrecioUnitario*, vemos su distribución en el gráfico \@ref(fig:FiguraPrecios), donde la mayoría de los precios promedio de Mercadona no superan los 10 EUR. Sin embargo, considerando la detección por la regla de boxplot, ya que no se sigue una distribución normal, aquellos valores por debajo de 1.4 y por arriba de 3.12 son consideros como outliers.
+
+```{r FiguraVariables, fig.cap='Análisis de variables', echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=4, fig.align='center'}
+# Usando patchwork
+(g_precioproductos + g_parking) / (g_preciototales + g_tipoproducto) / g_anual
+```
+
+Mercadona se caracteriza por ofrecer productos a precios bajos. Por ejemplo, podemos ver como los importes por productos, tienen un sesgo por derecha, hacia precios menores a los 10 euros, dónde su media no supera los 5 euros. Por otro lado, los productos que más se han de comprar en Mercadona, son los unitarios. Los pescados y, frutas y verdura, no tienen la misma proporción. Por último, el 90% de los tickets analizados registran parking.
+
+A pesar de que no se presentan gran cantidad de datos para ver la variación de los precios en los productos por año, y su comportamiento y/o frecuencia de compra por cada mes, vemos que hay una tendencia a comprar entre los primeros 4 meses del año y el final.
 
 ```{r include=FALSE}
 # # Estadísticos básicos
