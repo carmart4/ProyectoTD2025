@@ -1016,7 +1016,7 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 
 Podemos ver a partir del siguiente gráfico de barras, los diferentes municipios de los que proceden los tickets, y por color, la cantidad de tiendas diferentes con su porción de tickets, hay una gran variedad de localidades diferentes, la mayoria de Valencia, pero alguna que otra de Alicante o de las Islas Baleares, incluso de Almeria (Vera, Garrucha)
 
-```{r include=FALSE}
+```{r echo=FALSE}
 frec_tnd = Compra %>%
   left_join(Tienda, by = "IdTienda") %>%
   select(IdTienda, Municipio)
@@ -1035,7 +1035,7 @@ Alboraya y Burjassot se situan colindantes a valencia, pero Alcoy parece ser una
 
 Podemos ver una gran variedad de tiendas diferentes en Valencia, algunas con muchos tickets mientras que otras no tanto, pero en las demás ciudades parece faltar esa variedad, aunque el total de instancias sea mayor en muchos casos que de algunas tiendas de Valencia juntas. 
 
-```{r include=FALSE}
+```{r echo=FALSE}
 # Gráfrico de barras con tiendas con por lo menos 50 tickets
 
 frec_tnd %>%
@@ -1056,7 +1056,7 @@ frec_tnd %>%
 
 Parece que lo obvio sería cerrar los domingos, pero por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día, debe ser una anomalía, que abran los domingos, el siguiente mejor día para cerrar, es el jueves como podemos ver, aun así podemos ver varias cosas interesantes, un pico enorme en los sabados, y uno menos grande los lunes y los viernes, parece que todo el mundo evita hacer las comprar entresemana en la medida de lo posible.
 
-```{r include=FALSE}
+```{r echo=FALSE}
 Compra %>%
   mutate(Dia = format(Fecha, "%A"),
          Dia = factor(Dia, levels = c("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"))) %>%
