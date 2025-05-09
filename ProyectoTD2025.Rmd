@@ -1060,9 +1060,44 @@ ggplot(top_pairs, aes(x = reorder(Pair, Frecuencia), y = Frecuencia)) +
 
 2.	¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
 
+cv_precio: Coeficiente de variación del precio. Mide la variabilidad relativa del precio del producto (desviación estándar sobre media). Cuanto más bajo, más estable es el precio.
+
+correlacion: Correlación entre el precio unitario y la cantidad vendida. Mide si las ventas aumentan o disminuyen cuando cambia el precio.
+
 ```{r}
 
+estabilidad_ventas <- Producto %>%
+  group_by(DescripcionProducto) %>%  
+  summarise(
+    cv_precio = sd(PrecioUnitario, na.rm = TRUE) / mean(PrecioUnitario, na.rm = TRUE),
+    correlacion = cor(PrecioUnitario, Cantidad, use = "complete.obs")
+  ) %>%
+  arrange(abs(correlacion))  
+
+head(estabilidad_ventas, 10) 
+
+
+# Visualización para los 5 productos más estables
+
+productos_estables <- head(estabilidad_ventas, 5)$DescripcionProducto
+Producto %>%
+  filter(DescripcionProducto %in% productos_estables) %>%
+  ggplot(aes(x = PrecioUnitario, y = Cantidad)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  facet_wrap(~DescripcionProducto, scales = "free") +
+  labs(title = "Relación precio-cantidad para productos con ventas estables",
+       x = "Precio unitario (€)",
+       y = "Cantidad vendida") +
+  theme_minimal()
 ```
+Aquí encontramos los 10 productos con ventas más estables, a pesar de cambios en su precio.
+
+La mayoría de los productos tienen precios bastante estables (cv_precio < 0.1), lo cual es bueno para control de precios.
+
+Las correlaciones son en su mayoría muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
+
+
 
 
 5.⁠ ⁠¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
