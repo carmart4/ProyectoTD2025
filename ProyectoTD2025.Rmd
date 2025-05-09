@@ -1015,30 +1015,6 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 
 ```{r}
 
-combinaciones_frecuentes <- Compra %>%
-  distinct(IdFactura, Producto, .keep_all = TRUE) %>%
-  group_by(IdFactura) %>%
-  summarise(productos = list(Producto)) %>%
-  mutate(
-    pares = map(productos, ~ {
-      if (length(.x) >= 2) {
-        combn(.x, 2, simplify = FALSE) %>% 
-          map_chr(~ paste(sort(.x), collapse = " + "))  
-      } else {
-        character(0) 
-      }
-    })
-  ) %>%
-  unnest(pares) %>%
-  count(pares, sort = TRUE) %>%
-  mutate(
-    frecuencia_relativa = n / n_distinct(Compra$IdFactura),
-    .after = n
-  )
-
-head(combinaciones_frecuentes, 10)
-
-
 
 
 ```
