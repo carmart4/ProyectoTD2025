@@ -1097,6 +1097,14 @@ La mayoría de los productos tienen precios bastante estables (cv_precio < 0.1),
 
 Las correlaciones son en su mayoría muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
 
+En cuanto a la visualización:
+
+Se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables.
+
+Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X.
+
+Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio.
+
 
 
 
