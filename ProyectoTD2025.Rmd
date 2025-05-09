@@ -1011,6 +1011,46 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 
 ## Respuesta a las preguntas
 
+5.⁠ ⁠¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
+
+```{r}
+top_por_unidades <- Producto %>%
+  filter(TipoProducto == "Unitario") %>%
+  group_by(DescripcionProducto) %>%
+  summarise(UnidadesVendidas = sum(Cantidad, na.rm = TRUE)) %>%
+  arrange(desc(UnidadesVendidas)) 
+
+top_por_unidades[1:5, ]
+
+# Visualización
+ggplot(top_por_unidades[1:5, ], aes(x = reorder(DescripcionProducto, UnidadesVendidas), y = UnidadesVendidas)) +
+  geom_col(fill = "darkblue") +
+  coord_flip() +
+  labs(title = "Top 5 productos unitarios más vendidos",
+       x = "Producto",
+       y = "Unidades vendidas")
+```
+
+6.⁠ ⁠Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+
+```{r}
+top_frutas_verduras <- Producto %>%
+  filter(TipoProducto == "Fruta y verdura") %>%
+  group_by(DescripcionProducto) %>%
+  summarise(KilosVendidos = sum(Cantidad, na.rm = TRUE)) %>%
+  arrange(desc(KilosVendidos))
+
+top_frutas_verduras[1:5, ]
+
+# Visualización
+ggplot(top_frutas_verduras[1:5, ], aes(x = reorder(DescripcionProducto, KilosVendidos), y = KilosVendidos)) +
+  geom_col(fill = "darkgreen") +
+  coord_flip() +
+  labs(title = "Top 5 frutas y verduras más vendidas",
+       x = "Producto",
+       y = "Kilos vendidos")
+```
+
 9.  ¿Cuál es la procedencia de los tickets? ¿Qué ciudad/ pueblo tiene un mayor número de tickets?
 
 
