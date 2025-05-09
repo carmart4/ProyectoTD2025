@@ -1015,18 +1015,18 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 
 ```{r}
 
-producto_pairs <- Producto %>%
+combinaciones <- Producto %>%
   select(IdFactura, DescripcionProducto) %>%
   distinct() %>%  
   group_by(IdFactura) %>%
   arrange(DescripcionProducto) %>%  
   do({
-    products <- .$DescripcionProducto
-    if (length(products) > 1) {
-      pairs <- combn(products, 2, simplify = FALSE)
+    productos <- .$DescripcionProducto
+    if (length(productos) > 1) {
+      pares <- combn(productos, 2, simplify = FALSE)
       tibble(
-        Producto1 = sapply(pairs, `[`, 1),
-        Producto2 = sapply(pairs, `[`, 2)
+        Producto1 = sapply(pares, `[`, 1),
+        Producto2 = sapply(pares, `[`, 2)
       )
     } else {
       tibble(Producto1 = character(), Producto2 = character())
@@ -1036,19 +1036,20 @@ producto_pairs <- Producto %>%
   filter(Producto1 != "") 
 
 
-frequent_pairs <- producto_pairs %>%
-  mutate(Pair = paste(Producto1, Producto2, sep = " + ")) %>%
-  group_by(Pair, Producto1, Producto2) %>%
+pares_frecuentes <- combinaciones %>%
+  mutate(Par = paste(Producto1, Producto2, sep = " + ")) %>%
+  group_by(Par, Producto1, Producto2) %>%
   summarise(Frecuencia = n(), .groups = "drop") %>%
   arrange(desc(Frecuencia))
 
-top_pairs <- head(frequent_pairs, 5)
-kable(top_pairs, caption = "Top 5 combinaciones de productos más frecuentes", booktabs = TRUE)
+head(pares_frecuentes, 5)
+mostrar = head(pares_frecuentes, 5)
+
 
 
 # VISUALIZACIÓN
 
-ggplot(top_pairs, aes(x = reorder(Pair, Frecuencia), y = Frecuencia)) +
+ggplot(mostrar, aes(x = reorder(Par, Frecuencia), y = Frecuencia)) +
   geom_col(fill = "deeppink") +
   coord_flip() +
   labs(title = "Top 5 combinaciones de productos más frecuentes",
