@@ -1011,6 +1011,45 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 
 ## Respuesta a las preguntas
 
+1.	¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura? 
+
+```{r}
+
+combinaciones_frecuentes <- Compra %>%
+  distinct(IdFactura, Producto, .keep_all = TRUE) %>%
+  group_by(IdFactura) %>%
+  summarise(productos = list(Producto)) %>%
+  mutate(
+    pares = map(productos, ~ {
+      if (length(.x) >= 2) {
+        combn(.x, 2, simplify = FALSE) %>% 
+          map_chr(~ paste(sort(.x), collapse = " + "))  
+      } else {
+        character(0) 
+      }
+    })
+  ) %>%
+  unnest(pares) %>%
+  count(pares, sort = TRUE) %>%
+  mutate(
+    frecuencia_relativa = n / n_distinct(Compra$IdFactura),
+    .after = n
+  )
+
+head(combinaciones_frecuentes, 10)
+
+
+
+
+```
+
+2.	¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
+
+```{r}
+
+```
+
+
 5.⁠ ⁠¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
 
 ```{r}
