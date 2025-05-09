@@ -1051,6 +1051,35 @@ ggplot(top_frutas_verduras[1:5, ], aes(x = reorder(DescripcionProducto, KilosVen
        y = "Kilos vendidos")
 ```
 
+PREGUNTA 7.	Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+
+Para saber cuáles son los 5 productos más vendidos considerando únicamente la categoría pescado, debemos primero filtrar los datos para quedarnos solamente con la categoría TipoProducto y que esta contenga el valor de "Pescado", seguidamente calcularemos los kilos totales vendidos de cada producto y, por último mediante una suma nos quedaremos con los 5 productos más vendidos.
+
+```{r}
+
+#Filtramos para quedarnos con los productos que sean pescados.
+pescado <- Producto %>%
+  filter(TipoProducto == "Pescado")
+
+#Calculamos los kilos vendidos por producto
+kilos_por_producto <- pescado %>%
+  group_by(DescripcionProducto) %>%
+  summarise(kilos_totales = sum(Cantidad, na.rm = TRUE))
+
+#Seleccionamos los 5 productos más vendidos
+frecuencia_compras <- pescado %>%
+  group_by(DescripcionProducto) %>%
+  summarise(veces_comprado = n()) %>%
+  arrange(desc(veces_comprado)) %>%
+  head(frecuencia_compras, n = 5)
+# Unimos ambas tablas
+frecuencia_kilos <- left_join(frecuencia_compras, kilos_por_producto, by = "DescripcionProducto")
+
+print(frecuencia_kilos)
+
+```
+Por lo tanto los 5 productos más vendidos de la categoría pescado son la bacaladilla con una venta de 5.782 kg, la sepia fresca con 2.642 kg vendidos, la sepia lonja con 2.792 kg vendidos, el lenguado fresc europ con 1.248 kg vendidos y por último la sepia sucia, con 2.402 kg vendidos.
+
 9.  ¿Cuál es la procedencia de los tickets? ¿Qué ciudad/ pueblo tiene un mayor número de tickets?
 
 
