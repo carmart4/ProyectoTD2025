@@ -1106,7 +1106,233 @@ Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos 
 
 Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio.
 
+3.¿Cuál es el número promedio de productos por ticket y el gasto promedio por compra, según el día y la hora?
 
+```{r}
+Compra2<- Compra
+
+#Separamos Fecha y Hora
+Compra2 <- Compra %>%
+  mutate(Fecha = as.character(Fecha)) %>%
+  separate(Fecha, into = c("Fecha", "Hora"), sep = " ")
+
+#Arreglamos el formato
+Compra2 <- Compra2 %>%
+  mutate(
+    Fecha = as.Date(Fecha), # Convertir a tipo Date
+    Hora = hms::as_hms(Hora) # Convertir a tipo hora (hms)
+  )
+#Transformamos las horas en un entero de la hora a la que pertenecen, para omitir futuros problemas con el formato fecha
+Compra2 <- Compra2 %>%
+  mutate(Hora = hour(Hora))  # Extrae como número entero la hora
+#Creamos una nueva columna Dia de la semana, para poder analizar tanto las compras en los momentos del mes, como la semana
+Compra2 <- Compra2 %>%
+  mutate(DiaSemana = weekdays(Fecha))
+#Juntamos los 2 sets para un manejo mas sencillo
+CompraExtendida <- merge(Compra2, Producto, by = "IdFactura")
+
+```
+
+```{r}
+#Analisis de la horas
+ResumenHora <- CompraExtendida %>%
+  group_by(IdFactura, Hora) %>%
+  summarise(
+    TotalProductos = n(),
+    TotalTiquetsDistintos = n_distinct(IdFactura),
+    ImporteTotalFactura = unique(ImporteTotal)) %>%
+  group_by(Hora) %>%
+  summarise(
+    TotalProductos = sum(TotalProductos),
+    TotalTiquetsDistintos = sum(TotalTiquetsDistintos),
+    GastoTotal = sum(ImporteTotalFactura),
+    GastoMedio = mean(ImporteTotalFactura) )
+
+# Crear el gráficos
+# Gráfico 1: Total de productos por hora
+ggplot(ResumenHora, aes(x = Hora, y = TotalProductos)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "blue", size = 2) +
+  labs(
+    title = "Total de productos por hora",
+    x = "Hora",
+    y = "Total de productos"
+  )
+
+# Gráfico 2: Total de tiquets distintos por hora
+ggplot(ResumenHora, aes(x = Hora, y = TotalTiquetsDistintos)) +
+  geom_line(color = "red", size = 1) +
+  geom_point(color = "red", size = 2) +
+  labs(
+    title = "Total de tiquets distintos por hora",
+    x = "Hora",
+    y = "Total de tiquets"
+  )
+
+# Gráfico 3: Gasto total por hora
+ggplot(ResumenHora, aes(x = Hora, y = GastoTotal)) +
+  geom_line(color = "darkgreen", size = 1) +
+  geom_point(color = "darkgreen", size = 2) +
+  labs(
+    title = "Gasto total por hora",
+    x = "Hora",
+    y = "Gasto total (€)"
+  )
+
+# Gráfico 4: Gasto medio por hora
+ggplot(ResumenHora, aes(x = Hora, y = GastoMedio)) +
+  geom_line(color = "orange", size = 1) +
+  geom_point(color = "orange", size = 2) +
+  labs(
+    title = "Gasto medio por hora",
+    x = "Hora",
+    y = "Gasto medio (€)"
+  ) 
+
+```
+
+```{r}
+#Analisis de los DiaSemana
+ResumenSemana <- CompraExtendida %>%
+  group_by(IdFactura, DiaSemana) %>%
+  summarise(
+    TotalProductos = n(),
+    TotalTiquetsDistintos = n_distinct(IdFactura),
+    ImporteTotalFactura = unique(ImporteTotal)) %>%
+  group_by(DiaSemana) %>%
+  summarise(
+    TotalProductos = sum(TotalProductos),
+    TotalTiquetsDistintos = sum(TotalTiquetsDistintos),
+    GastoTotal = sum(ImporteTotalFactura),
+    GastoMedio = mean(ImporteTotalFactura) )
+
+# Crear el gráficos
+#Para ordenarlos en las graficas
+CompraExtendida$PeriodoMes <- factor(CompraExtendida$PeriodoMes, levels = c("Inicio", "Mitad", "Fin"))
+
+# Gráfico 1: Total de productos por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalProductos)) +
+  geom_col(fill = "blue") +
+  labs(
+    title = "Total de productos por época del mes",
+    x = "Época del mes",
+    y = "Total de productos"
+  ) +
+  theme_minimal()
+
+# Gráfico 2: Total de tiquets distintos por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalTiquetsDistintos)) +
+  geom_col(fill = "red") +
+  labs(
+    title = "Total de tiquets por época del mes",
+    x = "Época del mes",
+    y = "Total de tiquets"
+  ) +
+  theme_minimal()
+
+# Gráfico 3: Gasto total por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoTotal)) +
+  geom_col(fill = "darkgreen") +
+  labs(
+    title = "Gasto total por época del mes",
+    x = "Época del mes",
+    y = "Gasto total (€)"
+  ) +
+  theme_minimal()
+
+# Gráfico 4: Gasto medio por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoMedio)) +
+  geom_col(fill = "orange") +
+  labs(
+    title = "Gasto medio por época del mes",
+    x = "Época del mes",
+    y = "Gasto medio (€)"
+  ) +
+  theme_minimal()
+
+```
+
+4.¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
+
+```{r}
+#Para este apartado usaremos CompraExtendida, ya que ya lo hemos formateado para que nos sea util.
+
+#Añadimos una columna Epoca del mes
+CompraExtendida <- CompraExtendida %>%
+  mutate(
+    DiaDelMes = day(Fecha),
+    PeriodoMes = ifelse(
+      DiaDelMes <= 10, "Inicio",
+      ifelse(DiaDelMes <= 20, "Mitad", "Fin")))
+
+#Analisis
+#Analisis de los DiaSemana
+ResumenMes <- CompraExtendida %>%
+  group_by(IdFactura, PeriodoMes) %>%
+  summarise(
+    TotalProductos = n(),
+    TotalTiquetsDistintos = n_distinct(IdFactura),
+    ImporteTotalFactura = unique(ImporteTotal)) %>%
+  group_by(PeriodoMes) %>%
+  summarise(
+    TotalProductos = sum(TotalProductos),
+    TotalTiquetsDistintos = sum(TotalTiquetsDistintos),
+    GastoTotal = sum(ImporteTotalFactura),
+    GastoMedio = mean(ImporteTotalFactura)
+  )
+
+# Crear el gráficos
+
+# Gráfico 1: Total de productos por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalProductos)) +
+  geom_col(fill = "blue") +
+  labs(
+    title = "Total de productos por época del mes",
+    x = "Época del mes",
+    y = "Total de productos"
+  ) +
+  theme_minimal()
+
+# Gráfico 2: Total de tiquets distintos por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalTiquetsDistintos)) +
+  geom_col(fill = "red") +
+  labs(
+    title = "Total de tiquets por época del mes",
+    x = "Época del mes",
+    y = "Total de tiquets"
+  ) +
+  theme_minimal()
+
+# Gráfico 3: Gasto total por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoTotal)) +
+  geom_col(fill = "darkgreen") +
+  labs(
+    title = "Gasto total por época del mes",
+    x = "Época del mes",
+    y = "Gasto total (€)"
+  ) +
+  theme_minimal()
+
+# Gráfico 4: Gasto medio por época del mes
+ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoMedio)) +
+  geom_col(fill = "orange") +
+  labs(
+    title = "Gasto medio por época del mes",
+    x = "Época del mes",
+    y = "Gasto medio (€)"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#Parking
+ResumenParking <- CompraExtendida %>%
+  group_by(Parking) %>%
+  summarise(TotalCompras = n_distinct(IdFactura))
+
+print(ResumenParking)
+
+```
 
 
 5.⁠ ⁠¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
