@@ -1080,6 +1080,43 @@ print(frecuencia_kilos)
 ```
 Por lo tanto los 5 productos más vendidos de la categoría pescado son la bacaladilla con una venta de 5.782 kg, la sepia fresca con 2.642 kg vendidos, la sepia lonja con 2.792 kg vendidos, el lenguado fresc europ con 1.248 kg vendidos y por último la sepia sucia, con 2.402 kg vendidos.
 
+PREGUNTA 8.	Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
+
+Primero debemos unir las dos tablas "Compra" y "Producto" ya que en una se encuntra la descripción del producto y en otra la fecha, que nos interesa bastante para responder a la pregunta. Una vez unida filtramso la descripción del producto para quedarnos unicamente con los productos "platano" y "banana". Calculamos el precio medio del kilo por mes y representamos graficamente ya que es una forma muy fácil de interpretar los datos, y de ver la evolución del precio de estos dos productos a lo largo del tiempo.
+
+
+```{r}
+
+#Unimos las dos facturas mediante IdFactura
+tablas_unidas <- Producto %>%
+  inner_join(Compra, by = "IdFactura")
+
+#Filtramos solo por bananas y plátanos
+platano <- tablas_unidas %>%
+  filter(grepl("banana|platano", DescripcionProducto, ignore.case = TRUE)) %>%
+  mutate(Mes = floor_date(Fecha, "month"))
+
+#Calculamos el precio medio por mes
+precios_mes <- platano %>%
+  group_by(Mes, DescripcionProducto) %>%
+  summarise(PrecioPromedio = mean(PrecioUnitario, na.rm = TRUE)) %>%
+  ungroup()
+
+#Representamos gráficamente
+ggplot(precios_mes, aes(x = Mes, y = PrecioPromedio, color = DescripcionProducto)) +
+  geom_line(size = 1.5) +
+  geom_point(size = 3) +
+  labs(title = "Evolución mensual del precio por kilo",
+       x = "Meses",
+       y = "Precio por kilo (€)",
+       color = "Producto") +
+  theme_minimal(base_size = 14)
+
+```
+
+Podemos concluir que el precio de la banana se ha mantenido prácticamente estable a lo largo del año, presentando únicamente una leve caída puntual, de 1.5 euros a menos de un euro. En cambio, el precio del plátano ha mostrado una mayor variabilidad, de 2 euros incrementando a mas de 3 en menos de 4 meses, además cuenta con un aumento significativo seguido de una fuerte disminución, para luego volver a incrementar su valor.
+
+
 9.  ¿Cuál es la procedencia de los tickets? ¿Qué ciudad/ pueblo tiene un mayor número de tickets?
 
 
