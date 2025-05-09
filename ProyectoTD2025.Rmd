@@ -1046,7 +1046,15 @@ top_pairs <- head(frequent_pairs, 5)
 kable(top_pairs, caption = "Top 5 combinaciones de productos más frecuentes", booktabs = TRUE)
 
 
+# VISUALIZACIÓN
 
+ggplot(top_pairs, aes(x = reorder(Pair, Frecuencia), y = Frecuencia)) +
+  geom_col(fill = "deeppink") +
+  coord_flip() +
+  labs(title = "Top 5 combinaciones de productos más frecuentes",
+       x = "Combinación de productos",
+       y = "Número de facturas") +
+  theme_minimal()
 
 ```
 
