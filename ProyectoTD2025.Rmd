@@ -1207,45 +1207,46 @@ ResumenSemana <- CompraExtendida %>%
     GastoMedio = mean(ImporteTotalFactura) )
 
 # Crear el gráficos
-#Para ordenarlos en las graficas
-CompraExtendida$PeriodoMes <- factor(CompraExtendida$PeriodoMes, levels = c("Inicio", "Mitad", "Fin"))
+# Asegurar orden correcto de los días
+ResumenSemana$DiaSemana <- factor(ResumenSemana$DiaSemana,
+  levels = c("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"))
 
-# Gráfico 1: Total de productos por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalProductos)) +
+# Gráfico 1: Total de productos por Dia
+ggplot(ResumenSemana, aes(x = DiaSemana, y = TotalProductos)) +
   geom_col(fill = "blue") +
   labs(
-    title = "Total de productos por época del mes",
-    x = "Época del mes",
+    title = "Total de productos por Dia",
+    x = "Dia",
     y = "Total de productos"
   ) +
   theme_minimal()
 
-# Gráfico 2: Total de tiquets distintos por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalTiquetsDistintos)) +
+# Gráfico 2: Total de tiquets distintos por Dia
+ggplot(ResumenSemana, aes(x = DiaSemana, y = TotalTiquetsDistintos)) +
   geom_col(fill = "red") +
   labs(
-    title = "Total de tiquets por época del mes",
-    x = "Época del mes",
+    title = "Total de tiquets por Dia",
+    x = "Dia",
     y = "Total de tiquets"
   ) +
   theme_minimal()
 
-# Gráfico 3: Gasto total por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoTotal)) +
+# Gráfico 3: Gasto total por Dia
+ggplot(ResumenSemana, aes(x = DiaSemana, y = GastoTotal)) +
   geom_col(fill = "darkgreen") +
   labs(
-    title = "Gasto total por época del mes",
+    title = "Gasto total por Dia",
     x = "Época del mes",
     y = "Gasto total (€)"
   ) +
   theme_minimal()
 
-# Gráfico 4: Gasto medio por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoMedio)) +
+# Gráfico 4: Gasto medio por Dia
+ggplot(ResumenSemana, aes(x = DiaSemana, y = GastoMedio)) +
   geom_col(fill = "orange") +
   labs(
-    title = "Gasto medio por época del mes",
-    x = "Época del mes",
+    title = "Gasto medio por Dia",
+    x = "Dia",
     y = "Gasto medio (€)"
   ) +
   theme_minimal()
@@ -1264,6 +1265,9 @@ CompraExtendida <- CompraExtendida %>%
     PeriodoMes = ifelse(
       DiaDelMes <= 10, "Inicio",
       ifelse(DiaDelMes <= 20, "Mitad", "Fin")))
+
+#Para ordenarlos en las graficas
+CompraExtendida$PeriodoMes <- factor(CompraExtendida$PeriodoMes, levels = c("Inicio", "Mitad", "Fin"))
 
 #Analisis
 #Analisis de los DiaSemana
