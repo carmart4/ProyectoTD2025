@@ -50,19 +50,6 @@ Actualmente, las grandes empresas gestionan volúmenes significativos de product
 
 Nuestro objetivo al responder estas preguntas es profundizar en los hábitos y preferencias reales de los consumidores a partir del análisis de tickets de compra. Al extraer patrones y correlaciones dentro de estos datos, buscamos generar conocimiento útil para anticipar comportamientos, mejorar la planificación comercial y ajustar la oferta a la demanda real. Esta aproximación nos permitirá aportar valor estratégico desde el análisis de datos, con el foco puesto en reducir ineficiencias, mejorar la toma de decisiones y apoyar la sostenibilidad operativa del negocio desde una perspectiva basada en la evidencia.
 
-## Preguntas planteadas
-
-1. ¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura?
-2. ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
-3. ¿Cuál es el número promedio de productos por ticket y el gasto promedio por compra, según el día y la hora?
-4. ¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
-5. ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
-6. Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
-7. Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
-8. Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
-9. ¿Cuál es la procedencia de los tickets? ¿Qué ciudad/ pueblo tiene un mayor número de tickets?
-10. Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?
-
 # Material y métodos
 
 ## Carga de librerías
@@ -257,7 +244,7 @@ ExtraeInformacion <- function(Lineas) {
 }
 ```
 
-Para la lectura de los productos, identificamos dos filtros esenciales. El primero, es si el ticket incluía parking o no. Este 'producto' estaba listado al final, lo que nos permitía de alguna forma reducir el listado de productos e identificar si había o no parking.
+Para la lectura de los productos, identificamos dos filtros. El primero, es si el ticket incluía parking o no. Este 'producto' estaba listado al final, lo que nos permitía de alguna forma reducir el listado de productos e identificar si había o no parking.
 
 ```{r Parking, include=FALSE}
 # Filtro 1
@@ -838,33 +825,22 @@ En la Tabla \@ref(tab:TablaProductos) se muestran los productos que fueron leíd
 colnames(Producto)[2] <- 'DescripcionProducto'
 ```
 
-
-```{r TablaProductos, echo = FALSE, results ='asis'}
-kable(head(Producto, 10), caption = 'Tabla de productos leidos', booktabs = TRUE) 
+```{r TablaProductos, echo=FALSE, results='asis'}
+kable(head(Producto, 10), caption='Tabla de productos leidos', booktabs=TRUE) 
 ```
 
 # Limpieza de datos
 
-Para garantizar la fiabilidad de los datos y realizar su posterior análisis, es importante realizar el proceso de limpieza de datos. Podremos ver los valores NA, máximos, mínimos, y evaluar las diferentes características.
+## Valores NA
 
-## Valores vacios
-
-En principio, dada la naturaleza del ejercicio, de extracción y carga de los datos, no deberían haber valores nulos. Sin embargo, es necesario verificar, especialmente con los dataframes que queremos analizar: Producto y Tienda.
+En principio, dada la naturaleza del ejercicio, de extracción y carga de los datos, no deberían haber valores nulos o NA. Sin embargo, es necesario verificar, especialmente con los dataframes que queremos analizar: Producto y Tienda.
 
 ```{r include=FALSE}
 colSums(is.na(Producto))
-```
-
-```{r include=FALSE}
 vis_miss(Producto)
-```
-
-```{r include=FALSE}
 colSums(is.na(Tienda))
-```
-
-```{r include=FALSE}
 vis_miss(Tienda)
+
 ```
 
 ## Problemas con tipos de datos
@@ -918,26 +894,39 @@ summary(Producto)
 Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos.
 
 ```{r include=FALSE}
-# IMPORTANTE: Identificar los valores duplicados, que se eliminan tras la sentencia posterior.  
-Producto %>%
-  group_by(IdFactura) %>%
-  count(DescripcionProducto) %>%
-  filter(n > 1) %>%
-  inner_join(FicheroLeido, by = 'IdFactura')
+Compra[duplicated(Compra), ]
+FicheroLeido[duplicated(FicheroLeido), ]
+NoLeido[duplicated(NoLeido), ]
+Tienda[duplicated(Tienda), ]
+```
 
-Producto %>%
-  filter(IdFactura == '052628') %>%
-  duplicated()
+```{r include=FALSE}
+# Facturas que contienen productos repetidos
+r <- unique(Producto[duplicated(Producto), ][1])
 
-# Eliminar datos duplicados
-Compra <- unique(Compra)
+# Verificamos los datos 
+# for (repetido in r){
+#   rep <- Producto %>%
+#           filter(IdFactura == repetido) %>%
+#             inner_join(FicheroLeido, by = 'IdFactura') %>%
+#               arrange(IdFactura)
+#   print(rep)
+# }
+
+# Vemos el valor dentro del dataframe de Productos
+Producto %>%
+  filter(IdFactura == '052393') %>%
+  arrange(DescripcionProducto)
+
+# Efectivamente se hizo copia de los productos de facturas repetidas. Actualizamos los dataframes.
 Producto <- unique(Producto)
+Compra <- unique(Compra)
 Tienda <- unique(Tienda)
 ```
 
 # Resultados
 
-## Análisis de varibales
+## Análisis de variables
 
 Una vez tenemos limpios los datos, procedemos a analizarlos. Debemos tener en cuenta que dada la naturaleza de los datos y el desarrollo del trabajo, el análisis de las variables y las relaciones entre ellas, las veremos en profundidad en los apartados siguientes. Sin embargo, para tener un acercamiento a los datos, se puede ver la Figura \@ref(fig:FiguraVariables).
 
@@ -960,7 +949,7 @@ g_precioproductos = ggplot(data = Producto, aes(x = ImporteProducto)) +
                                      alpha = 0.2) +
                       geom_density(col='darkgreen') +
                       labs(title = 'Histograma de importes por productos',
-                           x = 'Importe por producto') + 
+                           x = 'Importe por producto (€)') + 
                       theme(plot.title = element_text(size = 8),
                             axis.title = element_text(size = 8)) +
                       geom_vline(xintercept = mean(Producto$ImporteProducto),
@@ -975,7 +964,7 @@ g_preciototales = ggplot(data = Compra, aes(x = ImporteTotal)) +
                                                        alpha = 0.2) +
                                         geom_density(col='darkgreen') +
                                         labs(title = 'Histograma de importes totales',
-                                             x = 'Importe total por factura') + 
+                                             x = 'Importe total por factura (€)') + 
                                         theme(plot.title = element_text(size = 10),
                                               axis.title = element_text(size = 8)) +
                                         geom_vline(xintercept = mean(Producto$ImporteProducto),
@@ -990,150 +979,140 @@ g_anual = Compra %>%
             ggplot(mapping = aes(x = Mes, y = Total, col = factor(Anio), group = Anio)) +
             geom_point() +
             geom_line(aes(group = Anio)) +
-            labs (title = 'Gasto mensual por anio', 
-                  y = 'Total') +
+            labs (title = 'Gasto mensual por año', 
+                  y = 'Total (€)') +
             scale_x_continuous(breaks = seq(1, 12, by = 1))
 ```
-
 
 ```{r FiguraVariables, fig.cap='Análisis de variables', echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=4, fig.align='center'}
 # Usando patchwork
 (g_precioproductos + g_parking) / (g_preciototales + g_tipoproducto) / g_anual
 ```
 
-Mercadona se caracteriza por ofrecer productos a precios bajos. Por ejemplo, podemos ver como los importes por productos, tienen un sesgo por derecha, hacia precios menores a los 10 euros, dónde su media no supera los 5 euros. Por otro lado, los productos que más se han de comprar en Mercadona, son los unitarios. Los pescados y, frutas y verdura, no tienen la misma proporción. Por último, el 90% de los tickets analizados registran parking.
+Mercadona se caracteriza por ofrecer productos a precios bajos. Por ejemplo, podemos ver como los importes por productos, tienen un sesgo por derecha, hacia precios menores a los 10 euros, dónde su media no supera los 5 euros. Por otro lado, los productos que más se han de comprar en Mercadona, son los unitarios. Los pescados y, frutas y verdura, no tienen la misma proporción.
 
 A pesar de que no se presentan gran cantidad de datos para ver la variación de los precios en los productos por año, y su comportamiento y/o frecuencia de compra por cada mes, vemos que hay una tendencia a comprar entre los primeros 4 meses del año y el final.
 
-## Continuación análisis...
+## Preguntas planteadas
 
-# Conclusiones
+1. ¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura? 
 
-## Respuesta a las preguntas
+Para las combinaciones de productos, será necesario saber el _id de factura_ y la _descripción del producto_. Una vez identificados, generamos todas las combinaciones entre los productos por factura, para saber la frecuencia en todas las facturas. 
 
-1.	¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura? 
-
-```{r}
-
+```{r include=FALSE}
 combinaciones <- Producto %>%
-  select(IdFactura, DescripcionProducto) %>%
-  distinct() %>%  
-  group_by(IdFactura) %>%
-  arrange(DescripcionProducto) %>%  
-  do({
-    productos <- .$DescripcionProducto
-    if (length(productos) > 1) {
-      pares <- combn(productos, 2, simplify = FALSE)
-      tibble(
-        Producto1 = sapply(pares, `[`, 1),
-        Producto2 = sapply(pares, `[`, 2)
-      )
-    } else {
-      tibble(Producto1 = character(), Producto2 = character())
-    }
-  }) %>%
-  ungroup() %>%
-  filter(Producto1 != "") 
-
+                  select(IdFactura, DescripcionProducto) %>%
+                    distinct() %>%  
+                      group_by(IdFactura) %>%
+                        arrange(DescripcionProducto) %>%  
+                          do({
+                            productos <- .$DescripcionProducto
+                            if (length(productos) > 1) {
+                              pares <- combn(productos, 2, simplify = FALSE)
+                              tibble(
+                                Producto1 = sapply(pares, `[`, 1),
+                                Producto2 = sapply(pares, `[`, 2)
+                              )
+                            } else {
+                              tibble(Producto1 = character(), Producto2 = character())
+                            }
+                          }) %>%
+                            ungroup() %>%
+                              filter(Producto1 != "") 
 
 pares_frecuentes <- combinaciones %>%
-  mutate(Par = paste(Producto1, Producto2, sep = " + ")) %>%
-  group_by(Par, Producto1, Producto2) %>%
-  summarise(Frecuencia = n(), .groups = "drop") %>%
-  arrange(desc(Frecuencia))
+                      mutate(Par = paste(Producto1, Producto2, sep = " + ")) %>%
+                        group_by(Par, Producto1, Producto2) %>%
+                          summarise(Frecuencia = n(), .groups = "drop") %>%
+                            arrange(desc(Frecuencia))
 
-head(pares_frecuentes, 5)
-mostrar = head(pares_frecuentes, 5)
-
-
-
-# VISUALIZACIÓN
-
-ggplot(mostrar, aes(x = reorder(Par, Frecuencia), y = Frecuencia)) +
-  geom_col(fill = "deeppink") +
-  coord_flip() +
-  labs(title = "Top 5 combinaciones de productos más frecuentes",
-       x = "Combinación de productos",
-       y = "Número de facturas") +
-  theme_minimal()
-
+pares_frecuentes[grepl(pattern = '^BOLSA PLASTICO', x = pares_frecuentes$Producto1), ]
 ```
 
-2.	¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
+En la Figura \@ref(fig:TopCombinaciones), vemos que la combinación de productos que más se repite es _ALMENDRA NATURAL + CACAHUETE CHOCOLATE_, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
 
-cv_precio: Coeficiente de variación del precio. Mide la variabilidad relativa del precio del producto (desviación estándar sobre media). Cuanto más bajo, más estable es el precio.
+```{r TopCombinaciones, fig.cap='Combinaciones de productos más frecuentes', echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=2}
+# VISUALIZACIÓN
+pares_frecuentes %>%
+  head(5) %>%
+  ggplot(., aes(x = reorder(Par, Frecuencia), y = Frecuencia)) +
+  geom_col(fill = "deeppink") +
+  coord_flip() +
+  labs(title = NULL,
+       x = NULL,
+       y = "Número de facturas") +
+  theme_minimal(base_size = 8) +
+  theme( plot.title = element_text(size = 9, hjust = 0.5),
+         axis.text.y = element_text(size = 7),
+         axis.text.x = element_text(hjust=0.5))
+```
 
-correlacion: Correlación entre el precio unitario y la cantidad vendida. Mide si las ventas aumentan o disminuyen cuando cambia el precio.
+2. ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
 
-```{r}
+Para determinar los productos que mantienen un volumen de ventas estable, analizaremos el _cv_precio_, que es el coeficiente de variación del precio. Mide la variabilidad relativa del precio del producto (desviación estándar sobre media). Cuanto más bajo, más estable es el precio. También, la _correlación_ entre el precio unitario y la cantidad vendida. Mide si las ventas aumentan o disminuyen cuando cambia el precio.
 
+```{r include=FALSE, warning=FALSE, message=FALSE}
 estabilidad_ventas <- Producto %>%
-  group_by(DescripcionProducto) %>%  
-  summarise(
-    cv_precio = sd(PrecioUnitario, na.rm = TRUE) / mean(PrecioUnitario, na.rm = TRUE),
-    correlacion = cor(PrecioUnitario, Cantidad, use = "complete.obs")
-  ) %>%
-  arrange(abs(correlacion))  
-
-head(estabilidad_ventas, 10) 
-
+                        group_by(DescripcionProducto) %>%  
+                          summarise( cv_precio = sd(PrecioUnitario, na.rm = TRUE) / mean(PrecioUnitario, na.rm = TRUE),
+                                     correlacion = cor(PrecioUnitario, Cantidad, use = "complete.obs")
+                                     ) %>%
+                        arrange(abs(correlacion))  
 
 # Visualización para los 5 productos más estables
-
+# Sabiendo que entre más bajo cv_precio, más estable es el precio
+# y que la correlacion baja (cercana a 0) entre precio y cantidad, indica que las ventas no dependen del precio
 productos_estables <- head(estabilidad_ventas, 5)$DescripcionProducto
+```
+
+```{r FiguraPrecioCantidad, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Relación precio-cantidad para productos con ventas estables', fig.align='center', fig.width=6, fig.height=2}
 Producto %>%
   filter(DescripcionProducto %in% productos_estables) %>%
   ggplot(aes(x = PrecioUnitario, y = Cantidad)) +
   geom_point(alpha = 0.5) +
   geom_smooth(method = "lm", se = FALSE, color = "red") +
   facet_wrap(~DescripcionProducto, scales = "free") +
-  labs(title = "Relación precio-cantidad para productos con ventas estables",
+  labs(title = NULL,
        x = "Precio unitario (€)",
        y = "Cantidad vendida") +
   theme_minimal()
 ```
-Aquí encontramos los 10 productos con ventas más estables, a pesar de cambios en su precio.
 
-La mayoría de los productos tienen precios bastante estables (cv_precio < 0.1), lo cual es bueno para control de precios.
+En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio. 
 
-Las correlaciones son en su mayoría muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
+En general, la mayoría de los productos tienen precios bastante estables (cv_precio < 0.1), lo cual es bueno para control de precios. Las correlaciones son muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
 
-En cuanto a la visualización:
+3. ¿Cuál es el número promedio de tickets por hora y el gasto promedio por compra, según el día y la hora?
 
-Se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables.
+```{r include=FALSE}
+# Creamos una copia del dataframe que contiene Compra
+Compra2 <- Compra
 
-Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X.
-
-Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio.
-
-3.¿Cuál es el número promedio de productos por ticket y el gasto promedio por compra, según el día y la hora?
-
-```{r}
-Compra2<- Compra
-
-#Separamos Fecha y Hora
+# Separamos Fecha y Hora
 Compra2 <- Compra %>%
   mutate(Fecha = as.character(Fecha)) %>%
   separate(Fecha, into = c("Fecha", "Hora"), sep = " ")
 
-#Arreglamos el formato
+# Arreglamos el formato
 Compra2 <- Compra2 %>%
   mutate(
     Fecha = as.Date(Fecha), # Convertir a tipo Date
     Hora = hms::as_hms(Hora) # Convertir a tipo hora (hms)
   )
-#Transformamos las horas en un entero de la hora a la que pertenecen, para omitir futuros problemas con el formato fecha
+
+# Transformamos las horas en un entero de la hora a la que pertenecen, para omitir futuros problemas con el formato fecha
 Compra2 <- Compra2 %>%
   mutate(Hora = hour(Hora))  # Extrae como número entero la hora
-#Creamos una nueva columna Dia de la semana, para poder analizar tanto las compras en los momentos del mes, como la semana
+
+# Creamos una nueva columna Dia de la semana, para poder analizar tanto las compras en los momentos del mes, como la semana
 Compra2 <- Compra2 %>%
   mutate(DiaSemana = weekdays(Fecha))
+
 #Juntamos los 2 sets para un manejo mas sencillo
 CompraExtendida <- merge(Compra2, Producto, by = "IdFactura")
-
 ```
 
-```{r}
+```{r include=FALSE}
 #Analisis de la horas
 ResumenHora <- CompraExtendida %>%
   group_by(IdFactura, Hora) %>%
@@ -1147,7 +1126,9 @@ ResumenHora <- CompraExtendida %>%
     TotalTiquetsDistintos = sum(TotalTiquetsDistintos),
     GastoTotal = sum(ImporteTotalFactura),
     GastoMedio = mean(ImporteTotalFactura) )
+```
 
+```{r include=FALSE}
 # Crear el gráficos
 # Gráfico 1: Total de productos por hora
 ggplot(ResumenHora, aes(x = Hora, y = TotalProductos)) +
@@ -1160,7 +1141,7 @@ ggplot(ResumenHora, aes(x = Hora, y = TotalProductos)) +
   )
 
 # Gráfico 2: Total de tiquets distintos por hora
-ggplot(ResumenHora, aes(x = Hora, y = TotalTiquetsDistintos)) +
+T_hora <- ggplot(ResumenHora, aes(x = Hora, y = TotalTiquetsDistintos)) +
   geom_line(color = "red", size = 1) +
   geom_point(color = "red", size = 2) +
   labs(
@@ -1191,7 +1172,7 @@ ggplot(ResumenHora, aes(x = Hora, y = GastoMedio)) +
 
 ```
 
-```{r}
+```{r include=FALSE}
 #Analisis de los DiaSemana
 ResumenSemana <- CompraExtendida %>%
   group_by(IdFactura, DiaSemana) %>%
@@ -1205,7 +1186,9 @@ ResumenSemana <- CompraExtendida %>%
     TotalTiquetsDistintos = sum(TotalTiquetsDistintos),
     GastoTotal = sum(ImporteTotalFactura),
     GastoMedio = mean(ImporteTotalFactura) )
+```
 
+```{r include=FALSE}
 # Crear el gráficos
 # Asegurar orden correcto de los días
 ResumenSemana$DiaSemana <- factor(ResumenSemana$DiaSemana,
@@ -1222,10 +1205,10 @@ ggplot(ResumenSemana, aes(x = DiaSemana, y = TotalProductos)) +
   theme_minimal()
 
 # Gráfico 2: Total de tiquets distintos por Dia
-ggplot(ResumenSemana, aes(x = DiaSemana, y = TotalTiquetsDistintos)) +
+T_dia <- ggplot(ResumenSemana, aes(x = DiaSemana, y = TotalTiquetsDistintos)) +
   geom_col(fill = "red") +
   labs(
-    title = "Total de tiquets por Dia",
+    title = NULL,
     x = "Dia",
     y = "Total de tiquets"
   ) +
@@ -1242,20 +1225,27 @@ ggplot(ResumenSemana, aes(x = DiaSemana, y = GastoTotal)) +
   theme_minimal()
 
 # Gráfico 4: Gasto medio por Dia
-ggplot(ResumenSemana, aes(x = DiaSemana, y = GastoMedio)) +
+G_dia <- ggplot(ResumenSemana, aes(x = DiaSemana, y = GastoMedio)) +
   geom_col(fill = "orange") +
   labs(
     title = "Gasto medio por Dia",
     x = "Dia",
     y = "Gasto medio (€)"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
 
 ```
 
+```{r Tickets-Gastos, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Análisis de tickets y gasto medio', fig.align='center', fig.width=7, fig.height=3}
+(T_hora + G_dia)
+```
+
+En la Figura \@ref(fig:Tickets-Gastos) ... 
+
 4.¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
 
-```{r}
+```{r include=FALSE}
 #Para este apartado usaremos CompraExtendida, ya que ya lo hemos formateado para que nos sea util.
 
 #Añadimos una columna Epoca del mes
@@ -1284,107 +1274,126 @@ ResumenMes <- CompraExtendida %>%
     GastoTotal = sum(ImporteTotalFactura),
     GastoMedio = mean(ImporteTotalFactura)
   )
+```
 
+```{r include=FALSE}
 # Crear el gráficos
 
 # Gráfico 1: Total de productos por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalProductos)) +
+T_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalProductos)) +
   geom_col(fill = "blue") +
   labs(
-    title = "Total de productos por época del mes",
-    x = "Época del mes",
+    title = "Total de productos",
+    x = NULL,
     y = "Total de productos"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(size = 10))
 
 # Gráfico 2: Total de tiquets distintos por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalTiquetsDistintos)) +
+T_ti_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalTiquetsDistintos)) +
   geom_col(fill = "red") +
   labs(
-    title = "Total de tiquets por época del mes",
-    x = "Época del mes",
+    title = "Total de tiquets",
+    x = NULL,
     y = "Total de tiquets"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(size = 10))
 
 # Gráfico 3: Gasto total por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoTotal)) +
+G_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoTotal)) +
   geom_col(fill = "darkgreen") +
   labs(
-    title = "Gasto total por época del mes",
-    x = "Época del mes",
+    title = "Gasto total",
+    x = "Epoca del mes",
     y = "Gasto total (€)"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(size = 10))
 
 # Gráfico 4: Gasto medio por época del mes
-ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoMedio)) +
+G_mean_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoMedio)) +
   geom_col(fill = "orange") +
   labs(
-    title = "Gasto medio por época del mes",
-    x = "Época del mes",
+    title = "Gasto medio",
+    x = "Epoca del mes",
     y = "Gasto medio (€)"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(size = 10))
 ```
 
-```{r}
+```{r Patrones-Compra, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Patrones de compra por epoca de mes', fig.align='center', fig.width=6, fig.height=3}
+(T_mes + T_ti_mes) / (G_mes + G_mean_mes)
+```
+
+En la Figura \@ref(fig:Patrones-Compra) ...
+
+```{r TablaParking, echo=FALSE, results='asis'}
 #Parking
 ResumenParking <- CompraExtendida %>%
   group_by(Parking) %>%
-  summarise(TotalCompras = n_distinct(IdFactura))
+  summarise('Total compras' = n_distinct(IdFactura))
 
-print(ResumenParking)
-
+kable(ResumenParking, caption = 'Compras que incluyen parking', booktabs = TRUE)
 ```
 
+En la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran parking. 
 
-5.⁠ ⁠¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
+5. ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido? 
 
-```{r}
+```{r include=FALSE}
 top_por_unidades <- Producto %>%
   filter(TipoProducto == "Unitario") %>%
   group_by(DescripcionProducto) %>%
   summarise(UnidadesVendidas = sum(Cantidad, na.rm = TRUE)) %>%
-  arrange(desc(UnidadesVendidas)) 
-
-top_por_unidades[1:5, ]
-
-# Visualización
-ggplot(top_por_unidades[1:5, ], aes(x = reorder(DescripcionProducto, UnidadesVendidas), y = UnidadesVendidas)) +
-  geom_col(fill = "darkblue") +
-  coord_flip() +
-  labs(title = "Top 5 productos unitarios más vendidos",
-       x = "Producto",
-       y = "Unidades vendidas")
+  arrange(desc(UnidadesVendidas))
 ```
 
-6.⁠ ⁠Si consideramos la categoría de FRUTAS Y VERDURAS. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+```{r TopUnidades, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Top 5 productos unitarios mas vendidos', fig.align='center', fig.width=6, fig.height=2}
+# Visualización
+top_por_unidades %>%
+  head(5) %>%
+  ggplot(., aes(x = reorder(DescripcionProducto, UnidadesVendidas), y = UnidadesVendidas)) +
+    geom_col(fill = "darkblue") +
+    coord_flip() +
+    labs(title = NULL,
+         x = "Producto",
+         y = "Unidades vendidas")
+```
 
-```{r}
+En la Figura \@ref(fig:TopUnidades) ...
+
+6. Si consideramos la categoría de FRUTAS Y VERDURAS, ¿cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos? 
+
+```{r include=FALSE}
 top_frutas_verduras <- Producto %>%
   filter(TipoProducto == "Fruta y verdura") %>%
   group_by(DescripcionProducto) %>%
   summarise(KilosVendidos = sum(Cantidad, na.rm = TRUE)) %>%
   arrange(desc(KilosVendidos))
-
-top_frutas_verduras[1:5, ]
-
-# Visualización
-ggplot(top_frutas_verduras[1:5, ], aes(x = reorder(DescripcionProducto, KilosVendidos), y = KilosVendidos)) +
-  geom_col(fill = "darkgreen") +
-  coord_flip() +
-  labs(title = "Top 5 frutas y verduras más vendidas",
-       x = "Producto",
-       y = "Kilos vendidos")
 ```
 
-PREGUNTA 7.	Si consideramos la categoría de PESCADO. Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+```{r TopFrutasVerduras, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Top 5 frutas y verduras mas vendidas', fig.align='center', fig.width=6, fig.height=2}
+# Visualizacion
+top_frutas_verduras %>%
+  head(5) %>%
+  ggplot(., aes(x = reorder(DescripcionProducto, KilosVendidos), y = KilosVendidos)) +
+    geom_col(fill = "darkgreen") +
+    coord_flip() +
+    labs(title = NULL,
+         x = "Producto",
+         y = "Kilos vendidos")
+```
 
-Para saber cuáles son los 5 productos más vendidos considerando únicamente la categoría pescado, debemos primero filtrar los datos para quedarnos solamente con la categoría TipoProducto y que esta contenga el valor de "Pescado", seguidamente calcularemos los kilos totales vendidos de cada producto y, por último mediante una suma nos quedaremos con los 5 productos más vendidos.
+En la Figura \@ref(fig:TopFrutasVerduras) ...
 
-```{r}
+7.	Si consideramos la categoría de PESCADO, ¿Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
 
+Para saber cuáles son los 5 productos más vendidos considerando únicamente la categoría pescado, debemos primero filtrar los datos para quedarnos solamente con la categoría _TipoProducto_ y que esta contenga el valor de "Pescado". Seguidamente calcularemos los kilos totales vendidos de cada producto y, por último mediante una suma nos quedaremos con los 5 productos más vendidos.
+
+```{r include=FALSE}
 #Filtramos para quedarnos con los productos que sean pescados.
 pescado <- Producto %>%
   filter(TipoProducto == "Pescado")
@@ -1400,21 +1409,22 @@ frecuencia_compras <- pescado %>%
   summarise(veces_comprado = n()) %>%
   arrange(desc(veces_comprado)) %>%
   head(frecuencia_compras, n = 5)
+
 # Unimos ambas tablas
 frecuencia_kilos <- left_join(frecuencia_compras, kilos_por_producto, by = "DescripcionProducto")
-
-print(frecuencia_kilos)
-
 ```
-Por lo tanto los 5 productos más vendidos de la categoría pescado son la bacaladilla con una venta de 5.782 kg, la sepia fresca con 2.642 kg vendidos, la sepia lonja con 2.792 kg vendidos, el lenguado fresc europ con 1.248 kg vendidos y por último la sepia sucia, con 2.402 kg vendidos.
 
-PREGUNTA 8.	Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
+```{r TablaTopPescado, echo=FALSE, results='asis'}
+kable(frecuencia_kilos, caption = 'Analisis categoria PESCADO', booktabs = TRUE)
+```
 
-Primero debemos unir las dos tablas "Compra" y "Producto" ya que en una se encuntra la descripción del producto y en otra la fecha, que nos interesa bastante para responder a la pregunta. Una vez unida filtramso la descripción del producto para quedarnos unicamente con los productos "platano" y "banana". Calculamos el precio medio del kilo por mes y representamos graficamente ya que es una forma muy fácil de interpretar los datos, y de ver la evolución del precio de estos dos productos a lo largo del tiempo.
+En la Tabla \@ref(tab:TablaTopPescado), los 5 productos más vendidos de la categoría pescado son la bacaladilla con una venta de 5.782 kg, la sepia fresca con 2.642 kg vendidos, la sepia lonja con 2.792 kg vendidos, el lenguado fresc europ con 1.248 kg vendidos y por último la sepia sucia, con 2.402 kg vendidos.
 
+8.	Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
 
-```{r}
+Primero debemos unir las dos tablas "Compra" y "Producto" ya que en una se encuntra la descripción del producto y en otra la fecha, que nos interesa bastante para responder a la pregunta. Una vez unida, filtramos la descripción del producto para quedarnos unicamente con los productos "platano" y "banana". Calculamos el precio medio del kilo por mes y representamos graficamente ya que es una forma muy fácil de interpretar los datos, y de ver la evolución del precio de estos dos productos a lo largo del tiempo.
 
+```{r include=FALSE}
 #Unimos las dos facturas mediante IdFactura
 tablas_unidas <- Producto %>%
   inner_join(Compra, by = "IdFactura")
@@ -1429,12 +1439,15 @@ precios_mes <- platano %>%
   group_by(Mes, DescripcionProducto) %>%
   summarise(PrecioPromedio = mean(PrecioUnitario, na.rm = TRUE)) %>%
   ungroup()
+```
 
+
+```{r Bananas, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Evolucion mensual del precio por kilo', fig.align='center', fig.width=6, fig.height=2}
 #Representamos gráficamente
 ggplot(precios_mes, aes(x = Mes, y = PrecioPromedio, color = DescripcionProducto)) +
   geom_line(size = 1.5) +
   geom_point(size = 3) +
-  labs(title = "Evolución mensual del precio por kilo",
+  labs(title = NULL,
        x = "Meses",
        y = "Precio por kilo (€)",
        color = "Producto") +
@@ -1442,19 +1455,19 @@ ggplot(precios_mes, aes(x = Mes, y = PrecioPromedio, color = DescripcionProducto
 
 ```
 
-Podemos concluir que el precio de la banana se ha mantenido prácticamente estable a lo largo del año, presentando únicamente una leve caída puntual, de 1.5 euros a menos de un euro. En cambio, el precio del plátano ha mostrado una mayor variabilidad, de 2 euros incrementando a mas de 3 en menos de 4 meses, además cuenta con un aumento significativo seguido de una fuerte disminución, para luego volver a incrementar su valor.
-
+Con la Figura \@ref(fig:Bananas) podemos concluir que el precio de la banana se ha mantenido prácticamente estable a lo largo del año, presentando únicamente una leve caída puntual, de 1.5 euros a menos de un euro. En cambio, el precio del plátano ha mostrado una mayor variabilidad, de 2 euros incrementando a mas de 3 en menos de 4 meses, además cuenta con un aumento significativo seguido de una fuerte disminución, para luego volver a incrementar su valor.
 
 9.  ¿Cuál es la procedencia de los tickets? ¿Qué ciudad/ pueblo tiene un mayor número de tickets?
 
+Podemos ver en la Figura \@ref(fig:Locacion), los diferentes municipios de los que proceden los tickets, hay una gran variedad de localidades diferentes, la mayoria de Valencia, pero alguna que otra de Alicante o de las Islas Baleares, incluso de Almeria (Vera, Garrucha). Podemos ver que la ciudad con el mayor número de tickets es Valencia, seguido de Alboraia y después Burjassot, era algo que se podia esperar, la ciudad con más tickets es la ciudad de estudio y los alrededores, aparte de eso, podemos ver una gran cantidad de instancias de Alcoy y cercanias, y por último una gran variedad de provincias diferentes, sea tanto Valencia como Alicante, pero también Almeria y Baleares
 
-Podemos ver a partir del siguiente gráfico de barras, los diferentes municipios de los que proceden los tickets, hay una gran variedad de localidades diferentes, la mayoria de Valencia, pero alguna que otra de Alicante o de las Islas Baleares, incluso de Almeria (Vera, Garrucha). Podemos ver que la ciudad con el mayor número de tickets es Valencia, seguido de Alboraia y después Burjassot, era algo que se podia esperar, la ciudad con más tickets es la ciudad de estudio y los alrededores, aparte de eso, podemos ver una gran cantidad de instancias de Alcoy y cercanias, y por último una gran variedad de provincias diferentes, sea tanto Valencia como Alicante, pero también Almeria y Baleares
-
-```{r echo=FALSE}
+```{r include=FALSE}
 frec_tnd = Compra %>%
   left_join(Tienda, by = "IdTienda") %>%
   select(IdTienda, Municipio)
+```
 
+```{r Locacion, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Tickets por municipio', fig.align='center', fig.width=6, fig.height=2.5}
 # Gráfrico de barras con todas las tiendas
 frec_tnd %>%
   count(Municipio) %>%
@@ -1463,21 +1476,22 @@ frec_tnd %>%
   ggplot(aes(x = Municipio, y = n)) +
   geom_col(fill = "darkblue") +
   coord_flip() +
-  labs(x = NULL, y = "Número de tickets") +
+  labs(x = NULL, y = NULL) +
   theme_minimal() +
   theme(axis.text.y = element_text(size = 10))
 ```
 
-
 10. Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?
 
-Parece que lo obvio, según el gráfico, sería cerrar los domingos, pero por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día, debe ser una anomalía, que abran los domingos, el siguiente mejor día para cerrar, es el jueves como podemos ver, aun así podemos ver varias cosas interesantes, un pico enorme en los sabados, y uno menos grande los lunes y los viernes, parece que todo el mundo evita hacer las comprar entresemana en la medida de lo posible.
+Parece que lo obvio, según la Figura \@ref(fig:DiaCierre), sería cerrar los Domingos. Pero, por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día; no es normal que las grandes cadenas de supermercados abran los Domingos. El siguiente mejor día para cerrar, es el jueves como podemos ver. Podríamos considerar también los martes o miércoles, ya que son los otros días con menos tiquets. 
 
-```{r echo=FALSE}
-Compra %>%
-  mutate(Dia = format(Fecha, "%A"),
-         Dia = factor(Dia, levels = c("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"))) %>%
-  ggplot(aes(x = Dia)) +
-  geom_bar(fill = "darkgreen") +
-  labs(title = "Frecuencia de tickets por día de la semana", y = NULL, x = NULL)
+En conclusión, la mayoría de personas no hace las compras entre semana, por lo que cerrar en uno de los días anteriormente mencionados es buena opción. Y, por otro lado, cerrar un fin de semana sería perjudicial.  
+
+```{r DiaCierre, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Tiquets por día', fig.align='center', fig.width=6, fig.height=2}
+T_dia
 ```
+
+# Conclusiones 
+
+
+
