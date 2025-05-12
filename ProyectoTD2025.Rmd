@@ -1025,6 +1025,7 @@ pares_frecuentes <- combinaciones %>%
                         group_by(Par, Producto1, Producto2) %>%
                           summarise(Frecuencia = n(), .groups = "drop") %>%
                             arrange(desc(Frecuencia))
+
 ```
 
 En la Figura \@ref(fig:TopCombinaciones), vemos que la combinación de productos que más se repite es _ALMENDRA NATURAL + CACAHUETE CHOCOLATE_, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
@@ -1484,7 +1485,7 @@ Con la Figura \@ref(fig:Bananas) podemos concluir que el precio de la banana se 
 Podemos ver en la Figura \@ref(fig:Locacion), los diferentes municipios de los que proceden los tickets, hay una gran variedad de localidades diferentes, la mayoria de Valencia, pero alguna que otra de Alicante o de las Islas Baleares, incluso de Almeria (Vera, Garrucha). Podemos ver que la ciudad con el mayor número de tickets es Valencia, seguido de Alboraia y después Burjassot, era algo que se podia esperar, la ciudad con más tickets es la ciudad de estudio y los alrededores, aparte de eso, podemos ver una gran cantidad de instancias de Alcoy y cercanias, y por último una gran variedad de provincias diferentes, sea tanto Valencia como Alicante, pero también Almeria y Baleares
 
 ```{r include=FALSE}
-frec_tnd = Compra %>%
+frec_tnd <- Compra %>%
   left_join(Tienda, by = "IdTienda") %>%
   select(IdTienda, Municipio)
 ```
