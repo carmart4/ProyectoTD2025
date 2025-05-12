@@ -1139,8 +1139,7 @@ ggplot(ResumenHora, aes(x = Hora, y = TotalProductos)) +
   labs(
     title = "Total de productos por hora",
     x = "Hora",
-    y = "Total de productos"
-  )
+    y = "Total de productos")
 
 # Gráfico 2: Total de tiquets distintos por hora
 T_hora <- ggplot(ResumenHora, aes(x = Hora, y = TotalTiquetsDistintos)) +
@@ -1149,8 +1148,7 @@ T_hora <- ggplot(ResumenHora, aes(x = Hora, y = TotalTiquetsDistintos)) +
   labs(
     title = "Total de tiquets distintos por hora",
     x = "Hora",
-    y = "Total de tiquets"
-  )
+    y = "Total de tiquets")
 
 ggsave(filename = 'figuras/tickets_hora.png', plot =  T_hora)
 
@@ -1161,8 +1159,7 @@ ggplot(ResumenHora, aes(x = Hora, y = GastoTotal)) +
   labs(
     title = "Gasto total por hora",
     x = "Hora",
-    y = "Gasto total (€)"
-  )
+    y = "Gasto total (€)")
 
 # Gráfico 4: Gasto medio por hora
 ggplot(ResumenHora, aes(x = Hora, y = GastoMedio)) +
@@ -1171,8 +1168,7 @@ ggplot(ResumenHora, aes(x = Hora, y = GastoMedio)) +
   labs(
     title = "Gasto medio por hora",
     x = "Hora",
-    y = "Gasto medio (€)"
-  ) 
+    y = "Gasto medio (€)") 
 
 ```
 
@@ -1189,7 +1185,8 @@ ResumenSemana <- CompraExtendida %>%
     TotalProductos = sum(TotalProductos),
     TotalTiquetsDistintos = sum(TotalTiquetsDistintos),
     GastoTotal = sum(ImporteTotalFactura),
-    GastoMedio = mean(ImporteTotalFactura) )
+    GastoMedio = mean(ImporteTotalFactura))
+
 ```
 
 ```{r include=FALSE}
@@ -1520,4 +1517,3 @@ T_dia
 ```
 
 # Conclusiones 
-
