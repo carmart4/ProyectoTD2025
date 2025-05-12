@@ -1491,7 +1491,11 @@ En conclusión, la mayoría de personas no hace las compras entre semana, por lo
 T_dia
 ```
 
+
+
 # Conclusiones 
+
+
 
 
 
