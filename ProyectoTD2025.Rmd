@@ -1025,18 +1025,16 @@ pares_frecuentes <- combinaciones %>%
                         group_by(Par, Producto1, Producto2) %>%
                           summarise(Frecuencia = n(), .groups = "drop") %>%
                             arrange(desc(Frecuencia))
-
-pares_frecuentes[grepl(pattern = '^BOLSA PLASTICO', x = pares_frecuentes$Producto1), ]
 ```
 
 En la Figura \@ref(fig:TopCombinaciones), vemos que la combinación de productos que más se repite es _ALMENDRA NATURAL + CACAHUETE CHOCOLATE_, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
 
 ```{r TopCombinaciones, fig.cap='Combinaciones de productos más frecuentes', echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=2}
 # VISUALIZACIÓN
-pares_frecuentes %>%
+par_frec <- pares_frecuentes %>%
   head(5) %>%
   ggplot(., aes(x = reorder(Par, Frecuencia), y = Frecuencia)) +
-  geom_col(fill = "deeppink") +
+  geom_col(fill = "lightpink") +
   coord_flip() +
   labs(title = NULL,
        x = NULL,
@@ -1045,6 +1043,8 @@ pares_frecuentes %>%
   theme( plot.title = element_text(size = 9, hjust = 0.5),
          axis.text.y = element_text(size = 7),
          axis.text.x = element_text(hjust=0.5))
+
+ggsave(filename = 'figuras/pares_frecuentes.png', plot =  par_frec)
 ```
 
 2. ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
@@ -1066,7 +1066,7 @@ productos_estables <- head(estabilidad_ventas, 5)$DescripcionProducto
 ```
 
 ```{r FiguraPrecioCantidad, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Relación precio-cantidad para productos con ventas estables', fig.align='center', fig.width=6, fig.height=2}
-Producto %>%
+var_prods <- Producto %>%
   filter(DescripcionProducto %in% productos_estables) %>%
   ggplot(aes(x = PrecioUnitario, y = Cantidad)) +
   geom_point(alpha = 0.5) +
@@ -1076,6 +1076,8 @@ Producto %>%
        x = "Precio unitario (€)",
        y = "Cantidad vendida") +
   theme_minimal()
+
+ggsave(filename = 'figuras/variacion_productos.png', plot =  var_prods)
 ```
 
 En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio. 
@@ -1150,6 +1152,8 @@ T_hora <- ggplot(ResumenHora, aes(x = Hora, y = TotalTiquetsDistintos)) +
     y = "Total de tiquets"
   )
 
+ggsave(filename = 'figuras/tickets_hora.png', plot =  T_hora)
+
 # Gráfico 3: Gasto total por hora
 ggplot(ResumenHora, aes(x = Hora, y = GastoTotal)) +
   geom_line(color = "darkgreen", size = 1) +
@@ -1214,6 +1218,8 @@ T_dia <- ggplot(ResumenSemana, aes(x = DiaSemana, y = TotalTiquetsDistintos)) +
   ) +
   theme_minimal()
 
+ggsave(filename = 'figuras/tickets_distintos_dia.png', plot =  T_dia)
+
 # Gráfico 3: Gasto total por Dia
 ggplot(ResumenSemana, aes(x = DiaSemana, y = GastoTotal)) +
   geom_col(fill = "darkgreen") +
@@ -1234,6 +1240,8 @@ G_dia <- ggplot(ResumenSemana, aes(x = DiaSemana, y = GastoMedio)) +
   ) +
   theme_minimal() +
   theme(axis.text.x=element_text(angle=45, hjust=1))
+
+ggsave(filename = 'figuras/gastos_medio_dia.png', plot =  G_dia)
 
 ```
 
@@ -1272,8 +1280,8 @@ ResumenMes <- CompraExtendida %>%
     TotalProductos = sum(TotalProductos),
     TotalTiquetsDistintos = sum(TotalTiquetsDistintos),
     GastoTotal = sum(ImporteTotalFactura),
-    GastoMedio = mean(ImporteTotalFactura)
-  )
+    GastoMedio = mean(ImporteTotalFactura))
+
 ```
 
 ```{r include=FALSE}
@@ -1290,6 +1298,8 @@ T_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalProductos)) +
   theme_minimal() +
   theme(plot.title = element_text(size = 10))
 
+ggsave(filename = 'figuras/Prods_mes.png', plot =  T_mes)
+
 # Gráfico 2: Total de tiquets distintos por época del mes
 T_ti_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalTiquetsDistintos)) +
   geom_col(fill = "red") +
@@ -1300,6 +1310,8 @@ T_ti_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = TotalTiquetsDistintos)) +
   ) +
   theme_minimal() +
   theme(plot.title = element_text(size = 10))
+
+ggsave(filename = 'figuras/Tickets_mes.png', plot =  T_ti_mes)
 
 # Gráfico 3: Gasto total por época del mes
 G_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoTotal)) +
@@ -1312,6 +1324,8 @@ G_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoTotal)) +
   theme_minimal() +
   theme(plot.title = element_text(size = 10))
 
+ggsave(filename = 'figuras/Total_epoca_mes.png', plot =  G_mes)
+
 # Gráfico 4: Gasto medio por época del mes
 G_mean_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoMedio)) +
   geom_col(fill = "orange") +
@@ -1322,6 +1336,9 @@ G_mean_mes <- ggplot(ResumenMes, aes(x = PeriodoMes, y = GastoMedio)) +
   ) +
   theme_minimal() +
   theme(plot.title = element_text(size = 10))
+
+ggsave(filename = 'figuras/Gasto_medio_mes.png', plot =  G_mean_mes)
+
 ```
 
 ```{r Patrones-Compra, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Patrones de compra por epoca de mes', fig.align='center', fig.width=6, fig.height=3}
@@ -1353,7 +1370,7 @@ top_por_unidades <- Producto %>%
 
 ```{r TopUnidades, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Top 5 productos unitarios mas vendidos', fig.align='center', fig.width=6, fig.height=2}
 # Visualización
-top_por_unidades %>%
+top_productos <- top_por_unidades %>%
   head(5) %>%
   ggplot(., aes(x = reorder(DescripcionProducto, UnidadesVendidas), y = UnidadesVendidas)) +
     geom_col(fill = "darkblue") +
@@ -1361,6 +1378,9 @@ top_por_unidades %>%
     labs(title = NULL,
          x = "Producto",
          y = "Unidades vendidas")
+
+ggsave(filename = 'figuras/Top_mas_vendido.png', plot =  top_productos)
+
 ```
 
 En la Figura \@ref(fig:TopUnidades) ...
@@ -1377,7 +1397,7 @@ top_frutas_verduras <- Producto %>%
 
 ```{r TopFrutasVerduras, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Top 5 frutas y verduras mas vendidas', fig.align='center', fig.width=6, fig.height=2}
 # Visualizacion
-top_frutas_verduras %>%
+top_frutas <- top_frutas_verduras %>%
   head(5) %>%
   ggplot(., aes(x = reorder(DescripcionProducto, KilosVendidos), y = KilosVendidos)) +
     geom_col(fill = "darkgreen") +
@@ -1385,6 +1405,9 @@ top_frutas_verduras %>%
     labs(title = NULL,
          x = "Producto",
          y = "Kilos vendidos")
+
+ggsave(filename = 'figuras/Top_frutas_vendidas.png', plot =  top_frutas)
+
 ```
 
 En la Figura \@ref(fig:TopFrutasVerduras) ...
@@ -1444,7 +1467,7 @@ precios_mes <- platano %>%
 
 ```{r Bananas, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Evolucion mensual del precio por kilo', fig.align='center', fig.width=6, fig.height=2}
 #Representamos gráficamente
-ggplot(precios_mes, aes(x = Mes, y = PrecioPromedio, color = DescripcionProducto)) +
+Ev_precio <- ggplot(precios_mes, aes(x = Mes, y = PrecioPromedio, color = DescripcionProducto)) +
   geom_line(size = 1.5) +
   geom_point(size = 3) +
   labs(title = NULL,
@@ -1452,6 +1475,8 @@ ggplot(precios_mes, aes(x = Mes, y = PrecioPromedio, color = DescripcionProducto
        y = "Precio por kilo (€)",
        color = "Producto") +
   theme_minimal(base_size = 14)
+
+ggsave(filename = 'figuras/Evolucion_precio.png', plot =  Ev_precio)
 
 ```
 
@@ -1469,7 +1494,7 @@ frec_tnd = Compra %>%
 
 ```{r Locacion, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Tickets por municipio', fig.align='center', fig.width=6, fig.height=2.5}
 # Gráfrico de barras con todas las tiendas
-frec_tnd %>%
+T_mun <- frec_tnd %>%
   count(Municipio) %>%
   arrange(n) %>%
   mutate(Municipio = factor(Municipio, levels = Municipio)) %>%
@@ -1479,6 +1504,9 @@ frec_tnd %>%
   labs(x = NULL, y = NULL) +
   theme_minimal() +
   theme(axis.text.y = element_text(size = 10))
+
+ggsave(filename = 'figuras/Tickets_municipio.png', plot =  T_mun)
+
 ```
 
 10. Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?
@@ -1491,11 +1519,5 @@ En conclusión, la mayoría de personas no hace las compras entre semana, por lo
 T_dia
 ```
 
-
-
 # Conclusiones 
-
-
-
-
 
