@@ -2,16 +2,16 @@
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
 date: "`r Sys.Date()`"
 output:
-  bookdown::pdf_document2:
-    toc: false
-    toc_depth: 3
-    number_sections: true
-    figure_caption: "Figura"
-    table_caption: "Tabla"
   bookdown::html_document2:
     echo: true
     number_sections: true
     toc: true
+    figure_caption: "Figura"
+    table_caption: "Tabla"
+  bookdown::pdf_document2:
+    toc: false
+    toc_depth: 3
+    number_sections: true
     figure_caption: "Figura"
     table_caption: "Tabla"
 always_allow_html: true
@@ -1046,6 +1046,9 @@ par_frec <- pares_frecuentes %>%
          axis.text.x = element_text(hjust=0.5))
 
 ggsave(filename = 'figuras/pares_frecuentes.png', plot =  par_frec)
+
+par_frec
+
 ```
 
 2. ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
@@ -1079,6 +1082,9 @@ var_prods <- Producto %>%
   theme_minimal()
 
 ggsave(filename = 'figuras/variacion_productos.png', plot =  var_prods)
+
+var_prods
+
 ```
 
 En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio. 
@@ -1379,6 +1385,8 @@ top_productos <- top_por_unidades %>%
 
 ggsave(filename = 'figuras/Top_mas_vendido.png', plot =  top_productos)
 
+top_productos
+
 ```
 
 En la Figura \@ref(fig:TopUnidades) ...
@@ -1405,6 +1413,8 @@ top_frutas <- top_frutas_verduras %>%
          y = "Kilos vendidos")
 
 ggsave(filename = 'figuras/Top_frutas_vendidas.png', plot =  top_frutas)
+
+top_frutas
 
 ```
 
@@ -1476,6 +1486,8 @@ Ev_precio <- ggplot(precios_mes, aes(x = Mes, y = PrecioPromedio, color = Descri
 
 ggsave(filename = 'figuras/Evolucion_precio.png', plot =  Ev_precio)
 
+Ev_precio
+
 ```
 
 Con la Figura \@ref(fig:Bananas) podemos concluir que el precio de la banana se ha mantenido prácticamente estable a lo largo del año, presentando únicamente una leve caída puntual, de 1.5 euros a menos de un euro. En cambio, el precio del plátano ha mostrado una mayor variabilidad, de 2 euros incrementando a mas de 3 en menos de 4 meses, además cuenta con un aumento significativo seguido de una fuerte disminución, para luego volver a incrementar su valor.
@@ -1504,6 +1516,8 @@ T_mun <- frec_tnd %>%
   theme(axis.text.y = element_text(size = 10))
 
 ggsave(filename = 'figuras/Tickets_municipio.png', plot =  T_mun)
+
+T_mun
 
 ```
 
