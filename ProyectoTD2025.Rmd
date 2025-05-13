@@ -82,9 +82,9 @@ pacman::p_load(pdftools, tidyverse, readxl, lubridate, visdat, knitr, tinytex, p
 
 ## Carga de datos
 
-Todos nuestros datos están almacenados la carpeta _data_, y fueron obtenidos desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato _pdf_.
+Todos nuestros datos están almacenados la carpeta *data*, y fueron obtenidos desde un repositorio en la nube. Todos los ficheros contenidos en esta carpeta están en formato *pdf*.
 
-Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Qué información queremos almacenar? ¿Cómo vamos a almacenar la información para responder a las preguntas planteadas? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros _pdf_ al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
+Antes de empezar con la extracción de los datos, fue necesario preguntarse: ¿Qué información queremos almacenar? ¿Cómo vamos a almacenar la información para responder a las preguntas planteadas? Adicionalmente, para evitar problemas con la extracción y lectura de datos desde los ficheros *pdf* al entorno de R, se estableció que lo mejor sería tratar todos los datos como caracteres. Una vez que todos los datos fueran leídos correctamente, se podría hacer la conversión al tipo de dato correspondiente.
 
 ```{r DataFrames, include=FALSE}
 # ¿Como vamos a almacenar la información? ¿Qué informacion queremos almacenar?
@@ -274,7 +274,7 @@ DetectaParking <- function(ListaProductos){
 }
 ```
 
-El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de gran utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 2 categorías: _Venta por unidad_ y _veta al peso_ para pescado y, frutas y verduras.
+El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue de gran utilidad dado que por la naturaleza de negocio de Mercadona, los tickets y los productos vienen clasificados en 2 categorías: *Venta por unidad* y *veta al peso* para pescado y, frutas y verduras.
 
 Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad. Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket.
 
@@ -789,7 +789,7 @@ for (f in lista_nombres_ficheros) {
 
 ## Ficheros no leidos
 
-Solo aquellos ficheros que estuvieran con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenido, hemos almacenado el nombre del fichero en un dataframe diferente _NoLeido_.
+Solo aquellos ficheros que estuvieran con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenido, hemos almacenado el nombre del fichero en un dataframe diferente *NoLeido*.
 
 ```{r include=FALSE}
 # Comprobacion de los ficheros no leidos 
@@ -845,13 +845,13 @@ vis_miss(Tienda)
 
 ## Problemas con tipos de datos
 
-Con _glimpse_ podemos ver algunos datos del dataframe, además de comprobar que cada columna tenga su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
+Con *glimpse* podemos ver algunos datos del dataframe, además de comprobar que cada columna tenga su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
 
 ```{r include=FALSE}
 glimpse(Tienda)
 ```
 
-Con los dataframes Compra y Producto, no podemos hacer lo mismo. Las variables como _Fecha_, _ImporteTotal_, _Cantidad_ y _PrecioUnitario_, deben tener el dato correspondiente para realizar las operaciones necesarias. Por ejemplo, dentro de las variables numéricas, es importante sustituir las comas por puntos para identificar los decimales y transformar correctamente el dato. Por último, el _TipoProducto_, _Parking_ y la variable _Tarjeta_, que serán de tipo categórico.
+Con los dataframes Compra y Producto, no podemos hacer lo mismo. Las variables como *Fecha*, *ImporteTotal*, *Cantidad* y *PrecioUnitario*, deben tener el dato correspondiente para realizar las operaciones necesarias. Por ejemplo, dentro de las variables numéricas, es importante sustituir las comas por puntos para identificar los decimales y transformar correctamente el dato. Por último, el *TipoProducto*, *Parking* y la variable *Tarjeta*, que serán de tipo categórico.
 
 ```{r include=FALSE}
 # Actualizacion para la tabla Compra. Variables a transformar:
@@ -891,7 +891,7 @@ Producto <- Producto %>%
 summary(Producto)
 ```
 
-Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos.
+Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando *unique* podemos asegurarnos.
 
 ```{r include=FALSE}
 Compra[duplicated(Compra), ]
@@ -995,9 +995,9 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 
 ## Preguntas planteadas
 
-1. ¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura? 
+1.  ¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura?
 
-Para las combinaciones de productos, será necesario saber el _id de factura_ y la _descripción del producto_. Una vez identificados, generamos todas las combinaciones entre los productos por factura, para saber la frecuencia en todas las facturas. 
+Para las combinaciones de productos, será necesario saber el *id de factura* y la *descripción del producto*. Una vez identificados, generamos todas las combinaciones entre los productos por factura, para saber la frecuencia en todas las facturas.
 
 ```{r include=FALSE}
 combinaciones <- Producto %>%
@@ -1028,7 +1028,7 @@ pares_frecuentes <- combinaciones %>%
 
 ```
 
-En la Figura \@ref(fig:TopCombinaciones), vemos que la combinación de productos que más se repite es _ALMENDRA NATURAL + CACAHUETE CHOCOLATE_, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
+En la Figura \@ref(fig:TopCombinaciones), vemos que la combinación de productos que más se repite es *ALMENDRA NATURAL + CACAHUETE CHOCOLATE*, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
 
 ```{r TopCombinaciones, fig.cap='Combinaciones de productos más frecuentes', echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=2}
 # VISUALIZACIÓN
@@ -1051,9 +1051,9 @@ par_frec
 
 ```
 
-2. ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
+2.  ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
 
-Para determinar los productos que mantienen un volumen de ventas estable, analizaremos el _cv_precio_, que es el coeficiente de variación del precio. Mide la variabilidad relativa del precio del producto (desviación estándar sobre media). Cuanto más bajo, más estable es el precio. También, la _correlación_ entre el precio unitario y la cantidad vendida. Mide si las ventas aumentan o disminuyen cuando cambia el precio.
+Para determinar los productos que mantienen un volumen de ventas estable, analizaremos el *cv_precio*, que es el coeficiente de variación del precio. Mide la variabilidad relativa del precio del producto (desviación estándar sobre media). Cuanto más bajo, más estable es el precio. También, la *correlación* entre el precio unitario y la cantidad vendida. Mide si las ventas aumentan o disminuyen cuando cambia el precio.
 
 ```{r include=FALSE, warning=FALSE, message=FALSE}
 estabilidad_ventas <- Producto %>%
@@ -1066,7 +1066,7 @@ estabilidad_ventas <- Producto %>%
 # Visualización para los 5 productos más estables
 # Sabiendo que entre más bajo cv_precio, más estable es el precio
 # y que la correlacion baja (cercana a 0) entre precio y cantidad, indica que las ventas no dependen del precio
-productos_estables <- head(estabilidad_ventas, 5)$DescripcionProducto
+productos_estables <- head(estabilidad_ventas, 6)$DescripcionProducto
 ```
 
 ```{r FiguraPrecioCantidad, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Relación precio-cantidad para productos con ventas estables', fig.align='center', fig.width=6, fig.height=2}
@@ -1087,11 +1087,11 @@ var_prods
 
 ```
 
-En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio. 
+En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio.
 
-En general, la mayoría de los productos tienen precios bastante estables (cv_precio < 0.1), lo cual es bueno para control de precios. Las correlaciones son muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
+En general, la mayoría de los productos tienen precios bastante estables (cv_precio \< 0.1), lo cual es bueno para control de precios. Las correlaciones son muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
 
-3. ¿Cuál es el número promedio de tickets por hora y el gasto promedio por compra, según el día y la hora?
+3.  ¿Cuál es el número promedio de tickets por hora y el gasto promedio por compra, según el día y la hora?
 
 ```{r include=FALSE}
 # Creamos una copia del dataframe que contiene Compra
@@ -1253,7 +1253,7 @@ ggsave(filename = 'figuras/gastos_medio_dia.png', plot =  G_dia)
 (T_hora + G_dia)
 ```
 
-En la Figura \@ref(fig:Tickets-Gastos) ... 
+En la Figura \@ref(fig:Tickets-Gastos) ...
 
 4.¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
 
@@ -1360,9 +1360,9 @@ ResumenParking <- CompraExtendida %>%
 kable(ResumenParking, caption = 'Compras que incluyen parking', booktabs = TRUE)
 ```
 
-En la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran parking. 
+En la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran parking.
 
-5. ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido? 
+5.  ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
 
 ```{r include=FALSE}
 top_por_unidades <- Producto %>%
@@ -1391,7 +1391,7 @@ top_productos
 
 En la Figura \@ref(fig:TopUnidades) ...
 
-6. Si consideramos la categoría de FRUTAS Y VERDURAS, ¿cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos? 
+6.  Si consideramos la categoría de FRUTAS Y VERDURAS, ¿cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
 
 ```{r include=FALSE}
 top_frutas_verduras <- Producto %>%
@@ -1420,9 +1420,9 @@ top_frutas
 
 En la Figura \@ref(fig:TopFrutasVerduras) ...
 
-7.	Si consideramos la categoría de PESCADO, ¿Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+7.  Si consideramos la categoría de PESCADO, ¿Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
 
-Para saber cuáles son los 5 productos más vendidos considerando únicamente la categoría pescado, debemos primero filtrar los datos para quedarnos solamente con la categoría _TipoProducto_ y que esta contenga el valor de "Pescado". Seguidamente calcularemos los kilos totales vendidos de cada producto y, por último mediante una suma nos quedaremos con los 5 productos más vendidos.
+Para saber cuáles son los 5 productos más vendidos considerando únicamente la categoría pescado, debemos primero filtrar los datos para quedarnos solamente con la categoría *TipoProducto* y que esta contenga el valor de "Pescado". Seguidamente calcularemos los kilos totales vendidos de cada producto y, por último mediante una suma nos quedaremos con los 5 productos más vendidos.
 
 ```{r include=FALSE}
 #Filtramos para quedarnos con los productos que sean pescados.
@@ -1451,7 +1451,7 @@ kable(frecuencia_kilos, caption = 'Analisis categoria PESCADO', booktabs = TRUE)
 
 En la Tabla \@ref(tab:TablaTopPescado), los 5 productos más vendidos de la categoría pescado son la bacaladilla con una venta de 5.782 kg, la sepia fresca con 2.642 kg vendidos, la sepia lonja con 2.792 kg vendidos, el lenguado fresc europ con 1.248 kg vendidos y por último la sepia sucia, con 2.402 kg vendidos.
 
-8.	Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
+8.  Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
 
 Primero debemos unir las dos tablas "Compra" y "Producto" ya que en una se encuntra la descripción del producto y en otra la fecha, que nos interesa bastante para responder a la pregunta. Una vez unida, filtramos la descripción del producto para quedarnos unicamente con los productos "platano" y "banana". Calculamos el precio medio del kilo por mes y representamos graficamente ya que es una forma muy fácil de interpretar los datos, y de ver la evolución del precio de estos dos productos a lo largo del tiempo.
 
@@ -1471,7 +1471,6 @@ precios_mes <- platano %>%
   summarise(PrecioPromedio = mean(PrecioUnitario, na.rm = TRUE)) %>%
   ungroup()
 ```
-
 
 ```{r Bananas, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Evolucion mensual del precio por kilo', fig.align='center', fig.width=6, fig.height=2}
 #Representamos gráficamente
@@ -1523,12 +1522,12 @@ T_mun
 
 10. Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?
 
-Parece que lo obvio, según la Figura \@ref(fig:DiaCierre), sería cerrar los Domingos. Pero, por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día; no es normal que las grandes cadenas de supermercados abran los Domingos. El siguiente mejor día para cerrar, es el jueves como podemos ver. Podríamos considerar también los martes o miércoles, ya que son los otros días con menos tiquets. 
+Parece que lo obvio, según la Figura \@ref(fig:DiaCierre), sería cerrar los Domingos. Pero, por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día; no es normal que las grandes cadenas de supermercados abran los Domingos. El siguiente mejor día para cerrar, es el jueves como podemos ver. Podríamos considerar también los martes o miércoles, ya que son los otros días con menos tiquets.
 
-En conclusión, la mayoría de personas no hace las compras entre semana, por lo que cerrar en uno de los días anteriormente mencionados es buena opción. Y, por otro lado, cerrar un fin de semana sería perjudicial.  
+En conclusión, la mayoría de personas no hace las compras entre semana, por lo que cerrar en uno de los días anteriormente mencionados es buena opción. Y, por otro lado, cerrar un fin de semana sería perjudicial.
 
 ```{r DiaCierre, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Tiquets por día', fig.align='center', fig.width=6, fig.height=2}
 T_dia
 ```
 
-# Conclusiones 
+# Conclusiones
