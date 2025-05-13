@@ -2,16 +2,16 @@
 title: "Análisis de Tickets de Supermercado: Mini Proyecto 2025"
 date: "`r Sys.Date()`"
 output:
-  bookdown::pdf_document2:
-    toc: false
-    toc_depth: 3
-    number_sections: true
-    figure_caption: "Figura"
-    table_caption: "Tabla"
   bookdown::html_document2:
     echo: true
     number_sections: true
     toc: true
+    figure_caption: "Figura"
+    table_caption: "Tabla"
+  bookdown::pdf_document2:
+    toc: false
+    toc_depth: 3
+    number_sections: true
     figure_caption: "Figura"
     table_caption: "Tabla"
 always_allow_html: true
@@ -44,7 +44,7 @@ En este proyecto se plantea realizar el análisis de tickets del supermercado Me
 
 ## Contexto
 
-Actualmente, las grandes empresas gestionan volúmenes significativos de productos, lo que conlleva elevados costes asociados al transporte y almacenamiento. Por este motivo, resulta fundamental optimizar cada etapa del proceso logístico. Con base en nuestro conocimiento en Big Data, nuestro equipo se enfocará en analizar y comprender las tendencias de los consumidores, con el objetivo de reducir costes operativos.
+Actualmente las grandes empresas gestionan volúmenes significativos de productos, lo que conlleva elevados costes asociados al transporte y almacenamiento. Por este motivo, resulta fundamental optimizar cada etapa del proceso logístico. Con base en nuestro conocimiento en Big Data, nuestro equipo se enfocará en analizar y comprender las tendencias de los consumidores, con el objetivo de reducir costes operativos.
 
 ## Grupo
 
@@ -161,7 +161,7 @@ vis_miss(Compra)
 
 ## Problemas con tipos de datos
 
-Con _glimpse_ podemos ver algunos datos del dataframe, además de comprobar que cada columna tiene su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el código postal, y el teléfono como números enteros. Pero, ya que no tendría sentido realizar operaciones propias de los números enteros con estos datos, no será necesario.
+Con _glimpse_ podemos ver algunos datos del dataframe, además de comprobar que cada columna tiene su tipo de dato adecuado. En el dataframe de tienda, podriamos poner tanto el id, el código postal, y el teléfono como números enteros. Pero, ya que no tendría sentido realizar operaciones propias de los números enteros con estos datos, no será necesario.
 
 ```{r include=FALSE}
 glimpse(Tienda)
@@ -303,7 +303,7 @@ g_anual <- Compra %>%
 (g_precioproductos + g_parking) / (g_preciototales + g_tipoproducto) / g_anual
 ```
 
-Mercadona se caracteriza por ofrecer productos a precios bajos. Por ejemplo, podemos ver como los importes por productos, tienen un sesgo por derecha, hacia precios menores a los 10 euros, dónde su media no supera los 5 euros. Por otro lado, los productos que más se han de comprar en Mercadona, son los unitarios. Los pescados y, frutas y verdura, no tienen la misma proporción.
+Mercadona se caracteriza por ofrecer productos a precios bajos. Por ejemplo, podemos ver como los importes por productos, tienen un sesgo por derecha hacia precios menores a los 10 euros, dónde su media no supera los 5 euros. Por otro lado, los productos que más se han de comprar en Mercadona, son los unitarios. Los pescados y, frutas y verdura, no tienen la misma proporción.
 
 A pesar de que no se presentan gran cantidad de datos para ver la variación de los precios en los productos por año, y su comportamiento y/o frecuencia de compra por cada mes, vemos que hay una tendencia a comprar entre los primeros 4 meses del año y el final.
 
@@ -454,7 +454,7 @@ if (!file.exists('figuras/VariacionPrecio_productos.png')) {
 
 ```
 
-En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas según el precio para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio.
+En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas según el precio para los 6 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio.
 
 En general, la mayoría de los productos tienen precios bastante estables (cv_precio \< 0.1), lo cual es bueno para el control de precios. Las correlaciones son muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
 
@@ -568,7 +568,8 @@ if (!file.exists('figuras/Tickets_Gastos1.png')) {
 }
 
 ```
-En primer lugar analizaremos las ventas en relación a la hora del día, análisis que permitirá optimizar la organización de las tareas de los empleados, como por ejemplo reponer las estanterías en horas bajas para no molestar a los clientes durante sus compras; o aumentar el personal en charcutería y pescadería en momentos de mucha clientela.
+
+Como vemos en la Figura \@ref(fig:Tickets-Gastos), en primer lugar analizaremos las ventas en relación a la hora del día, análisis que permitirá optimizar la organización de las tareas de los empleados, como por ejemplo reponer las estanterías en horas bajas para no molestar a los clientes durante sus compras; o aumentar el personal en charcutería y pescadería en momentos de mucha clientela.
 Podemos ver que recién abiertos se recibe a pequeña cantidad de clientes, que no solo gastan poco en general e individualmente. Sobre las 11 hay un ligero aumento de los consumidores, con un gran incremento en los gastos totales e individuales (puede que sea porque los que hacen la compra a esa hora compran para hacer la comida y se llevan más cosas de paso). A las 12 hay un pico en los gastos totales, pero una bajada en los individuales (compran los ingredientes que les faltan). A las 13-14 podemos observar que se deja de aumentar el número de clientes, pero son claramente 2 horas opuestas en lo que se refiere a gasto donde a las 13 alcanzamos datos muy altos y a las 14 comienza una bajada que dura hasta las 17. Por último hay un pico de número de ventas y gasto general a las 20 horas que viene generado poco a poco en el tiempo, pero son ventas más pequeñas. Por último, como es lógico a la hora de cierre, alcanzamos mínimos en todo.
 
 ```{r Tickets-Gastos, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Análisis de tickets y gasto', fig.align='center', fig.width=7, fig.height=4}
@@ -693,13 +694,7 @@ if (!file.exists('figuras/Tickets_Gastos2.png')) {
 TyG2
 ```
 
-En la Figura \@ref(fig:Tickets-Gastos) ...
-
-En la Figura \@ref(fig:Tickets-Gastos2) ...
-
-Si hablamos de los días de la semana, el gasto medio por dia esta muy balanceado sin casi variación entre los días, pero claramente podemos 2 días que salen de la norma en 
-el resto de aspectos, siendo estos sábado y jueves, como día con más ventas y beneficios claramente y el jueves siendo el día con menos.
-
+Si hablamos de los días de la semana, el gasto medio por dia esta muy balanceado sin casi variación entre los días, pero claramente podemos 2 días que salen de la norma en el resto de aspectos, siendo estos sábado y jueves, como día con más ventas y beneficios claramente y el jueves siendo el día con menos. Véase Figura \@ref(fig:Tickets-Gastos2).
 
 4.¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
 
@@ -812,10 +807,7 @@ if (!file.exists('figuras/Patrones_compra_epoca.png')) {
 Patrones_compra
 ```
 
-En la Figura \@ref(fig:Patrones-Compra) ...
-
-Ahora analizando las épocas de los meses, donde por desgracia no podemos sacar mucha información. Lo único destacable es que las ventas bajan a mitad de mes, muy 
-probablemente porque no coincide con la entrega de los sueldos.
+Como se ve en la Figura \@ref(fig:Patrones-Compra), analizando las épocas de los meses, destacamos que las ventas bajan a mitad de mes. Podemos inferir que esto se debe a que este periodo no coincide con la entrega de los sueldos.
 
 ```{r TablaParking, echo=FALSE, results='asis'}
 ResumenParking <- CompraExtendida %>%
@@ -825,11 +817,7 @@ ResumenParking <- CompraExtendida %>%
 kable(ResumenParking, caption = 'Compras que incluyen parking', booktabs = TRUE)
 ```
 
-En la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran parking.
-
-En lo que al parking respecta, claramente no es muy usado, pero esto puede ser debido a la edad de quienes generan los datos y puede no ser información concluyente. Si así 
-lo fuera habría que cuestionar si el gasto de la creación del parking sale rentable a muy largo plazo.
-
+En lo que al parking respecta, claramente no es muy usado ya que en la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran, pero esto puede ser debido a la edad de quienes generan los datos y puede no ser información concluyente. Si así lo fuera habría que cuestionar si el gasto de la creación del parking sale rentable a muy largo plazo.
 
 5.  ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
 
@@ -843,7 +831,7 @@ top_por_unidades <- Producto %>%
 top_por_unidades
 ```
 
-```{r TopUnidades, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Top 5 productos unitarios mas vendidos', fig.align='center', fig.width=6, fig.height=2}
+```{r TopUnidades, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Top 5 productos unitarios mas vendidos', fig.align='center', fig.width=6, fig.height=1.8}
 # Visualización
 top_productos <- top_por_unidades %>%
   head(5) %>%
@@ -862,7 +850,9 @@ if (!file.exists('figuras/TopUnidades_mas_vendido.png')) {
 top_productos
 ```
 
-En la Figura \@ref(fig:TopUnidades) ...
+En los productos unitario más vendidos, Figura \@ref(fig:TopUnidades), observamos que el ATÚN CLARO EN ACEITE DE OLIVA encabeza la lista con diferencia. Esto es esperable, ya que es un alimento no perecedero (no se estropea fácilmente con el tiempo), versátil (tiene muchos usos) y de consumo muy habitual en los hogares.
+
+En segundo lugar aparece la BOLSA DE PLÁSTICO, lo que indica que se está contabilizando como producto individual cada vez que un cliente la compra en caja, algo muy común en supermercados que cobran por bolsa. A continuación, encontramos productos como QUESO EN LONCHAS DE CABRA, YOGUR DE COCO y PAN DE SEMILLAS. Son todos productos cotidianos, vinculados a desayunos, meriendas o cenas rápidas, y que suelen venderse en unidades individuales o en envases pequeños.
 
 6.  Si consideramos la categoría de FRUTAS Y VERDURAS, ¿cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
 
@@ -896,7 +886,7 @@ top_frutas
 
 ```
 
-En la Figura \@ref(fig:TopFrutasVerduras) ...
+La Figura \@ref(fig:TopFrutasVerduras) refleja claramente una preferencia por productos frescos y saludables, que forman parte de la dieta diaria de muchas personas. Además, la estacionalidad de algunos de ellos sugiere que este tipo de análisis puede ser útil también para estudiar patrones de compra vinculados al calendario. 
 
 7.  Si consideramos la categoría de PESCADO, ¿Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
 
@@ -931,7 +921,7 @@ En la Tabla \@ref(tab:TablaTopPescado), los 5 productos más vendidos de la cate
 
 8.  Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
 
-Primero debemos unir las dos tablas "Compra" y "Producto" ya que en una se encuntra la descripción del producto y en otra la fecha, que nos interesa bastante para responder a la pregunta. Una vez unida, filtramos la descripción del producto para quedarnos unicamente con los productos "platano" y "banana". Calculamos el precio medio del kilo por mes y representamos graficamente ya que es una forma muy fácil de interpretar los datos, y de ver la evolución del precio de estos dos productos a lo largo del tiempo.
+Primero debemos unir las dos tablas _Compra_ y _Producto_ ya que en una se encuntra la descripción del producto y en otra la fecha, que nos interesa bastante para responder a la pregunta. Una vez unida, filtramos la descripción del producto para quedarnos unicamente con los productos "platano" y "banana". Calculamos el precio medio del kilo por mes y representamos graficamente ya que es una forma muy fácil de interpretar los datos, y de ver la evolución del precio de estos dos productos a lo largo del tiempo.
 
 ```{r include=FALSE}
 #Unimos las dos facturas mediante IdFactura
@@ -968,7 +958,6 @@ if (!file.exists('figuras/Evolucion_precio.png')) {
 
 ```
 
-
 ```{r Bananas, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Evolucion mensual del precio por kilo', fig.align='center', fig.width=6, fig.height=2}
 #Representamos gráficamente
 Ev_precio
@@ -990,7 +979,7 @@ frec_tnd %>%
   arrange(desc(n))
 ```
 
-```{r Locacion, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Tickets por municipio', fig.align='center', fig.width=6, fig.height=2.5}
+```{r Locacion, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Tickets por municipio', fig.align='center', fig.width=6, fig.height=2.2}
 # Gráfrico de barras con todas las tiendas
 T_mun <- frec_tnd %>%
   count(Municipio) %>%
@@ -1030,3 +1019,11 @@ CompraExtendida %>%
 ```
 
 # Conclusiones
+
+Este proyecto se centró en el análisis de los tickets de compra de Mercadona con el objetivo de responder a preguntas clave relacionadas con los hábitos de consumo, los precios y los patrones de compra. A través del procesamiento y la visualización de los datos, fue posible identificar variaciones significativas en los precios unitarios de ciertos productos, así como tendencias en la frecuencia y el volumen de las compras.
+
+En primer lugar, se observó que Mercadona tiende a mantener precios estables, mayormente por debajo de los 5 euros. Aunque en algunos momentos se registran picos en el número de tickets, productos comprados e importes totales, el gasto medio por compra rara vez supera los 50 euros.
+
+Los resultados obtenidos permiten comprender mejor el comportamiento de consumo de los estudiantes del grado. Por ejemplo, se identificaron patrones claros en los hábitos de compra durante la semana. Es común que los estudiantes realicen sus compras el fin de semana, probablemente porque disponen de más tiempo. Además, se detectó una disminución en las compras los jueves, posiblemente porque muchos estudiantes regresan a sus hogares ese día.
+
+Finalmente, también se puede inferir una tendencia hacia el consumo de productos saludables. A pesar de la amplia variedad de productos que ofrece Mercadona, se destaca un alto consumo de pescados, frutas y verduras, lo que sugiere una alimentación equilibrada.
