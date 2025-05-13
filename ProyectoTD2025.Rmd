@@ -315,10 +315,39 @@ Para las combinaciones de productos, será necesario saber el _id de factura_ y 
 
 ```{r include=FALSE}
 combinaciones <- Producto %>%
+                  select(IdFactura, DescripcionProducto) %>%
+                    distinct() %>%  
+                      group_by(IdFactura) %>%
+                        arrange(DescripcionProducto) %>%  
+                          do({
+                            productos <- .$DescripcionProducto
+                            if (length(productos) > 1) {
+                              pares <- combn(productos, 2, simplify = FALSE)
+                              tibble(
+                                Producto1 = sapply(pares, `[`, 1),
+                                Producto2 = sapply(pares, `[`, 2)
+                              )
+                            } else {
+                              tibble(Producto1 = character(), Producto2 = character())
+                            }
+                          }) %>%
+                            ungroup() %>%
+                              filter(Producto1 != "") 
+
+pares_frecuentes <- combinaciones %>%
+                      mutate(Par_productos = paste(Producto1, Producto2, sep = " + ")) %>%
+                        group_by(Par_productos, Producto1, Producto2) %>%
+                          summarise(Frecuencia = n(), .groups = "drop") %>%
+                            arrange(desc(Frecuencia))
+
+pares_frecuentes[1, ][1] # Descripcion
+pares_frecuentes[1, ][4] # Frecuencia
+
+combinaciones <- Producto %>%
   select(IdFactura, DescripcionProducto) %>%      # 1. Selecciona solo el ID de la factura y la descripción del producto
   distinct() %>%                                  # 2. Elimina duplicados (por si un producto aparece más de una vez en la misma factura)
   group_by(IdFactura) %>%                         # 3. Agrupa por cada factura
-  arrange(DescripcionProducto) %>%                # 4. Ordena los productos alfabéticamente por factura
+  arrange(DescripcionProducto) %>%                # 4. Ordena los productos alfabéticamente por factura para consistencia
 
    do({ # La función do() permite ejecutar código arbitrario para cada grupo generado por group_by().; es útil para manipular grupos cuando se necesita crear data frames personalizados. En este caso, do() se usa para: Acceder al vector de productos de cada factura (.$DescripcionProducto), Generar combinaciones de a pares solo si hay más de un producto,y Crear un nuevo tibble con esos pares.
      
@@ -354,8 +383,6 @@ pares_frecuentes <- combinaciones %>%
   # Ordenamos los pares de productos de mayor a menor según la frecuencia con que aparecen juntos.
   arrange(desc(Frecuencia))
 
-pares_frecuentes[1, ][1] # Descripcion
-pares_frecuentes[1, ][4] # Frecuencia
 
 ```
 
@@ -367,7 +394,8 @@ pares_frecuentes %>%
   head(5) %>%
   ggplot(., aes(x = reorder(Par_productos, Frecuencia), y = Frecuencia)) +
   geom_col(fill = "lightpink") +
-  coord_flip() +
+  coord_flip() + # invertimos los ejes X e Y del gráfico para facilitar la lectura
+
   labs(title = NULL,
        x = NULL,
        y = "Número de facturas") +
