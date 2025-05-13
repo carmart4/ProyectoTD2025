@@ -315,30 +315,44 @@ Para las combinaciones de productos, será necesario saber el _id de factura_ y 
 
 ```{r include=FALSE}
 combinaciones <- Producto %>%
-                  select(IdFactura, DescripcionProducto) %>%
-                    distinct() %>%  
-                      group_by(IdFactura) %>%
-                        arrange(DescripcionProducto) %>%  
-                          do({
-                            productos <- .$DescripcionProducto
-                            if (length(productos) > 1) {
-                              pares <- combn(productos, 2, simplify = FALSE)
-                              tibble(
-                                Producto1 = sapply(pares, `[`, 1),
-                                Producto2 = sapply(pares, `[`, 2)
-                              )
-                            } else {
-                              tibble(Producto1 = character(), Producto2 = character())
-                            }
-                          }) %>%
-                            ungroup() %>%
-                              filter(Producto1 != "") 
+  select(IdFactura, DescripcionProducto) %>%      # 1. Selecciona solo el ID de la factura y la descripción del producto
+  distinct() %>%                                  # 2. Elimina duplicados (por si un producto aparece más de una vez en la misma factura)
+  group_by(IdFactura) %>%                         # 3. Agrupa por cada factura
+  arrange(DescripcionProducto) %>%                # 4. Ordena los productos alfabéticamente por factura
+
+   do({ # La función do() permite ejecutar código arbitrario para cada grupo generado por group_by().; es útil para manipular grupos cuando se necesita crear data frames personalizados. En este caso, do() se usa para: Acceder al vector de productos de cada factura (.$DescripcionProducto), Generar combinaciones de a pares solo si hay más de un producto,y Crear un nuevo tibble con esos pares.
+     
+    productos <- .$DescripcionProducto            # 5. Extrae los productos de esa factura como un vector
+    if (length(productos) > 1) {
+      pares <- combn(productos, 2, simplify = FALSE)  # 6. Genera todas las combinaciones posibles de pares (sin repetición)
+      tibble(
+        Producto1 = sapply(pares, `[`, 1),        # 7. Extrae el primer producto de cada par
+        Producto2 = sapply(pares, `[`, 2)         # 8. Extrae el segundo producto de cada par
+      )
+    } else {
+      tibble(Producto1 = character(), Producto2 = character())  # 9. Si solo hay un producto, no hay combinaciones
+    }
+  }) %>%
+  ungroup() %>%
+  filter(Producto1 != "")                         # 10. Filtra filas vacías (si alguna factura tenía solo un producto)
+
 
 pares_frecuentes <- combinaciones %>%
-                      mutate(Par_productos = paste(Producto1, Producto2, sep = " + ")) %>%
-                        group_by(Par_productos, Producto1, Producto2) %>%
-                          summarise(Frecuencia = n(), .groups = "drop") %>%
-                            arrange(desc(Frecuencia))
+  
+  # Creamos una nueva columna "Par" que une los dos productos del par con " + " como separador.
+  # Esto nos da una representación en texto fácil de leer y agrupar.
+  mutate(Par = paste(Producto1, Producto2, sep = " + ")) %>%
+
+  # Agrupamos por la combinación de productos ("Par"), y también por los nombres originales Producto1 y Producto2.
+  # Esto asegura que cada par único sea tratado como una sola unidad.
+  group_by(Par, Producto1, Producto2) %>%
+
+  # Contamos cuántas veces aparece cada combinación en todas las facturas.
+  # `n()` cuenta el número de filas por grupo.
+  summarise(Frecuencia = n()) %>%
+
+  # Ordenamos los pares de productos de mayor a menor según la frecuencia con que aparecen juntos.
+  arrange(desc(Frecuencia))
 
 pares_frecuentes[1, ][1] # Descripcion
 pares_frecuentes[1, ][4] # Frecuencia
