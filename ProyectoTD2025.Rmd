@@ -444,7 +444,7 @@ estabilidad_ventas <- Producto %>%
                         group_by(DescripcionProducto) %>%  
                           summarise( cv_precio = sd(PrecioUnitario, na.rm = TRUE) / mean(PrecioUnitario, na.rm = TRUE),
                                      correlacion = cor(PrecioUnitario, Cantidad, use = "complete.obs")) %>%
-                          arrange(abs(correlacion))  
+                          arrange(abs(correlacion))  # con use= "complete.obs"  excluimos filas con valores NA de nuestro cálculo.
 
 # Visualización para los 5 productos más estables
 # Sabiendo que entre más bajo cv_precio, más estable es el precio
@@ -463,6 +463,9 @@ Producto %>%
        x = "Precio unitario (€)",
        y = "Cantidad vendida") +
   theme_minimal()
+
+#Con facet_wrap dividimos un gráfico en varios subgráficos.
+
 ```
 
 ```{r include=FALSE}
