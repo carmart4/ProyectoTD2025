@@ -568,6 +568,8 @@ if (!file.exists('figuras/Tickets_Gastos1.png')) {
 }
 
 ```
+En primer lugar analizaremos las ventas en relación a la hora del día, análisis que permitirá optimizar la organización de las tareas de los empleados, como por ejemplo reponer las estanterías en horas bajas para no molestar a los clientes durante sus compras; o aumentar el personal en charcutería y pescadería en momentos de mucha clientela.
+Podemos ver que recién abiertos se recibe a pequeña cantidad de clientes, que no solo gastan poco en general e individualmente. Sobre las 11 hay un ligero aumento de los consumidores, con un gran incremento en los gastos totales e individuales (puede que sea porque los que hacen la compra a esa hora compran para hacer la comida y se llevan más cosas de paso). A las 12 hay un pico en los gastos totales, pero una bajada en los individuales (compran los ingredientes que les faltan). A las 13-14 podemos observar que se deja de aumentar el número de clientes, pero son claramente 2 horas opuestas en lo que se refiere a gasto donde a las 13 alcanzamos datos muy altos y a las 14 comienza una bajada que dura hasta las 17. Por último hay un pico de número de ventas y gasto general a las 20 horas que viene generado poco a poco en el tiempo, pero son ventas más pequeñas. Por último, como es lógico a la hora de cierre, alcanzamos mínimos en todo.
 
 ```{r Tickets-Gastos, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Análisis de tickets y gasto', fig.align='center', fig.width=7, fig.height=4}
 TyG1
@@ -695,6 +697,10 @@ En la Figura \@ref(fig:Tickets-Gastos) ...
 
 En la Figura \@ref(fig:Tickets-Gastos2) ...
 
+Si hablamos de los días de la semana, el gasto medio por dia esta muy balanceado sin casi variación entre los días, pero claramente podemos 2 días que salen de la norma en 
+el resto de aspectos, siendo estos sábado y jueves, como día con más ventas y beneficios claramente y el jueves siendo el día con menos.
+
+
 4.¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
 
 ```{r include=FALSE}
@@ -808,6 +814,9 @@ Patrones_compra
 
 En la Figura \@ref(fig:Patrones-Compra) ...
 
+Ahora analizando las épocas de los meses, donde por desgracia no podemos sacar mucha información. Lo único destacable es que las ventas bajan a mitad de mes, muy 
+probablemente porque no coincide con la entrega de los sueldos.
+
 ```{r TablaParking, echo=FALSE, results='asis'}
 ResumenParking <- CompraExtendida %>%
   group_by(Parking) %>%
@@ -817,6 +826,10 @@ kable(ResumenParking, caption = 'Compras que incluyen parking', booktabs = TRUE)
 ```
 
 En la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran parking.
+
+En lo que al parking respecta, claramente no es muy usado, pero esto puede ser debido a la edad de quienes generan los datos y puede no ser información concluyente. Si así 
+lo fuera habría que cuestionar si el gasto de la creación del parking sale rentable a muy largo plazo.
+
 
 5.  ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
 
