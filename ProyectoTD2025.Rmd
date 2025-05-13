@@ -98,531 +98,26 @@ El segundo filtro, permitía saber si se compró pescado o no. Este filtro fue d
 
 Si en el ticket se registró la compra de pescado, ya podíamos establecer que a partir de ese filtro, los productos que estuvieran por debajo de esa línea, serían al peso. Y los que no, serían por unidad. Una vez que se identificara el tipo de producto, unitario o al peso, ya sería más fácil identificar la categoría a la que pertenece, por el formato en que fue registrado el producto en el ticket.
 
-```{r Pescado, include=FALSE}
-# Filtro 2
-# Función que detecta si hubo compra de pescado o no. Ayuda en la lectura e identificacion del tipo de producto.
-
-# Valores que recibe:
-# - ListaProductos = Lista 'recuperada' del filtro anterior -> DetectaParking(ListaProductos)[[2]]
-
-# Valores que devuelve:
-# - Pescado = Valor booleano si hay pescado o no
-# - ListaProductos = Todos los productos unitarios, o por peso, si NO TIENE PESCADO
-# ---
-# - Productos = Todos los productos unitarios
-# - ProductosPeso = Los productos pescados y, frutas y verdutas
-
-DetectaPescado <- function(ListaProductos){
-  
-  Pescado <- FALSE
-  
-  # ^ indica el inicio de la linea 
-  # $ indica el final de la linea
-  # Lo empleamos para que PESCADO sea el unico valor en la linea, y no confundir con otros productos
-  if (any(grepl(x=ListaProductos, pattern='^PESCADO$'))) {
-    
-    Pescado <- TRUE
-
-    # Guardo la posicion del primer PESCADO
-    PrimerPescado <- grep(x=ListaProductos, pattern='^PESCADO$')[1]
-    final <- PrimerPescado-1
-    
-    Productos <- ListaProductos[0:final] # Productos unitarios
-    
-    # Los productos a partir de la primer linea PESCADO, serán por peso.
-    inicio <- PrimerPescado+1
-    ListaProductosPeso <- ListaProductos[inicio:length(ListaProductos)]
-    
-    # En caso de encontrar otra linea con PESCADO dentro de los productos por peso, la quitamos 
-    indices <- !grepl(x=ListaProductosPeso, pattern='^PESCADO$')
-    
-    ProductosPeso <- ListaProductosPeso[indices]
-  }
-
-  if (Pescado){
-    valores <- list(Pescado, Productos, ProductosPeso)
-  } else {
-    valores <- list(Pescado, ListaProductos)
-  }
-  
-  return(valores)
-}
-
-```
-
-```{r Patrones, include=FALSE}
-# Patrones para diferenciar los tupos de producto
-
-# Sabemos que disponemos de 3 tipos de productos
-TipoProducto <- c('Unitario', 'Pescado', 'Fruta y verdura')
-
-# Patron normal, para productos unitarios con más de una unidad
-patron_normal <- '^([0-9]+)\\s(.+?)\\s([0-9]+,[0-9]{2})\\s+([0-9]+,[0-9]{2})$'
-
-# Caso 2: Cuando cantidad es 1. Es decir, sin precio unitario.
-patron_cantidad_1 <- '^1\\s(.+?)\\s+([0-9]+,[0-9]{2})$'
-
-# Caso 3: Productos por peso, tanto pescado como fruteria.
-patron_pescado <- "(?i)^[A-ZÁÉÍÓÚÑ]+(?:\\s+[A-ZÁÉÍÓÚÑ]+)*\\s*(?:[0-9/]+)?(?:\\s+[A-ZÁÉÍÓÚÑ]+)*$"
-
-patron_peso <- "^([0-9]+)\\s(.+)$"
-
-patron_precio_peso <- "^([0-9,]+)\\s*kg\\s*([0-9,]+)\\s*€/kg\\s*([0-9,]+)$"
-
-# ^ -> Indica el inicio de la cadena.
-# [0-9] -> Un numero de 0 a 9.
-# + -> Permite que sean varios numeros, caracteres.
-# \\s -> Espacio.
-# . -> Lee cualquier caracter, menos el salto de linea.
-# ? -> Puede que el valor a evaluar esté o no. 
-# , -> Valor literal de ','
-# [0-9]{2} -> Exactamente dos numeros 
-# $ -> Indica el final de la cadena
-```
-
-```{r Registro1, include=FALSE}
-
-# Funcion que registra datos de los productos si tiene pescado.
-
-# NOTA: Esta funcion solo sirve si se ha comprado pescado. Por eso se creo la funcion anterior 
-# para detectar si había pescado o no en la compra.
-
-# InformacionCompra = lista recuperada de ExtraerInformacion 
-# Parking = valor bool recuperado de DetectaParking
-# ListaProductosUnitarios = lista recuperada de la funcion DetectaPescado
-# ListaProductosPeso = lista recuperada de la funcion DetectaPescado, siempre que se haya comprado pescado
-# ProductosRegistrados = dataframe Compra, que contendrá todos los productos leidos
-
-RegistraProductosConFiltro <- function (InformacionCompra, Parking, ListaProductosUnitarios, ListaProductosPeso, ProductosRegistrados){
-  
-  idfactura <- InformacionCompra[[8]]
-  
-  # Tratamiento para los productos unitarios
-  
-  i <- 1
-  
-  while (i <= length(ListaProductosUnitarios)){
-    
-    p <- ListaProductosUnitarios[i]
-  
-    if (grepl(pattern = patron_cantidad_1, x = p)){
-      
-      detalleproducto <- str_match(string = p, pattern = patron_cantidad_1)[2:3]
-      
-      nombreproducto <- detalleproducto[1]
-      precio <- detalleproducto[2]
-      tproducto <- TipoProducto[1]
-      
-      valores <- data.frame(
-                    IdFactura = idfactura,
-                    Producto = nombreproducto,
-                    Cantidad = '1',
-                    PrecioUnitario = precio,
-                    ImporteProducto = precio, 
-                    TipoProducto = tproducto, 
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados <- rbind(ProductosRegistrados, valores)
-      
-    } else {
-      # Si no sigue el patron de una unidad, seguirá el patrón de más de una unidad
-      
-      detalleproducto <- str_match(string = p, pattern = patron_normal)[2:5]
-      
-      cantidad <- detalleproducto[1]
-      nombreproducto <- detalleproducto[2]
-      precio <- detalleproducto[3]
-      importe <- detalleproducto[4]
-      tproducto <- TipoProducto[1]
-      
-      valores <- data.frame(
-                    IdFactura = idfactura,
-                    Producto = nombreproducto,
-                    Cantidad = cantidad,
-                    PrecioUnitario = precio, 
-                    ImporteProducto = importe, 
-                    TipoProducto = tproducto, 
-                    stringsAsFactors = FALSE) 
-      
-      ProductosRegistrados <- rbind(ProductosRegistrados, valores)
-      
-    }
-    i <- i + 1
-  }
-  
-  # Tratamiento para los datos por peso
-  
-  i <- 1
-  
-  while (i <= length(ListaProductosPeso)){
-    
-    p <- ListaProductosPeso[i]
-  
-    if (grepl(pattern = patron_pescado, x = p)){
-      
-      nombreproducto <- p
-      
-      i <- i + 1
-      
-      detalleproducto <- ListaProductosPeso[i]
-      detalleproducto <- str_match(string = detalleproducto, pattern = patron_precio_peso)[2:4]
-  
-      cantidad <- detalleproducto[1]
-      precio <- detalleproducto[2]
-      importe <- detalleproducto[3]
-      tproducto <- TipoProducto[2]
-      
-      valores <- data.frame(
-                    IdFactura = idfactura,
-                    Producto = nombreproducto,
-                    Cantidad = cantidad,
-                    PrecioUnitario = precio, 
-                    ImporteProducto = importe, 
-                    TipoProducto = tproducto, 
-                    stringsAsFactors = FALSE)
-        
-      ProductosRegistrados <- rbind(ProductosRegistrados, valores)
-      
-    } else {
-      
-      # Si no sigue el patron de pescado, seguirá el patron de frutas y verduras; por peso. 
-      
-      nombreproductopeso <- str_match(string = p, pattern = patron_peso)[2:3]
-      
-      cantidad <- nombreproductopeso[1]
-      nombreproducto <- nombreproductopeso[2]
-      
-      i <- i + 1
-      
-      detalleproducto <- ListaProductosPeso[i]
-      detalleproducto <- str_match(string = detalleproducto, pattern = patron_precio_peso)[2:4]
-  
-      cantidad <- detalleproducto[1]
-      precio <- detalleproducto[2]
-      importe <- detalleproducto[3]
-      tproducto <- TipoProducto[3]
-      
-      valores <- data.frame(
-                    IdFactura = idfactura,
-                    Producto = nombreproducto,
-                    Cantidad = cantidad,
-                    PrecioUnitario = precio, 
-                    ImporteProducto = importe, 
-                    TipoProducto = tproducto, 
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados <- rbind(ProductosRegistrados, valores)
-    }
-    i <- i + 1
-  }
-  
-  # Solo devolverá el dataframe que contiene los productos registrados
-  
-  return(ProductosRegistrados)
-}
-```
-
-```{r Registro2, include=FALSE}
-# Funcion que registra datos de los productos cuando no se ha comprado pescado
-
-RegistraProductosSinFiltro <- function (InformacionCompra, Parking, ListaProductos, ProductosRegistrados){
-  
-  idfactura <- InformacionCompra[[8]]
-  
-  # Tratamiento para los productos unitarios
-
-  i <- 1
-    
-  while (i <= length(ListaProductos)) {
-    
-    p <- ListaProductos[i]
-    
-    if (grepl(pattern = patron_normal, x = p) | grepl(pattern = patron_cantidad_1, x = p)){
-      
-      tproducto <- TipoProducto[1]
-      
-      if (grepl(pattern = patron_normal, x = p)) {
-        
-        # Productos que tienen mas de una cantidad 
-        
-        detalleproducto <- str_match(string = p, pattern = patron_normal)[2:5]
-        
-        cantidad <- detalleproducto[1]
-        nombreproducto <- detalleproducto[2]
-        precio <- detalleproducto[3]
-        importe <- detalleproducto[4]
-        
-        valores <- data.frame(
-                    IdFactura = idfactura,
-                    Producto = nombreproducto,
-                    Cantidad = cantidad,
-                    PrecioUnitario = precio, 
-                    ImporteProducto = importe, 
-                    TipoProducto = tproducto, 
-                    stringsAsFactors = FALSE)
-        
-        ProductosRegistrados <- rbind(ProductosRegistrados, valores)
-        
-      } else if (grepl(pattern = patron_cantidad_1, x = p)){
-        
-        # Productos que tienen una (1) cantidad 
-          
-        cantidad <- '1'
-        
-        detalleproducto <- str_match(string = p, pattern = patron_cantidad_1)[2:3]
-        
-        nombreproducto <- detalleproducto[1]
-        precio <- detalleproducto[2]
-        
-        valores <- data.frame(
-                    IdFactura = idfactura,
-                    Producto = nombreproducto,
-                    Cantidad = cantidad,
-                    PrecioUnitario = precio, 
-                    ImporteProducto = precio, 
-                    TipoProducto = tproducto, 
-                    stringsAsFactors = FALSE)
-        
-        ProductosRegistrados <- rbind(ProductosRegistrados, valores)
-      }
-      
-    } else {
-      
-      # Si no tienen el patron normal o de una cantidad, entonces es un producto por peso 
-      
-      # Tratamiento producto por peso, para frutas y verduras
-      
-      tproducto <- TipoProducto[3]
-      
-      nombreproductopeso <- str_match(string = p, pattern = patron_peso)[2:3]
-      
-      cantidad <- nombreproductopeso[1]
-      nombreproducto <- nombreproductopeso[2]
-      
-      i <- i + 1
-      
-      detalleproducto <- ListaProductos[i]
-      detalleproducto <- str_match(string = detalleproducto, pattern = patron_precio_peso)[2:4]
-  
-      cantidad <- detalleproducto[1]
-      precio <- detalleproducto[2]
-      importe <- detalleproducto[3]
-      
-      valores <- data.frame(
-                    IdFactura = idfactura,
-                    Producto = nombreproducto,
-                    Cantidad = cantidad,
-                    PrecioUnitario = precio, 
-                    ImporteProducto = importe, 
-                    TipoProducto = tproducto, 
-                    stringsAsFactors = FALSE)
-      
-      ProductosRegistrados <- rbind(ProductosRegistrados, valores)
-    }
-    i <- i + 1
-  }
-  
-  # Solo devolverá el dataframe que contiene los productos registrados
-  return(ProductosRegistrados)
-  
-}
-```
-
-```{r RegistroGeneral, include=FALSE}
-# General 
-
-# Funcion que almacena:
-
-# 1. El nombre de los ficheros que no fueron leidos.
-
-# 2. El nombre de los ficheros que fueron leidos; los que corresponden a Mercadona. 
-
-# 3. Información de todas las tiendas que fueron leidas.
-
-# 4. Información sobre productos y compras realizadas
-
-RegistroFichero <- function(Nombrepdf, DF_FicherosNoLeidos, DF_FicherosLeidos, DF_Tiendas, DF_Productos, DF_Compra) {
-  
-  Verifica <- EsMercadona(Nombrepdf)
-  
-  # Bool para saber si es de mercadona o no
-  V <- Verifica[[1]]
-  
-  if (V) {
-    
-    # Verifica si se pagó con tarjeta o no 
-    Tarjeta <- Verifica[[2]]
-    
-    # Todas las lineas leidas
-    Lineas <- Verifica[[3]]
-    
-    # Datos contenidos en el ticket
-    datos <- ExtraeInformacion(Lineas)
-    
-    InfoCompra <- datos[[1]]
-    
-    direccion <- InfoCompra[[1]]
-    codpos <- InfoCompra[[2]]
-    municipio <- InfoCompra[[3]]
-    tel <- InfoCompra[[4]]
-    fecha <- InfoCompra[[5]]
-    id_tienda <- InfoCompra[[6]]
-    id_factura <- InfoCompra[[8]]
-    total <- InfoCompra[[9]]
-    
-    # Bloque de datos que contiene los productos, sin filtros
-    Productos <- datos[[2]]
-    
-    # FILTRO 1
-    filtro1 <- DetectaParking(Productos)
-    
-    # Valor bool para saber si tiene parking o no
-    ValorParking <- filtro1[[1]]
-    
-    # Todo el bloque que contiene los productos, con filtro parking
-    Productos <- filtro1[[2]]
-    
-    # FILTRO 2
-    filtro2 <- DetectaPescado(Productos)
-    
-    # Valor bool para saber si tiene pescado o no
-    Pescado <- filtro2[[1]]
-    
-    # Añadimos los ficheros que fueron leidos correctamente y además, 
-    # añadimos la factura a la que corresponde para verificar posteriormente
-    
-    if (!id_factura %in% DF_FicherosLeidos$IdFactura){
-      
-      valores <- data.frame( IdFactura = id_factura,
-                             NombreFichero = Nombrepdf,
-                             stringsAsFactors = FALSE )
-      
-      DF_FicherosLeidos <- rbind(DF_FicherosLeidos, valores)
-      
-    }
-
-    if (!id_factura %in% DF_Compra$IdFactura) {
-      
-      valores <- data.frame( Fecha = fecha,
-                             IdTienda = id_tienda,
-                             IdFactura = id_factura,
-                             Parking = ValorParking,
-                             Tarjeta = Tarjeta,
-                             ImporteTotal = total,
-                             stringsAsFactors = FALSE)
-      
-      DF_Compra <- rbind(DF_Compra, valores)
-      
-    }
-
-    
-    if (!id_tienda %in% DF_Tiendas$IdTienda){
-
-      valores <- data.frame( IdTienda = id_tienda,
-                              Direccion = direccion,
-                              CodigoPostal = codpos,
-                              Municipio = municipio,
-                              Telefono = tel,
-                             stringsAsFactors = FALSE )
-      
-      DF_Tiendas <- rbind(DF_Tiendas, valores)
-    }
-    
-    # INFORMACION SOBRE LOS PRODUCTOS COMPRADOS
-    
-    if (Pescado) {
-      
-      ProductosUnitarios <- filtro2[[2]]
-      ProductosPeso <- filtro2[[3]]
-      
-      DF_Productos <- RegistraProductosConFiltro( InformacionCompra = InfoCompra,
-                                 Parking = ValorParking,
-                                 ListaProductosUnitarios = ProductosUnitarios,
-                                 ListaProductosPeso = ProductosPeso,
-                                 ProductosRegistrados = DF_Productos
-                                 )
-    } else {
-      
-      Productos <- filtro2[[2]]
-      
-      DF_Productos <- RegistraProductosSinFiltro ( InformacionCompra = InfoCompra,
-                                             Parking = ValorParking,
-                                             ListaProductos = Productos,
-                                             ProductosRegistrados = DF_Productos)
-    }
-
-  } else {
-    
-    # Si no es de Mercadona
-    # INFORMACION GENERAL DE LOS FICHEROS
-    
-    if (!(Nombrepdf %in% DF_FicherosNoLeidos$NombreFichero)) {
-      
-      valor <- data.frame(NombreFichero = Nombrepdf,
-                           stringsAsFactors = FALSE )
-    
-      DF_FicherosNoLeidos <- rbind(DF_FicherosNoLeidos, valor)
-    }
-  }
-
-  valores <- list(FicherosNoLeidos = DF_FicherosNoLeidos,
-                  FicherosLeidos = DF_FicherosLeidos,
-                  Tiendas = DF_Tiendas,
-                  Productos = DF_Productos,
-                  Compras = DF_Compra)
-  
-  # Devuelve todos los dataframes con la respectiva información
-  
-  return(valores)
-}
-
-```
-
-```{r include=FALSE}
-# Verificacion de las funciones anteriores para todos los ficheros
-
-# Carga de todos los ficheros
-# lista_ficheros <- list.files(path = 'data/', pattern = "\\.pdf$")
-lista_nombres_ficheros <- list.files(path = 'data/')
-length(lista_nombres_ficheros)
-```
-
-```{r CargaFicheros, include=FALSE}
-## Bucle para cargar la informacion de cada fichero
-
-for (f in lista_nombres_ficheros) {
-  
-  Resultado <- RegistroFichero(Nombrepdf = f, 
-                               DF_FicherosNoLeidos = NoLeido, 
-                               DF_FicherosLeidos = FicheroLeido, 
-                               DF_Tiendas = Tienda, 
-                               DF_Productos = Producto, 
-                               DF_Compra = Compra)
-
-  NoLeido <- Resultado$FicherosNoLeidos
-  FicheroLeido <- Resultado$FicherosLeidos
-  Tienda <- Resultado$Tiendas
-  Producto <- Resultado$Productos
-  Compra <- Resultado$Compras
-}
-```
-
 ## Ficheros no leidos
 
-Solo aquellos ficheros que estuvieran con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenido, hemos almacenado el nombre del fichero en un dataframe diferente _NoLeido_.
+Solo los ficheros con el formato correcto, serían tratados. Es decir, aquellos ficheros que tuvieran un escaner, foto u otro formato de factura distinto al formato de Mercadona, no serían tratados. Para identificarlos y corroborar su contenido, hemos almacenado el nombre del fichero en un dataframe diferente _NoLeido_.
 
 ```{r include=FALSE}
-# Comprobacion de los ficheros no leidos 
-lista_f_almacenados <- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
-diferencia <- setdiff(lista_nombres_ficheros, lista_f_almacenados)
-diferencia
+# Nombres ficheros en carpeta data
+ficheros_en_data <- list.files(path = 'data/', pattern = "\\.pdf$")
+
+# Comprobacion de los ficheros repetidos 
+ficheros_almacenados <- c(NoLeido$NombreFichero, FicheroLeido$NombreFichero)
+repetidos <- setdiff(ficheros_en_data, ficheros_almacenados)
+repetidos
+
+# De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron leidos anteriormente 
+# y por tanto, no se vuelven a leer ni almacenar. 
 ```
 
 ```{r include=FALSE}
-# De estos nombres, identificamos que se trata de ficheros repetidos. Ya fueron leidos anteriormente 
- #y por tanto, no se vuelven a leer ni almacenar. 
-
 ## Verificamos los valores NA, ya que no deberian haber
+
 sum(is.na(Compra))
 
 sum(is.na(Producto))
@@ -632,7 +127,7 @@ sum(is.na(Tienda))
 
 ## Presentación parcial de los datos
 
-Esta es una representación sobre cómo se almacenaron los datos para empezar a trabajar sobre ellos. En la Tabla \@ref(tab:TablaTiendas) podemos ver todas las tiendas en las que se han hecho las compras. En total, se han registrado 34 tiendas.
+Esta es una representación sobre cómo se almacenaron los datos para empezar a trabajar sobre ellos. En la Tabla \@ref(tab:TablaTiendas) podemos ver todas las tiendas en las que se han hecho las compras. En total, se han registrado `r nrow(Tienda)` tiendas.
 
 ```{r TablaTiendas, echo=FALSE, results='asis'}
 kable(head(Tienda, 10), caption = 'Tabla de tiendas leidas', booktabs = TRUE)
@@ -665,13 +160,13 @@ vis_miss(Tienda)
 
 ## Problemas con tipos de datos
 
-Con _glimpse_ podemos ver algunos datos del dataframe, además de comprobar que cada columna tenga su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
+Con *glimpse* podemos ver algunos datos del dataframe, además de comprobar que cada columna tenga su tipo adecuado. En el dataframe de tienda, podriamos poner tanto el id, el codigo postal, y el telefono como números enteros, pero, ya que no tendria sentido realizar operaciones propias de los numeros enteros con estos datos, no será necesario.
 
 ```{r include=FALSE}
 glimpse(Tienda)
 ```
 
-Con los dataframes Compra y Producto, no podemos hacer lo mismo. Las variables como _Fecha_, _ImporteTotal_, _Cantidad_ y _PrecioUnitario_, deben tener el dato correspondiente para realizar las operaciones necesarias. Por ejemplo, dentro de las variables numéricas, es importante sustituir las comas por puntos para identificar los decimales y transformar correctamente el dato. Por último, el _TipoProducto_, _Parking_ y la variable _Tarjeta_, que serán de tipo categórico.
+Con los dataframes Compra y Producto, no podemos hacer lo mismo. Las variables como *Fecha*, *ImporteTotal*, *Cantidad* y *PrecioUnitario*, deben tener el dato correspondiente para realizar las operaciones necesarias. Por ejemplo, dentro de las variables numéricas, es importante sustituir las comas por puntos para identificar los decimales y transformar correctamente el dato. Por último, el *TipoProducto*, *Parking* y la variable *Tarjeta*, que serán de tipo categórico.
 
 ```{r include=FALSE}
 # Actualizacion para la tabla Compra. Variables a transformar:
@@ -711,7 +206,7 @@ Producto <- Producto %>%
 summary(Producto)
 ```
 
-Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando _unique_ podemos asegurarnos.
+Para finalizar hacemos una verificacion sobre los valores repetidos. En principio, no deberían haber valores repetidos, ya que al hacer el registro de los datos, se evito este problema. Sin embargo, usando *unique* podemos asegurarnos.
 
 ```{r include=FALSE}
 Compra[duplicated(Compra), ]
@@ -815,9 +310,9 @@ A pesar de que no se presentan gran cantidad de datos para ver la variación de 
 
 ## Preguntas planteadas
 
-1. ¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura? 
+1.  ¿Qué combinaciones de productos se compran con mayor frecuencia en una misma factura?
 
-Para las combinaciones de productos, será necesario saber el _id de factura_ y la _descripción del producto_. Una vez identificados, generamos todas las combinaciones entre los productos por factura, para saber la frecuencia en todas las facturas. 
+Para las combinaciones de productos, será necesario saber el *id de factura* y la *descripción del producto*. Una vez identificados, generamos todas las combinaciones entre los productos por factura, para saber la frecuencia en todas las facturas.
 
 ```{r include=FALSE}
 combinaciones <- Producto %>%
@@ -848,7 +343,7 @@ pares_frecuentes <- combinaciones %>%
 
 ```
 
-En la Figura \@ref(fig:TopCombinaciones), vemos que la combinación de productos que más se repite es _ALMENDRA NATURAL + CACAHUETE CHOCOLATE_, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
+En la Figura \@ref(fig:TopCombinaciones), vemos que una de las combinaciones de productos que más se repite es *ALMENDRA NATURAL + CACAHUETE CHOCOLATE*, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
 
 ```{r TopCombinaciones, fig.cap='Combinaciones de productos más frecuentes', echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=2}
 # VISUALIZACIÓN
@@ -871,9 +366,9 @@ par_frec
 
 ```
 
-2. ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
+2.  ¿Qué productos mantienen un volumen de ventas estable, independientemente de cambios en su precio unitario?
 
-Para determinar los productos que mantienen un volumen de ventas estable, analizaremos el _cv_precio_, que es el coeficiente de variación del precio. Mide la variabilidad relativa del precio del producto (desviación estándar sobre media). Cuanto más bajo, más estable es el precio. También, la _correlación_ entre el precio unitario y la cantidad vendida. Mide si las ventas aumentan o disminuyen cuando cambia el precio.
+Para determinar los productos que mantienen un volumen de ventas estable, analizaremos el *cv_precio*, que es el coeficiente de variación del precio. Mide la variabilidad relativa del precio del producto (desviación estándar sobre media). Cuanto más bajo, más estable es el precio. También, la *correlación* entre el precio unitario y la cantidad vendida. Mide si las ventas aumentan o disminuyen cuando cambia el precio.
 
 ```{r include=FALSE, warning=FALSE, message=FALSE}
 estabilidad_ventas <- Producto %>%
@@ -886,7 +381,7 @@ estabilidad_ventas <- Producto %>%
 # Visualización para los 5 productos más estables
 # Sabiendo que entre más bajo cv_precio, más estable es el precio
 # y que la correlacion baja (cercana a 0) entre precio y cantidad, indica que las ventas no dependen del precio
-productos_estables <- head(estabilidad_ventas, 5)$DescripcionProducto
+productos_estables <- head(estabilidad_ventas, 6)$DescripcionProducto
 ```
 
 ```{r FiguraPrecioCantidad, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Relación precio-cantidad para productos con ventas estables', fig.align='center', fig.width=6, fig.height=2}
@@ -907,11 +402,11 @@ var_prods
 
 ```
 
-En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio. 
+En la Figura \@ref(fig:FiguraPrecioCantidad), se visualiza cómo varían las ventas (Cantidad) según el precio (PrecioUnitario) para los 5 productos más estables. Como estos productos tienen precios muy constantes (bajo cv_precio), los puntos están cercanos al eje X. Las líneas rojas muestran la tendencia general: si sube o baja la venta cuando cambia el precio.
 
-En general, la mayoría de los productos tienen precios bastante estables (cv_precio < 0.1), lo cual es bueno para control de precios. Las correlaciones son muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
+En general, la mayoría de los productos tienen precios bastante estables (cv_precio \< 0.1), lo cual es bueno para control de precios. Las correlaciones son muy bajas, cercanas a 0. Esto sugiere que, para estos productos, el precio no influye fuertemente en la cantidad vendida.
 
-3. ¿Cuál es el número promedio de tickets por hora y el gasto promedio por compra, según el día y la hora?
+3.  ¿Cuál es el número promedio de tickets por hora y el gasto promedio por compra, según el día y la hora?
 
 ```{r include=FALSE}
 # Creamos una copia del dataframe que contiene Compra
@@ -1073,7 +568,7 @@ ggsave(filename = 'figuras/gastos_medio_dia.png', plot =  G_dia)
 (T_hora + G_dia)
 ```
 
-En la Figura \@ref(fig:Tickets-Gastos) ... 
+En la Figura \@ref(fig:Tickets-Gastos) ...
 
 4.¿Qué patrones de compra se observan hacia inicio/fin de mes? ¿Cuántas compras incluyen parking?
 
@@ -1180,9 +675,9 @@ ResumenParking <- CompraExtendida %>%
 kable(ResumenParking, caption = 'Compras que incluyen parking', booktabs = TRUE)
 ```
 
-En la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran parking. 
+En la Tabla \@ref(tab:TablaParking) vemos que el 90% de las compras no registran parking.
 
-5. ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido? 
+5.  ¿Cuáles son los 5 productos, de los vendidos por unidades, con más ventas? ¿Cuántas unidades de cada uno se han vendido?
 
 ```{r include=FALSE}
 top_por_unidades <- Producto %>%
@@ -1211,7 +706,7 @@ top_productos
 
 En la Figura \@ref(fig:TopUnidades) ...
 
-6. Si consideramos la categoría de FRUTAS Y VERDURAS, ¿cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos? 
+6.  Si consideramos la categoría de FRUTAS Y VERDURAS, ¿cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
 
 ```{r include=FALSE}
 top_frutas_verduras <- Producto %>%
@@ -1240,9 +735,9 @@ top_frutas
 
 En la Figura \@ref(fig:TopFrutasVerduras) ...
 
-7.	Si consideramos la categoría de PESCADO, ¿Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
+7.  Si consideramos la categoría de PESCADO, ¿Cuáles son los 5 productos más vendidos? ¿Cuántos kilos se han vendido de cada uno de estos productos?
 
-Para saber cuáles son los 5 productos más vendidos considerando únicamente la categoría pescado, debemos primero filtrar los datos para quedarnos solamente con la categoría _TipoProducto_ y que esta contenga el valor de "Pescado". Seguidamente calcularemos los kilos totales vendidos de cada producto y, por último mediante una suma nos quedaremos con los 5 productos más vendidos.
+Para saber cuáles son los 5 productos más vendidos considerando únicamente la categoría pescado, debemos primero filtrar los datos para quedarnos solamente con la categoría *TipoProducto* y que esta contenga el valor de "Pescado". Seguidamente calcularemos los kilos totales vendidos de cada producto y, por último mediante una suma nos quedaremos con los 5 productos más vendidos.
 
 ```{r include=FALSE}
 #Filtramos para quedarnos con los productos que sean pescados.
@@ -1271,7 +766,7 @@ kable(frecuencia_kilos, caption = 'Analisis categoria PESCADO', booktabs = TRUE)
 
 En la Tabla \@ref(tab:TablaTopPescado), los 5 productos más vendidos de la categoría pescado son la bacaladilla con una venta de 5.782 kg, la sepia fresca con 2.642 kg vendidos, la sepia lonja con 2.792 kg vendidos, el lenguado fresc europ con 1.248 kg vendidos y por último la sepia sucia, con 2.402 kg vendidos.
 
-8.	Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
+8.  Muestra mediante un gráfico de líneas como ha variado el precio por kilo de las bananas y los plátanos en los tickets disponibles, a lo largo del tiempo.
 
 Primero debemos unir las dos tablas "Compra" y "Producto" ya que en una se encuntra la descripción del producto y en otra la fecha, que nos interesa bastante para responder a la pregunta. Una vez unida, filtramos la descripción del producto para quedarnos unicamente con los productos "platano" y "banana". Calculamos el precio medio del kilo por mes y representamos graficamente ya que es una forma muy fácil de interpretar los datos, y de ver la evolución del precio de estos dos productos a lo largo del tiempo.
 
@@ -1291,7 +786,6 @@ precios_mes <- platano %>%
   summarise(PrecioPromedio = mean(PrecioUnitario, na.rm = TRUE)) %>%
   ungroup()
 ```
-
 
 ```{r Bananas, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Evolucion mensual del precio por kilo', fig.align='center', fig.width=6, fig.height=2}
 #Representamos gráficamente
@@ -1343,12 +837,12 @@ T_mun
 
 10. Muestra mediante un diagrama el número de tickets recogidos cada día de las semana. ¿Si tuvieses que cerrar un día entre semana qué día lo harías?
 
-Parece que lo obvio, según la Figura \@ref(fig:DiaCierre), sería cerrar los Domingos. Pero, por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día; no es normal que las grandes cadenas de supermercados abran los Domingos. El siguiente mejor día para cerrar, es el jueves como podemos ver. Podríamos considerar también los martes o miércoles, ya que son los otros días con menos tiquets. 
+Parece que lo obvio, según la Figura \@ref(fig:DiaCierre), sería cerrar los Domingos. Pero, por conocimiento del medio sabemos que la mayoria de las tiendas cierran ese mismo día; no es normal que las grandes cadenas de supermercados abran los Domingos. El siguiente mejor día para cerrar, es el jueves como podemos ver. Podríamos considerar también los martes o miércoles, ya que son los otros días con menos tiquets.
 
-En conclusión, la mayoría de personas no hace las compras entre semana, por lo que cerrar en uno de los días anteriormente mencionados es buena opción. Y, por otro lado, cerrar un fin de semana sería perjudicial.  
+En conclusión, la mayoría de personas no hace las compras entre semana, por lo que cerrar en uno de los días anteriormente mencionados es buena opción. Y, por otro lado, cerrar un fin de semana sería perjudicial.
 
 ```{r DiaCierre, echo=FALSE, warning=FALSE, message=FALSE, fig.cap='Tiquets por día', fig.align='center', fig.width=6, fig.height=2}
 T_dia
 ```
 
-# Conclusiones 
+# Conclusiones
