@@ -1028,7 +1028,7 @@ pares_frecuentes <- combinaciones %>%
 
 ```
 
-En la Figura \@ref(fig:TopCombinaciones), vemos que la combinación de productos que más se repite es *ALMENDRA NATURAL + CACAHUETE CHOCOLATE*, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
+En la Figura \@ref(fig:TopCombinaciones), vemos que una de las combinaciones de productos que más se repite es *ALMENDRA NATURAL + CACAHUETE CHOCOLATE*, con un total de 16 veces. Por lo tanto, el 5.51% de las compras analizadas presentan esta combinación.
 
 ```{r TopCombinaciones, fig.cap='Combinaciones de productos más frecuentes', echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.width=6, fig.height=2}
 # VISUALIZACIÓN
